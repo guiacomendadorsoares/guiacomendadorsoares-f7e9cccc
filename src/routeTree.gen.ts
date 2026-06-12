@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as GuiaRouteImport } from './routes/guia'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/perfil': typeof PerfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/perfil': typeof PerfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,22 @@ export interface FileRoutesById {
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/perfil': typeof PerfilRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/guia' | '/imoveis' | '/perfil' | '/vagas'
+  fullPaths: '/' | '/guia' | '/imoveis' | '/perfil' | '/sitemap.xml' | '/vagas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/guia' | '/imoveis' | '/perfil' | '/vagas'
-  id: '__root__' | '/' | '/guia' | '/imoveis' | '/perfil' | '/vagas'
+  to: '/' | '/guia' | '/imoveis' | '/perfil' | '/sitemap.xml' | '/vagas'
+  id:
+    | '__root__'
+    | '/'
+    | '/guia'
+    | '/imoveis'
+    | '/perfil'
+    | '/sitemap.xml'
+    | '/vagas'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +92,7 @@ export interface RootRouteChildren {
   GuiaRoute: typeof GuiaRoute
   ImoveisRoute: typeof ImoveisRoute
   PerfilRoute: typeof PerfilRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
 }
 
@@ -86,6 +103,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -124,8 +148,19 @@ const rootRouteChildren: RootRouteChildren = {
   GuiaRoute: GuiaRoute,
   ImoveisRoute: ImoveisRoute,
   PerfilRoute: PerfilRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
