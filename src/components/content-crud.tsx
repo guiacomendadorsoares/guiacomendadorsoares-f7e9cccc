@@ -20,6 +20,7 @@ import { SCHEMAS, selectColumns, type FieldDef } from "@/lib/content-schemas";
 import { useCurrentPlan } from "@/lib/plans";
 import { PremiumModal } from "@/components/premium-modal";
 import { SingleImageUploader, GalleryUploader } from "@/components/image-uploader";
+import { LocationPicker } from "@/components/location-picker";
 
 interface Props {
   table: ContentTable;
@@ -57,6 +58,7 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
       // Coerce empty strings to null and numbers; pass arrays through
       for (const f of schema.fields) {
         const v = payload[f.key];
+        if (f.type === "location") { delete payload[f.key]; continue; } // virtual field
         if (f.type === "gallery") payload[f.key] = Array.isArray(v) ? v : [];
         else if (f.type === "image") payload[f.key] = v || null;
         else if (v === "" || v === undefined) payload[f.key] = null;
@@ -235,6 +237,26 @@ function CrudFormDialog({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {fields.map((f) => {
               const locked = !!f.premium && !businessFeatures[f.premium];
+              if (f.type === "location") {
+                const lat = values[f.latKey ?? "latitude"];
+                const lng = values[f.lngKey ?? "longitude"];
+                const addr = values[f.addressKey ?? "address"];
+                return (
+                  <div key={f.key} className="sm:col-span-2 space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
+                    <LocationPicker
+                      lat={lat != null && lat !== "" ? Number(lat) : null}
+                      lng={lng != null && lng !== "" ? Number(lng) : null}
+                      address={addr}
+                      onChange={(c: { lat: number; lng: number } | null) => setValues({
+                        ...values,
+                        [f.latKey ?? "latitude"]: c?.lat ?? null,
+                        [f.lngKey ?? "longitude"]: c?.lng ?? null,
+                      })}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
                   <FieldRender

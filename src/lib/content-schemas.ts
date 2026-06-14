@@ -3,7 +3,7 @@ import type { BusinessFeatures } from "@/lib/plans";
 
 export type FieldType =
   | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
-  | "image" | "gallery";
+  | "image" | "gallery" | "location";
 
 export interface FieldDef {
   key: string;
@@ -22,6 +22,11 @@ export interface FieldDef {
   aspect?: "square" | "wide";
   /** gallery only — which plan section drives the max count */
   limitFrom?: "business" | "properties";
+  /** location only — sibling field with address text used for geocoding */
+  addressKey?: string;
+  /** location only — db columns for lat/lng */
+  latKey?: string;
+  lngKey?: string;
 }
 
 export interface TableSchema {
@@ -50,8 +55,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "logo_url", label: "Logo", type: "image", folder: "businesses/logo", aspect: "square", half: true },
       { key: "banner_url", label: "Banner", type: "image", folder: "businesses/banner", aspect: "wide", half: true, premium: "banner" },
       { key: "gallery_urls", label: "Galeria de fotos", type: "gallery", folder: "businesses/gallery", limitFrom: "business" },
-      { key: "latitude", label: "Latitude", type: "number", half: true, placeholder: "-22.7654" },
-      { key: "longitude", label: "Longitude", type: "number", half: true, placeholder: "-43.4321" },
+      { key: "__location", label: "Localização no mapa", type: "location", addressKey: "address", latKey: "latitude", lngKey: "longitude" },
     ],
   },
   jobs: {
@@ -105,9 +109,8 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "description", label: "Descrição", type: "textarea", max: 4000 },
       { key: "cover_url", label: "Foto principal", type: "image", folder: "properties/cover", aspect: "wide" },
       { key: "gallery_urls", label: "Galeria de fotos", type: "gallery", folder: "properties/gallery", limitFrom: "properties" },
-      { key: "video_url", label: "URL do vídeo (YouTube)", type: "url", max: 500, half: true },
-      { key: "latitude", label: "Latitude", type: "number", half: true, placeholder: "-22.7654" },
-      { key: "longitude", label: "Longitude", type: "number", half: true, placeholder: "-43.4321" },
+      { key: "video_url", label: "URL do vídeo (YouTube)", type: "url", max: 500 },
+      { key: "__location", label: "Localização no mapa", type: "location", addressKey: "address", latKey: "latitude", lngKey: "longitude" },
       { key: "featured", label: "Destaque", type: "boolean" },
     ],
   },
@@ -146,6 +149,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "is_free", label: "Gratuito", type: "boolean", half: true },
       { key: "url", label: "Link de inscrição", type: "url", max: 500 },
       { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "__location", label: "Localização no mapa", type: "location", addressKey: "location", latKey: "latitude", lngKey: "longitude" },
     ],
   },
   curiosities: {
