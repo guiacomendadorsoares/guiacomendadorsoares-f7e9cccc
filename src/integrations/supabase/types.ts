@@ -17,6 +17,8 @@ export type Database = {
       businesses: {
         Row: {
           address: string
+          approved_at: string | null
+          approved_by: string | null
           category: string
           category_label: string
           cover_url: string | null
@@ -34,13 +36,18 @@ export type Database = {
           name: string
           owner_id: string | null
           phone: string | null
+          rejection_reason: string | null
           slug: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
           updated_at: string
           verified: boolean
           whatsapp: string | null
         }
         Insert: {
           address: string
+          approved_at?: string | null
+          approved_by?: string | null
           category: string
           category_label: string
           cover_url?: string | null
@@ -58,13 +65,18 @@ export type Database = {
           name: string
           owner_id?: string | null
           phone?: string | null
+          rejection_reason?: string | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           updated_at?: string
           verified?: boolean
           whatsapp?: string | null
         }
         Update: {
           address?: string
+          approved_at?: string | null
+          approved_by?: string | null
           category?: string
           category_label?: string
           cover_url?: string | null
@@ -82,7 +94,10 @@ export type Database = {
           name?: string
           owner_id?: string | null
           phone?: string | null
+          rejection_reason?: string | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           updated_at?: string
           verified?: boolean
           whatsapp?: string | null
@@ -141,9 +156,53 @@ export type Database = {
           },
         ]
       }
+      curiosities: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          body: string
+          cover_url: string | null
+          created_at: string
+          id: string
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          body: string
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          body?: string
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       events: {
         Row: {
           active: boolean
+          approved_at: string | null
+          approved_by: string | null
           business_id: string | null
           cover_url: string | null
           created_at: string
@@ -153,7 +212,10 @@ export type Database = {
           is_free: boolean
           location: string | null
           price: number | null
+          rejection_reason: string | null
           starts_at: string
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
           summary: string | null
           title: string
           updated_at: string
@@ -161,6 +223,8 @@ export type Database = {
         }
         Insert: {
           active?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
           business_id?: string | null
           cover_url?: string | null
           created_at?: string
@@ -170,7 +234,10 @@ export type Database = {
           is_free?: boolean
           location?: string | null
           price?: number | null
+          rejection_reason?: string | null
           starts_at: string
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           summary?: string | null
           title: string
           updated_at?: string
@@ -178,6 +245,8 @@ export type Database = {
         }
         Update: {
           active?: boolean
+          approved_at?: string | null
+          approved_by?: string | null
           business_id?: string | null
           cover_url?: string | null
           created_at?: string
@@ -187,7 +256,10 @@ export type Database = {
           is_free?: boolean
           location?: string | null
           price?: number | null
+          rejection_reason?: string | null
           starts_at?: string
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           summary?: string | null
           title?: string
           updated_at?: string
@@ -203,10 +275,36 @@ export type Database = {
           },
         ]
       }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          target_id: string
+          target_type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          target_id?: string
+          target_type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       jobs: {
         Row: {
           active: boolean
           apply_url: string | null
+          approved_at: string | null
+          approved_by: string | null
           business_id: string | null
           company: string
           created_at: string
@@ -215,7 +313,10 @@ export type Database = {
           id: string
           location: string
           posted_at: string
+          rejection_reason: string | null
           salary: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
           title: string
           type: Database["public"]["Enums"]["job_type"]
           updated_at: string
@@ -225,6 +326,8 @@ export type Database = {
         Insert: {
           active?: boolean
           apply_url?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           business_id?: string | null
           company: string
           created_at?: string
@@ -233,7 +336,10 @@ export type Database = {
           id?: string
           location: string
           posted_at?: string
+          rejection_reason?: string | null
           salary?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           title: string
           type: Database["public"]["Enums"]["job_type"]
           updated_at?: string
@@ -243,6 +349,8 @@ export type Database = {
         Update: {
           active?: boolean
           apply_url?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           business_id?: string | null
           company?: string
           created_at?: string
@@ -251,7 +359,10 @@ export type Database = {
           id?: string
           location?: string
           posted_at?: string
+          rejection_reason?: string | null
           salary?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           title?: string
           type?: Database["public"]["Enums"]["job_type"]
           updated_at?: string
@@ -270,6 +381,8 @@ export type Database = {
       }
       news: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           author_id: string | null
           category: Database["public"]["Enums"]["news_category"]
           content: string | null
@@ -278,12 +391,17 @@ export type Database = {
           id: string
           published: boolean
           published_at: string
+          rejection_reason: string | null
           slug: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
           summary: string | null
           title: string
           updated_at: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           author_id?: string | null
           category: Database["public"]["Enums"]["news_category"]
           content?: string | null
@@ -292,12 +410,17 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string
+          rejection_reason?: string | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           summary?: string | null
           title: string
           updated_at?: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           author_id?: string | null
           category?: Database["public"]["Enums"]["news_category"]
           content?: string | null
@@ -306,7 +429,10 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string
+          rejection_reason?: string | null
           slug?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           summary?: string | null
           title?: string
           updated_at?: string
@@ -321,11 +447,42 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          email: string | null
           full_name: string | null
           id: string
           phone: string | null
@@ -336,6 +493,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
@@ -346,6 +504,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          email?: string | null
           full_name?: string | null
           id?: string
           phone?: string | null
@@ -358,6 +517,8 @@ export type Database = {
         Row: {
           active: boolean
           address: string
+          approved_at: string | null
+          approved_by: string | null
           area_m2: number | null
           bathrooms: number | null
           bedrooms: number | null
@@ -375,12 +536,17 @@ export type Database = {
           parking: number | null
           price: number
           price_label: string | null
+          rejection_reason: string | null
+          status: Database["public"]["Enums"]["content_status"]
+          submitted_by: string | null
           title: string
           updated_at: string
         }
         Insert: {
           active?: boolean
           address: string
+          approved_at?: string | null
+          approved_by?: string | null
           area_m2?: number | null
           bathrooms?: number | null
           bedrooms?: number | null
@@ -398,12 +564,17 @@ export type Database = {
           parking?: number | null
           price: number
           price_label?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           title: string
           updated_at?: string
         }
         Update: {
           active?: boolean
           address?: string
+          approved_at?: string | null
+          approved_by?: string | null
           area_m2?: number | null
           bathrooms?: number | null
           bedrooms?: number | null
@@ -421,6 +592,9 @@ export type Database = {
           parking?: number | null
           price?: number
           price_label?: string | null
+          rejection_reason?: string | null
+          status?: Database["public"]["Enums"]["content_status"]
+          submitted_by?: string | null
           title?: string
           updated_at?: string
         }
@@ -541,15 +715,51 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      app_role:
+        | "admin"
+        | "editor"
+        | "partner"
+        | "broker"
+        | "influencer"
+        | "user"
       comment_target: "business" | "news" | "event"
+      content_status: "draft" | "pending" | "approved" | "rejected"
       job_type: "emprego" | "estagio" | "jovem-aprendiz" | "freelancer"
       listing_type: "venda" | "aluguel"
       news_category:
@@ -694,7 +904,9 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      app_role: ["admin", "editor", "partner", "broker", "influencer", "user"],
       comment_target: ["business", "news", "event"],
+      content_status: ["draft", "pending", "approved", "rejected"],
       job_type: ["emprego", "estagio", "jovem-aprendiz", "freelancer"],
       listing_type: ["venda", "aluguel"],
       news_category: [
