@@ -57,6 +57,7 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
       // Coerce empty strings to null and numbers; pass arrays through
       for (const f of schema.fields) {
         const v = payload[f.key];
+        if (f.type === "location") { delete payload[f.key]; continue; } // virtual field
         if (f.type === "gallery") payload[f.key] = Array.isArray(v) ? v : [];
         else if (f.type === "image") payload[f.key] = v || null;
         else if (v === "" || v === undefined) payload[f.key] = null;
