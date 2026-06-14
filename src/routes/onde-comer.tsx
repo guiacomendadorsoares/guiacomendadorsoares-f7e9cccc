@@ -1,14 +1,12 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { Search, UtensilsCrossed } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
-import { RestaurantCard } from "@/components/restaurant-card";
-import {
-  sampleRestaurants,
-  RESTAURANT_FILTERS,
-  type RestaurantCategory,
-} from "@/lib/restaurants";
+import { GuiaBusinessCard } from "@/components/guia-business-card";
+import { fetchBusinessesByCategory } from "@/services/businesses.service";
+import { findCategory } from "@/lib/guia-taxonomy";
 
 export const Route = createFileRoute("/onde-comer")({
   head: () => ({
@@ -24,18 +22,29 @@ export const Route = createFileRoute("/onde-comer")({
 });
 
 function OndeComerPage() {
-  const [filter, setFilter] = useState<RestaurantCategory | "todos">("todos");
+  const [filter, setFilter] = useState<string>("todos");
   const [query, setQuery] = useState("");
 
+  const { data: items = [], isLoading } = useQuery({
+    queryKey: ["guia", "category", "alimentacao"],
+    queryFn: () => fetchBusinessesByCategory("alimentacao"),
+  });
+
+  const cat = findCategory("alimentacao");
+  const filters = useMemo(
+    () => [{ value: "todos", label: "Todos" }, ...(cat?.subcategories.map((s) => ({ value: s.slug, label: s.label })) ?? [])],
+    [cat],
+  );
+
   const filtered = useMemo(() => {
-    return sampleRestaurants.filter((r) => {
-      const matchCat = filter === "todos" || r.category === filter;
-      const q = query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
+    return items.filter((b) => {
+      const matchCat = filter === "todos" || b.subcategory === filter;
       const matchQ =
-        !q || r.name.toLowerCase().includes(q) || r.categoryLabel.toLowerCase().includes(q);
+        !q || b.name.toLowerCase().includes(q) || (b.address ?? "").toLowerCase().includes(q);
       return matchCat && matchQ;
     });
-  }, [filter, query]);
+  }, [filter, query, items]);
 
   return (
     <AppShell title="Onde Comer" subtitle="Sabores do bairro">
@@ -52,7 +61,7 @@ function OndeComerPage() {
 
       <div className="mb-4 -mx-5 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         <div className="flex gap-2 pb-1">
-          {RESTAURANT_FILTERS.map((f) => {
+          {filters.map((f) => {
             const active = filter === f.value;
             return (
               <button
@@ -75,16 +84,18 @@ function OndeComerPage() {
         {filtered.length} {filtered.length === 1 ? "lugar encontrado" : "lugares encontrados"}
       </p>
 
-      {filtered.length === 0 ? (
+      {isLoading ? (
+        <p className="py-12 text-center text-sm text-muted-foreground">Carregando…</p>
+      ) : filtered.length === 0 ? (
         <EmptyState
           icon={<UtensilsCrossed className="h-5 w-5" />}
-          title={sampleRestaurants.length === 0 ? "Nenhum restaurante cadastrado ainda." : "Nada por aqui"}
-          description={sampleRestaurants.length === 0 ? "Em breve os estabelecimentos do bairro estarão aqui." : "Tente outra categoria ou termo de busca."}
+          title="Nenhum estabelecimento encontrado"
+          description="Em breve mais opções de Alimentação por aqui."
         />
       ) : (
         <div className="flex flex-col gap-4">
-          {filtered.map((r) => (
-            <RestaurantCard key={r.id} restaurant={r} />
+          {filtered.map((b) => (
+            <GuiaBusinessCard key={b.id} b={b} />
           ))}
         </div>
       )}
