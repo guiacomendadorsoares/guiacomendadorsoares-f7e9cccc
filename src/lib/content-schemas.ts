@@ -1,7 +1,9 @@
 import type { ContentTable } from "@/lib/approvals";
 import type { BusinessFeatures } from "@/lib/plans";
 
-export type FieldType = "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url";
+export type FieldType =
+  | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
+  | "image" | "gallery";
 
 export interface FieldDef {
   key: string;
@@ -11,9 +13,15 @@ export interface FieldDef {
   options?: { value: string; label: string }[];
   max?: number;
   placeholder?: string;
-  half?: boolean; // render in 2-col grid
+  half?: boolean;
   /** when set, field is gated behind this business plan feature */
   premium?: keyof BusinessFeatures;
+  /** image/gallery only — sub-folder inside the storage bucket */
+  folder?: string;
+  /** image only — aspect ratio of the preview */
+  aspect?: "square" | "wide";
+  /** gallery only — which plan section drives the max count */
+  limitFrom?: "business" | "properties";
 }
 
 export interface TableSchema {
@@ -37,11 +45,13 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "description", label: "Descrição", type: "textarea", max: 2000 },
       { key: "phone", label: "Telefone", type: "text", max: 40, half: true },
       { key: "email", label: "E-mail", type: "text", max: 255, half: true },
-      { key: "logo_url", label: "URL do logo", type: "url", max: 500 },
       { key: "whatsapp", label: "WhatsApp", type: "text", max: 40, half: true, premium: "whatsapp" },
       { key: "instagram", label: "Instagram", type: "text", max: 120, half: true, premium: "social" },
-      { key: "banner_url", label: "URL do banner", type: "url", max: 500, premium: "banner" },
-      { key: "gallery_urls", label: "Galeria (URLs separadas por vírgula)", type: "textarea", max: 4000, premium: "gallery" },
+      { key: "logo_url", label: "Logo", type: "image", folder: "businesses/logo", aspect: "square", half: true },
+      { key: "banner_url", label: "Banner", type: "image", folder: "businesses/banner", aspect: "wide", half: true, premium: "banner" },
+      { key: "gallery_urls", label: "Galeria de fotos", type: "gallery", folder: "businesses/gallery", limitFrom: "business" },
+      { key: "latitude", label: "Latitude", type: "number", half: true, placeholder: "-22.7654" },
+      { key: "longitude", label: "Longitude", type: "number", half: true, placeholder: "-43.4321" },
     ],
   },
   jobs: {
@@ -93,7 +103,11 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "area_m2", label: "Área (m²)", type: "number", half: true },
       { key: "address", label: "Endereço *", type: "text", required: true, max: 255 },
       { key: "description", label: "Descrição", type: "textarea", max: 4000 },
-      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "cover_url", label: "Foto principal", type: "image", folder: "properties/cover", aspect: "wide" },
+      { key: "gallery_urls", label: "Galeria de fotos", type: "gallery", folder: "properties/gallery", limitFrom: "properties" },
+      { key: "video_url", label: "URL do vídeo (YouTube)", type: "url", max: 500, half: true },
+      { key: "latitude", label: "Latitude", type: "number", half: true, placeholder: "-22.7654" },
+      { key: "longitude", label: "Longitude", type: "number", half: true, placeholder: "-43.4321" },
       { key: "featured", label: "Destaque", type: "boolean" },
     ],
   },

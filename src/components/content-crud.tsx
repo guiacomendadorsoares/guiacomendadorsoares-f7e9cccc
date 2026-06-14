@@ -19,6 +19,7 @@ import type { ContentTable } from "@/lib/approvals";
 import { SCHEMAS, selectColumns, type FieldDef } from "@/lib/content-schemas";
 import { useCurrentPlan } from "@/lib/plans";
 import { PremiumModal } from "@/components/premium-modal";
+import { SingleImageUploader, GalleryUploader } from "@/components/image-uploader";
 
 interface Props {
   table: ContentTable;
@@ -53,10 +54,12 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
       const payload: Record<string, any> = { ...schema.defaults, ...values };
       delete payload.id;
       if (forcePending) payload.status = "pending";
-      // Coerce empty strings to null and numbers
+      // Coerce empty strings to null and numbers; pass arrays through
       for (const f of schema.fields) {
         const v = payload[f.key];
-        if (v === "" || v === undefined) payload[f.key] = null;
+        if (f.type === "gallery") payload[f.key] = Array.isArray(v) ? v : [];
+        else if (f.type === "image") payload[f.key] = v || null;
+        else if (v === "" || v === undefined) payload[f.key] = null;
         else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
       }
@@ -189,6 +192,8 @@ function CrudFormDialog({
     for (const f of fields) {
       const v = initial ? initial[f.key] : defaults[f.key];
       if (f.type === "boolean") init[f.key] = !!v;
+      else if (f.type === "gallery") init[f.key] = Array.isArray(v) ? v : [];
+      else if (f.type === "image") init[f.key] = v ?? null;
       else if (f.type === "datetime" && v) init[f.key] = new Date(v).toISOString().slice(0, 16);
       else init[f.key] = v ?? "";
     }
@@ -208,7 +213,19 @@ function CrudFormDialog({
 
   const { plan } = useCurrentPlan();
   const businessFeatures = (plan?.features as any)?.business ?? {};
+  const propertyFeatures = (plan?.features as any)?.properties ?? {};
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
+
+  function galleryMaxFor(f: FieldDef): number {
+    if (f.limitFrom === "properties") {
+      const n = Number(propertyFeatures.max_photos ?? 5);
+      return Number.isFinite(n) && n > 0 ? n : 999;
+    }
+    // business gallery: gated by `gallery` feature + gallery_max
+    if (!businessFeatures.gallery) return 1; // FREE: 1 image
+    const n = Number(businessFeatures.gallery_max ?? 20);
+    return Number.isFinite(n) && n > 0 ? n : 999;
+  }
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -226,6 +243,7 @@ function CrudFormDialog({
                     onChange={(v) => setValues({ ...values, [f.key]: v })}
                     locked={locked}
                     onLockedClick={() => setLockedFeature(f.label.replace(" *", ""))}
+                    galleryMax={f.type === "gallery" ? galleryMaxFor(f) : undefined}
                   />
                 </div>
               );
@@ -245,10 +263,10 @@ function CrudFormDialog({
 }
 
 function FieldRender({
-  field, value, onChange, locked, onLockedClick,
+  field, value, onChange, locked, onLockedClick, galleryMax,
 }: {
   field: FieldDef; value: any; onChange: (v: any) => void;
-  locked?: boolean; onLockedClick?: () => void;
+  locked?: boolean; onLockedClick?: () => void; galleryMax?: number;
 }) {
   const label = (
     <Label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
@@ -292,6 +310,32 @@ function FieldRender({
             {field.options?.map((o) => <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>)}
           </SelectContent>
         </Select>
+      </div>
+    );
+  }
+  if (field.type === "image") {
+    return (
+      <div className="space-y-1.5">
+        {label}
+        <SingleImageUploader
+          value={value ?? null}
+          onChange={onChange}
+          folder={field.folder ?? "misc"}
+          aspect={field.aspect ?? "square"}
+        />
+      </div>
+    );
+  }
+  if (field.type === "gallery") {
+    return (
+      <div className="space-y-1.5">
+        {label}
+        <GalleryUploader
+          value={Array.isArray(value) ? value : []}
+          onChange={onChange}
+          folder={field.folder ?? "misc"}
+          max={galleryMax ?? 1}
+        />
       </div>
     );
   }

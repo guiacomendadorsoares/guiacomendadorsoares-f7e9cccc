@@ -19,6 +19,7 @@ export type Database = {
           address: string
           approved_at: string | null
           approved_by: string | null
+          banner_url: string | null
           category: string
           category_label: string
           cover_url: string | null
@@ -27,6 +28,7 @@ export type Database = {
           email: string | null
           featured: boolean
           gallery: Json
+          gallery_urls: string[]
           hours: Json
           id: string
           instagram: string | null
@@ -48,6 +50,7 @@ export type Database = {
           address: string
           approved_at?: string | null
           approved_by?: string | null
+          banner_url?: string | null
           category: string
           category_label: string
           cover_url?: string | null
@@ -56,6 +59,7 @@ export type Database = {
           email?: string | null
           featured?: boolean
           gallery?: Json
+          gallery_urls?: string[]
           hours?: Json
           id?: string
           instagram?: string | null
@@ -77,6 +81,7 @@ export type Database = {
           address?: string
           approved_at?: string | null
           approved_by?: string | null
+          banner_url?: string | null
           category?: string
           category_label?: string
           cover_url?: string | null
@@ -85,6 +90,7 @@ export type Database = {
           email?: string | null
           featured?: boolean
           gallery?: Json
+          gallery_urls?: string[]
           hours?: Json
           id?: string
           instagram?: string | null
@@ -210,7 +216,9 @@ export type Database = {
           ends_at: string | null
           id: string
           is_free: boolean
+          latitude: number | null
           location: string | null
+          longitude: number | null
           price: number | null
           rejection_reason: string | null
           starts_at: string
@@ -232,7 +240,9 @@ export type Database = {
           ends_at?: string | null
           id?: string
           is_free?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           price?: number | null
           rejection_reason?: string | null
           starts_at: string
@@ -254,7 +264,9 @@ export type Database = {
           ends_at?: string | null
           id?: string
           is_free?: boolean
+          latitude?: number | null
           location?: string | null
+          longitude?: number | null
           price?: number | null
           rejection_reason?: string | null
           starts_at?: string
@@ -531,6 +543,7 @@ export type Database = {
           description: string | null
           featured: boolean
           gallery: Json
+          gallery_urls: string[]
           id: string
           kind: Database["public"]["Enums"]["property_kind"]
           latitude: number | null
@@ -544,6 +557,7 @@ export type Database = {
           submitted_by: string | null
           title: string
           updated_at: string
+          video_url: string | null
         }
         Insert: {
           active?: boolean
@@ -559,6 +573,7 @@ export type Database = {
           description?: string | null
           featured?: boolean
           gallery?: Json
+          gallery_urls?: string[]
           id?: string
           kind: Database["public"]["Enums"]["property_kind"]
           latitude?: number | null
@@ -572,6 +587,7 @@ export type Database = {
           submitted_by?: string | null
           title: string
           updated_at?: string
+          video_url?: string | null
         }
         Update: {
           active?: boolean
@@ -587,6 +603,7 @@ export type Database = {
           description?: string | null
           featured?: boolean
           gallery?: Json
+          gallery_urls?: string[]
           id?: string
           kind?: Database["public"]["Enums"]["property_kind"]
           latitude?: number | null
@@ -600,6 +617,7 @@ export type Database = {
           submitted_by?: string | null
           title?: string
           updated_at?: string
+          video_url?: string | null
         }
         Relationships: [
           {
