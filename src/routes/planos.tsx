@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { usePlans, useCurrentPlan, type PlanSlug } from "@/lib/plans";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/site-footer";
 import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/planos")({
@@ -28,7 +29,7 @@ function PlanosPage() {
       <PlansGrid />
       <Compare />
       <FinalCta />
-      <Footer />
+      <SiteFooter />
     </div>
   );
 }
@@ -234,20 +235,6 @@ function FinalCta() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-card">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row">
-        <p>© {new Date().getFullYear()} Guia Comendador Soares.</p>
-        <div className="flex gap-4">
-          <Link to="/" className="hover:text-foreground">Início</Link>
-          <Link to="/anuncie" className="hover:text-foreground">Anuncie</Link>
-          <Link to="/auth" className="hover:text-foreground">Entrar</Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 function buildBullets(slug: PlanSlug, b: any, p: any): string[] {
   const out: string[] = [];
