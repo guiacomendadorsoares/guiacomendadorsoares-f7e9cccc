@@ -213,7 +213,19 @@ function CrudFormDialog({
 
   const { plan } = useCurrentPlan();
   const businessFeatures = (plan?.features as any)?.business ?? {};
+  const propertyFeatures = (plan?.features as any)?.properties ?? {};
   const [lockedFeature, setLockedFeature] = useState<string | null>(null);
+
+  function galleryMaxFor(f: FieldDef): number {
+    if (f.limitFrom === "properties") {
+      const n = Number(propertyFeatures.max_photos ?? 5);
+      return Number.isFinite(n) && n > 0 ? n : 999;
+    }
+    // business gallery: gated by `gallery` feature + gallery_max
+    if (!businessFeatures.gallery) return 1; // FREE: 1 image
+    const n = Number(businessFeatures.gallery_max ?? 20);
+    return Number.isFinite(n) && n > 0 ? n : 999;
+  }
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -231,6 +243,7 @@ function CrudFormDialog({
                     onChange={(v) => setValues({ ...values, [f.key]: v })}
                     locked={locked}
                     onLockedClick={() => setLockedFeature(f.label.replace(" *", ""))}
+                    galleryMax={f.type === "gallery" ? galleryMaxFor(f) : undefined}
                   />
                 </div>
               );
