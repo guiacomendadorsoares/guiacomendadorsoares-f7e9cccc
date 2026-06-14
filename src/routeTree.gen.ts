@@ -20,6 +20,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
+import { Route as AuthenticatedPortalImprensaRouteImport } from './routes/_authenticated/portal-imprensa'
+import { Route as AuthenticatedPainelImoveisRouteImport } from './routes/_authenticated/painel-imoveis'
+import { Route as AuthenticatedPainelEmpresaRouteImport } from './routes/_authenticated/painel-empresa'
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
@@ -92,6 +95,24 @@ const EmpresaIdRoute = EmpresaIdRouteImport.update({
   path: '/empresa/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedPortalImprensaRoute =
+  AuthenticatedPortalImprensaRouteImport.update({
+    id: '/portal-imprensa',
+    path: '/portal-imprensa',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPainelImoveisRoute =
+  AuthenticatedPainelImoveisRouteImport.update({
+    id: '/painel-imoveis',
+    path: '/painel-imoveis',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPainelEmpresaRoute =
+  AuthenticatedPainelEmpresaRouteImport.update({
+    id: '/painel-empresa',
+    path: '/painel-empresa',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMinhaContaRoute = AuthenticatedMinhaContaRouteImport.update({
   id: '/minha-conta',
   path: '/minha-conta',
@@ -203,6 +224,9 @@ export interface FileRoutesByFullPath {
   '/vagas': typeof VagasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
+  '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
+  '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
+  '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -231,6 +255,9 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
+  '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
+  '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
+  '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -262,6 +289,9 @@ export interface FileRoutesById {
   '/vagas': typeof VagasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
+  '/_authenticated/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
+  '/_authenticated/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
+  '/_authenticated/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -293,6 +323,9 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/admin'
     | '/minha-conta'
+    | '/painel-empresa'
+    | '/painel-imoveis'
+    | '/portal-imprensa'
     | '/empresa/$id'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
@@ -321,6 +354,9 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/vagas'
     | '/minha-conta'
+    | '/painel-empresa'
+    | '/painel-imoveis'
+    | '/portal-imprensa'
     | '/empresa/$id'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
@@ -351,6 +387,9 @@ export interface FileRouteTypes {
     | '/vagas'
     | '/_authenticated/admin'
     | '/_authenticated/minha-conta'
+    | '/_authenticated/painel-empresa'
+    | '/_authenticated/painel-imoveis'
+    | '/_authenticated/portal-imprensa'
     | '/empresa/$id'
     | '/_authenticated/admin/aprovacoes'
     | '/_authenticated/admin/configuracoes'
@@ -461,6 +500,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/empresa/$id'
       preLoaderRoute: typeof EmpresaIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/portal-imprensa': {
+      id: '/_authenticated/portal-imprensa'
+      path: '/portal-imprensa'
+      fullPath: '/portal-imprensa'
+      preLoaderRoute: typeof AuthenticatedPortalImprensaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/painel-imoveis': {
+      id: '/_authenticated/painel-imoveis'
+      path: '/painel-imoveis'
+      fullPath: '/painel-imoveis'
+      preLoaderRoute: typeof AuthenticatedPainelImoveisRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/painel-empresa': {
+      id: '/_authenticated/painel-empresa'
+      path: '/painel-empresa'
+      fullPath: '/painel-empresa'
+      preLoaderRoute: typeof AuthenticatedPainelEmpresaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/minha-conta': {
       id: '/_authenticated/minha-conta'
@@ -627,11 +687,17 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedMinhaContaRoute: typeof AuthenticatedMinhaContaRoute
+  AuthenticatedPainelEmpresaRoute: typeof AuthenticatedPainelEmpresaRoute
+  AuthenticatedPainelImoveisRoute: typeof AuthenticatedPainelImoveisRoute
+  AuthenticatedPortalImprensaRoute: typeof AuthenticatedPortalImprensaRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedMinhaContaRoute: AuthenticatedMinhaContaRoute,
+  AuthenticatedPainelEmpresaRoute: AuthenticatedPainelEmpresaRoute,
+  AuthenticatedPainelImoveisRoute: AuthenticatedPainelImoveisRoute,
+  AuthenticatedPortalImprensaRoute: AuthenticatedPortalImprensaRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
