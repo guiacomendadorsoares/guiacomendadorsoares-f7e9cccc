@@ -114,7 +114,7 @@ function FeaturedCompanies() {
       <SectionHeader title="Empresas em destaque" subtitle="Os queridinhos do bairro" to="/guia" />
       <HScroll>
         {companies.map((c) => (
-          <GlassCard key={c.name} className="w-[220px] shrink-0 overflow-hidden">
+          <GlassCard interactive key={c.name} className="w-[220px] shrink-0 overflow-hidden">
             <div
               className="relative h-24 w-full"
               style={{
@@ -157,7 +157,7 @@ function LatestJobs() {
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
       <div className="space-y-2.5">
         {jobs.map((j) => (
-          <GlassCard key={j.title} className="p-3.5">
+          <GlassCard interactive key={j.title} className="p-3.5">
             <div className="flex items-center gap-3">
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl gradient-brand text-primary-foreground shadow-elegant">
                 <Briefcase className="h-5 w-5" />
@@ -196,7 +196,7 @@ function RecentProperties() {
       <SectionHeader title="Imóveis recentes" subtitle="Alugar e comprar" to="/imoveis" />
       <HScroll>
         {props.map((p) => (
-          <GlassCard key={p.title} className="w-[260px] shrink-0 overflow-hidden">
+          <GlassCard interactive key={p.title} className="w-[260px] shrink-0 overflow-hidden">
             <div
               className="grid h-28 place-items-center"
               style={{ background: "linear-gradient(135deg, #1f3a2e, #4a8a6b)" }}
@@ -235,7 +235,7 @@ function UpcomingEvents() {
       <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
       <div className="space-y-3">
         {events.map((e) => (
-          <GlassCard key={e.title} className="flex gap-3 overflow-hidden p-2">
+          <GlassCard interactive key={e.title} className="flex gap-3 overflow-hidden p-2">
             <img
               src={e.img}
               alt=""
@@ -278,7 +278,7 @@ function NeighborhoodNews() {
       <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" />
       <div className="space-y-3">
         {items.map((n) => (
-          <GlassCard key={n.title} className="overflow-hidden">
+          <GlassCard interactive key={n.title} className="overflow-hidden">
             <div className="relative h-32 w-full">
               <img
                 src={n.img}
@@ -313,7 +313,7 @@ function WhereToEat() {
       <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/guia" />
       <HScroll>
         {places.map((p) => (
-          <GlassCard key={p.name} className="w-[220px] shrink-0 overflow-hidden">
+          <GlassCard interactive key={p.name} className="w-[220px] shrink-0 overflow-hidden">
             <div className="relative h-32">
               <img
                 src={p.img}

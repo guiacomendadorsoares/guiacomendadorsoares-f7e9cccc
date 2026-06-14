@@ -4,7 +4,7 @@ import { formatNewsDate, getCategoryColor, type NewsItem } from "@/lib/news";
 
 export function NewsCard({ item, featured = false }: { item: NewsItem; featured?: boolean }) {
   return (
-    <GlassCard className="group overflow-hidden">
+    <GlassCard interactive className="group overflow-hidden">
       <div className={`relative w-full overflow-hidden ${featured ? "h-56" : "h-40"}`}>
         <img
           src={item.image}

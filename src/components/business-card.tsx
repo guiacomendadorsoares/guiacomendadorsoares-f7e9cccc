@@ -8,7 +8,7 @@ export function BusinessCard({ b }: { b: Business }) {
   )}`;
 
   return (
-    <GlassCard className="p-3.5">
+    <GlassCard interactive className="p-3.5">
       <div className="flex gap-3">
         {/* 3D logo */}
         <div

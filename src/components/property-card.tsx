@@ -5,7 +5,7 @@ import { getListingBadgeColor } from "@/lib/properties";
 
 export function PropertyCard({ property }: { property: Property }) {
   return (
-    <GlassCard className="group overflow-hidden">
+    <GlassCard interactive className="group overflow-hidden">
       {/* Image area */}
       <div className="relative h-48 w-full overflow-hidden">
         <img

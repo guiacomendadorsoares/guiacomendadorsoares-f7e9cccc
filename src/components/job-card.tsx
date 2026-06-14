@@ -5,7 +5,7 @@ import { getTypeBadgeColor } from "@/lib/jobs";
 
 export function JobCard({ job }: { job: Job }) {
   return (
-    <GlassCard className="overflow-hidden transition-transform active:scale-[0.99]">
+    <GlassCard interactive className="overflow-hidden">
       {/* Top accent bar for urgent */}
       {job.urgent && (
         <div className="gradient-brand h-1 w-full" />
