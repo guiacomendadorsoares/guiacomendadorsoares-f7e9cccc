@@ -482,6 +482,7 @@ export type Database = {
           avatar_url: string | null
           bio: string | null
           created_at: string
+          current_plan: string
           email: string | null
           full_name: string | null
           id: string
@@ -493,6 +494,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          current_plan?: string
           email?: string | null
           full_name?: string | null
           id?: string
@@ -504,6 +506,7 @@ export type Database = {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
+          current_plan?: string
           email?: string | null
           full_name?: string | null
           id?: string
@@ -711,6 +714,86 @@ export type Database = {
             columns: ["business_id"]
             isOneToOne: false
             referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          features: Json
+          id: string
+          name: string
+          price: number
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          name: string
+          price?: number
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          name?: string
+          price?: number
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          plan_id: string
+          starts_at: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_id: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_id?: string
+          starts_at?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_plans"
             referencedColumns: ["id"]
           },
         ]
