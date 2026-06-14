@@ -8,6 +8,7 @@ import { useCurrentUser, useUserRoles, type AppRole } from "@/hooks/use-auth";
 import { navForRole, type NavSection } from "@/lib/dashboard-nav";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import logoUrl from "@/assets/logo.png";
 
 function useDark() {
   const [dark, setDark] = useState(() =>
@@ -64,9 +65,7 @@ function NavList({ sections, onNavigate }: { sections: NavSection[]; onNavigate?
 function Brand() {
   return (
     <Link to="/" className="flex items-center gap-2 px-3 py-4">
-      <span className="grid h-9 w-9 place-items-center rounded-xl gradient-brand text-primary-foreground font-display font-bold">
-        CS
-      </span>
+      <img src={logoUrl} alt="" className="h-10 w-10 object-contain" />
       <span className="font-display text-sm font-bold leading-tight">
         Guia<br />Comendador Soares
       </span>

@@ -21,6 +21,7 @@ import food1 from "@/assets/food-1.jpg";
 import food2 from "@/assets/food-2.jpg";
 import event1 from "@/assets/event-1.jpg";
 import news1 from "@/assets/news-1.jpg";
+import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -71,9 +72,7 @@ function TopBar() {
     <div className="-mx-5 -mt-4 mb-4 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3">
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl gradient-brand text-primary-foreground shadow-elegant">
-            <span className="font-display text-[13px] font-extrabold text-gold">CS</span>
-          </span>
+          <img src={logoUrl} alt="Guia Comendador Soares" className="h-10 w-10 object-contain" />
           <div className="leading-tight">
             <p className="font-display text-[13px] font-extrabold text-foreground">Guia CS</p>
             <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
