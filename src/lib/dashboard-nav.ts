@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard, CheckCircle2, Building2, Briefcase, Home, Newspaper,
   Calendar, Sparkles, Handshake, Users, BarChart3, Settings, Wallet,
-  User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound,
+  User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound, Crown,
 } from "lucide-react";
 import type { AppRole } from "@/hooks/use-auth";
 
@@ -42,6 +42,7 @@ export const adminNav: NavSection[] = [
     items: [
       { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
       { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
+      { to: "/admin/planos", label: "Planos", icon: Crown },
       { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
     ],
   },
