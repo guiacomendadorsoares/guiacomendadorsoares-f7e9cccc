@@ -19,6 +19,7 @@ import type { ContentTable } from "@/lib/approvals";
 import { SCHEMAS, selectColumns, type FieldDef } from "@/lib/content-schemas";
 import { useCurrentPlan } from "@/lib/plans";
 import { PremiumModal } from "@/components/premium-modal";
+import { SingleImageUploader, GalleryUploader } from "@/components/image-uploader";
 
 interface Props {
   table: ContentTable;
