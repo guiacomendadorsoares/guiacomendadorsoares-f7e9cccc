@@ -100,6 +100,9 @@ function AuthPage() {
           password: parsed.data.password,
         });
         if (error) throw error;
+        if (profile !== "user") {
+          try { await requestSelfRole({ data: { role: profile } }); } catch { /* ignore */ }
+        }
         toast.success("Bem-vindo!");
         const to = await redirectForUser(signIn.user!.id, selected.redirect);
         navigate({ to });
