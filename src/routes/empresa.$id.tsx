@@ -47,20 +47,20 @@ function EmpresaPage() {
     );
   }
 
-  const profile = getBusinessProfile(id);
   const b: any = business;
-  const cover = b.cover_url || b.logo_url || profile.cover;
-  const description = b.description || profile.description;
-  const instagram = b.instagram || profile.instagram;
+  const cover = b.cover_url || b.banner_url || b.logo_url || null;
+  const description = b.description || "";
+  const instagram = b.instagram || "";
   const whatsapp = b.whatsapp || "";
   const waUrl = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : "#";
-  const initials =
-    b.initials ||
-    b.name.split(/\s+/).filter(Boolean).slice(0, 2).map((s: string) => s[0]).join("").toUpperCase();
+  const initials = b.name.split(/\s+/).filter(Boolean).slice(0, 2).map((s: string) => s[0]).join("").toUpperCase();
   const from = b.from || "#1f3a2e";
   const to = b.to || "#4a8a6b";
-  const rating = Number(b.rating ?? 0);
-  const reviews = Number(b.reviews ?? 0);
+  const hours: Array<{ day: string; hours: string }> = Array.isArray(b.hours) ? b.hours : [];
+  const gallery: string[] = Array.isArray(b.gallery_urls) && b.gallery_urls.length
+    ? b.gallery_urls
+    : Array.isArray(b.gallery) ? (b.gallery as string[]) : [];
+
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-background">
