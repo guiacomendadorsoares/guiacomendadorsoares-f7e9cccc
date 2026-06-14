@@ -1,7 +1,7 @@
 import {
   HeartPulse, Scale, GraduationCap, Dumbbell, UtensilsCrossed, Scissors,
   Dog, Car, Home, Wrench, ShoppingBag, Landmark, Building2, Church,
-  PartyPopper, Truck, type LucideIcon,
+  PartyPopper, Truck, Megaphone, type LucideIcon,
 } from "lucide-react";
 
 export type Subcategory = { slug: string; label: string };
