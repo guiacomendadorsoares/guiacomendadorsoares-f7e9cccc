@@ -1,7 +1,9 @@
 import type { ContentTable } from "@/lib/approvals";
 import type { BusinessFeatures } from "@/lib/plans";
 
-export type FieldType = "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url";
+export type FieldType =
+  | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
+  | "image" | "gallery";
 
 export interface FieldDef {
   key: string;
@@ -11,9 +13,15 @@ export interface FieldDef {
   options?: { value: string; label: string }[];
   max?: number;
   placeholder?: string;
-  half?: boolean; // render in 2-col grid
+  half?: boolean;
   /** when set, field is gated behind this business plan feature */
   premium?: keyof BusinessFeatures;
+  /** image/gallery only — sub-folder inside the storage bucket */
+  folder?: string;
+  /** image only — aspect ratio of the preview */
+  aspect?: "square" | "wide";
+  /** gallery only — which plan section drives the max count */
+  limitFrom?: "business" | "properties";
 }
 
 export interface TableSchema {
