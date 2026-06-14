@@ -22,21 +22,5 @@ export async function listPending(table: ContentTable) {
 }
 
 export function titleColumn(table: ContentTable) {
-  return table === "jobs" ? "title" : table === "properties" ? "title" : table === "news" ? "title" : table === "events" ? "title" : table === "curiosities" ? "title" : "name";
-}
-
-export async function approve(table: ContentTable, id: string, userId: string) {
-  const { error } = await supabase
-    .from(table)
-    .update({ status: "approved", approved_by: userId, approved_at: new Date().toISOString(), rejection_reason: null })
-    .eq("id", id);
-  if (error) throw error;
-}
-
-export async function reject(table: ContentTable, id: string, userId: string, reason: string) {
-  const { error } = await supabase
-    .from(table)
-    .update({ status: "rejected", approved_by: userId, approved_at: new Date().toISOString(), rejection_reason: reason })
-    .eq("id", id);
-  if (error) throw error;
+  return table === "businesses" ? "name" : "title";
 }
