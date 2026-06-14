@@ -1,17 +1,17 @@
 import { supabase } from "@/integrations/supabase/client";
-import { sampleNews, type NewsItem } from "@/lib/news";
+import type { NewsItem } from "@/lib/news";
 
 export async function fetchNews(): Promise<NewsItem[]> {
   const { data, error } = await supabase
     .from("news")
     .select("*")
     .eq("published", true)
+    .eq("status", "approved")
     .order("published_at", { ascending: false });
 
   if (error) {
     console.error("[news.service] fetch error:", error.message);
-    return sampleNews;
+    return [];
   }
-  if (!data || data.length === 0) return sampleNews;
-  return data as unknown as NewsItem[];
+  return (data ?? []) as unknown as NewsItem[];
 }
