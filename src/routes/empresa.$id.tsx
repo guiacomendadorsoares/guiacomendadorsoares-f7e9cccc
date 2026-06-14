@@ -65,12 +65,13 @@ function EmpresaPage() {
   return (
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-background">
       <div className="relative h-56 w-full overflow-hidden">
-        <img
-          src={cover}
-          alt={`Capa de ${b.name}`}
-          className="h-full w-full object-cover"
-        />
+        {cover ? (
+          <img src={cover} alt={`Capa de ${b.name}`} className="h-full w-full object-cover" />
+        ) : (
+          <div className="h-full w-full" style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }} />
+        )}
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-background" />
+
         <Link
           to="/guia"
           aria-label="Voltar"
