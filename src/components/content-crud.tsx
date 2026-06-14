@@ -398,7 +398,21 @@ function FieldRender({
       </div>
     );
   }
-  const inputType = field.type === "number" ? "number" : field.type === "datetime" ? "datetime-local" : field.type === "url" ? "url" : "text";
+  if (field.type === "number") {
+    return (
+      <div className="space-y-1.5">
+        {label}
+        <Input
+          type="text"
+          inputMode="decimal"
+          value={value ?? ""}
+          onChange={(e) => onChange(e.target.value.replace(/[^\d.,-]/g, ""))}
+          placeholder={field.placeholder ?? "Ex: 1.500,00"}
+        />
+      </div>
+    );
+  }
+  const inputType = field.type === "datetime" ? "datetime-local" : field.type === "url" ? "url" : "text";
   return (
     <div className="space-y-1.5">
       {label}
@@ -406,3 +420,4 @@ function FieldRender({
     </div>
   );
 }
+
