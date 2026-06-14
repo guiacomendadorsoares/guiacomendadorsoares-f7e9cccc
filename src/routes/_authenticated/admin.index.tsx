@@ -85,8 +85,11 @@ function AdminHome() {
   );
 }
 
-function moduleRoute(t: string) {
-  return { businesses: "empresas", jobs: "vagas", properties: "imoveis", news: "noticias", events: "eventos", curiosities: "curiosidades" }[t]!;
+function moduleRoute(t: typeof TABLES[number]) {
+  return ({
+    businesses: "/admin/empresas", jobs: "/admin/vagas", properties: "/admin/imoveis",
+    news: "/admin/noticias", events: "/admin/eventos", curiosities: "/admin/curiosidades",
+  } as const)[t];
 }
 
 function KpiCard({ label, value, icon: Icon, accent, href }: { label: string; value: number | string; icon: any; accent?: "gold"; href: string }) {
