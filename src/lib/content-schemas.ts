@@ -149,6 +149,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "is_free", label: "Gratuito", type: "boolean", half: true },
       { key: "url", label: "Link de inscrição", type: "url", max: 500 },
       { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "__location", label: "Localização no mapa", type: "location", addressKey: "location", latKey: "latitude", lngKey: "longitude" },
     ],
   },
   curiosities: {
