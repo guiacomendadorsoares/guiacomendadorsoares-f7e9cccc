@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 import { User, LogIn, Settings, HelpCircle, ChevronRight } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
