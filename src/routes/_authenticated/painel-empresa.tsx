@@ -1,6 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, useRequireAnyRole } from "@/components/dashboard-shell";
-import { ComingSoon } from "@/components/admin-content-table";
+import { ContentCrud } from "@/components/content-crud";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/painel-empresa")({
   component: PainelEmpresa,
@@ -8,10 +10,22 @@ export const Route = createFileRoute("/_authenticated/painel-empresa")({
 
 function PainelEmpresa() {
   const { ready } = useRequireAnyRole(["partner", "admin"]);
-  if (!ready) return null;
+  const { user } = useCurrentUser();
+  if (!ready || !user) return null;
   return (
     <DashboardShell role="partner" title="Painel da Empresa" subtitle="Gerencie sua presença no Guia">
-      <ComingSoon title="Painel de Empresa / Parceiro" />
+      <Tabs defaultValue="vagas">
+        <TabsList>
+          <TabsTrigger value="vagas">Vagas</TabsTrigger>
+          <TabsTrigger value="eventos">Eventos</TabsTrigger>
+        </TabsList>
+        <TabsContent value="vagas" className="mt-4">
+          <ContentCrud table="jobs" ownerOnly={user.id} forcePending />
+        </TabsContent>
+        <TabsContent value="eventos" className="mt-4">
+          <ContentCrud table="events" ownerOnly={user.id} forcePending />
+        </TabsContent>
+      </Tabs>
     </DashboardShell>
   );
 }

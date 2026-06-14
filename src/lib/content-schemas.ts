@@ -1,0 +1,138 @@
+import type { ContentTable } from "@/lib/approvals";
+
+export type FieldType = "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url";
+
+export interface FieldDef {
+  key: string;
+  label: string;
+  type: FieldType;
+  required?: boolean;
+  options?: { value: string; label: string }[];
+  max?: number;
+  placeholder?: string;
+  half?: boolean; // render in 2-col grid
+}
+
+export interface TableSchema {
+  label: string;
+  titleKey: string;
+  subtitleKey?: string;
+  fields: FieldDef[];
+  defaults: Record<string, any>;
+}
+
+export const SCHEMAS: Record<ContentTable, TableSchema> = {
+  businesses: {
+    label: "Empresa",
+    titleKey: "name",
+    fields: [],
+    defaults: {},
+  },
+  jobs: {
+    label: "Vaga",
+    titleKey: "title",
+    subtitleKey: "company",
+    defaults: { type: "emprego", urgent: false, active: true, status: "approved" },
+    fields: [
+      { key: "title", label: "Título *", type: "text", required: true, max: 120 },
+      { key: "company", label: "Empresa *", type: "text", required: true, max: 120 },
+      {
+        key: "type", label: "Tipo *", type: "select", required: true, options: [
+          { value: "emprego", label: "Emprego" }, { value: "estagio", label: "Estágio" },
+          { value: "jovem-aprendiz", label: "Jovem Aprendiz" }, { value: "freelancer", label: "Freelancer" },
+        ],
+      },
+      { key: "location", label: "Local *", type: "text", required: true, max: 160, half: true },
+      { key: "salary", label: "Salário", type: "text", max: 60, half: true },
+      { key: "description", label: "Descrição", type: "textarea", max: 4000 },
+      { key: "apply_url", label: "Link para candidatura", type: "url", max: 500, half: true },
+      { key: "whatsapp", label: "WhatsApp", type: "text", max: 40, half: true },
+      { key: "urgent", label: "Urgente", type: "boolean" },
+      { key: "expires_at", label: "Expira em", type: "datetime" },
+    ],
+  },
+  properties: {
+    label: "Imóvel",
+    titleKey: "title",
+    subtitleKey: "address",
+    defaults: { listing_type: "venda", kind: "casa", active: true, featured: false, status: "approved" },
+    fields: [
+      { key: "title", label: "Título *", type: "text", required: true, max: 160 },
+      {
+        key: "listing_type", label: "Modalidade *", type: "select", required: true, half: true, options: [
+          { value: "venda", label: "Venda" }, { value: "aluguel", label: "Aluguel" },
+        ],
+      },
+      {
+        key: "kind", label: "Tipo *", type: "select", required: true, half: true, options: [
+          { value: "casa", label: "Casa" }, { value: "apartamento", label: "Apartamento" },
+          { value: "terreno", label: "Terreno" }, { value: "comercial", label: "Comercial" },
+        ],
+      },
+      { key: "price", label: "Preço (R$)", type: "number", half: true },
+      { key: "price_label", label: "Texto do preço", type: "text", max: 60, half: true, placeholder: "Sob consulta" },
+      { key: "bedrooms", label: "Quartos", type: "number", half: true },
+      { key: "bathrooms", label: "Banheiros", type: "number", half: true },
+      { key: "parking", label: "Vagas", type: "number", half: true },
+      { key: "area_m2", label: "Área (m²)", type: "number", half: true },
+      { key: "address", label: "Endereço *", type: "text", required: true, max: 255 },
+      { key: "description", label: "Descrição", type: "textarea", max: 4000 },
+      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "featured", label: "Destaque", type: "boolean" },
+    ],
+  },
+  news: {
+    label: "Notícia",
+    titleKey: "title",
+    defaults: { category: "bairro", published: true, status: "approved" },
+    fields: [
+      { key: "title", label: "Título *", type: "text", required: true, max: 200 },
+      {
+        key: "category", label: "Categoria *", type: "select", required: true, options: [
+          { value: "bairro", label: "Bairro" }, { value: "seguranca", label: "Segurança" },
+          { value: "transito", label: "Trânsito" }, { value: "obras", label: "Obras" },
+          { value: "saude", label: "Saúde" }, { value: "educacao", label: "Educação" },
+        ],
+      },
+      { key: "summary", label: "Resumo", type: "textarea", max: 500 },
+      { key: "content", label: "Conteúdo", type: "textarea", max: 20000 },
+      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "published", label: "Publicado", type: "boolean" },
+    ],
+  },
+  events: {
+    label: "Evento",
+    titleKey: "title",
+    subtitleKey: "location",
+    defaults: { is_free: false, active: true, status: "approved" },
+    fields: [
+      { key: "title", label: "Título *", type: "text", required: true, max: 200 },
+      { key: "starts_at", label: "Início *", type: "datetime", required: true, half: true },
+      { key: "ends_at", label: "Término", type: "datetime", half: true },
+      { key: "location", label: "Local", type: "text", max: 255 },
+      { key: "summary", label: "Resumo", type: "textarea", max: 500 },
+      { key: "description", label: "Descrição", type: "textarea", max: 4000 },
+      { key: "price", label: "Preço (R$)", type: "number", half: true },
+      { key: "is_free", label: "Gratuito", type: "boolean", half: true },
+      { key: "url", label: "Link de inscrição", type: "url", max: 500 },
+      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+    ],
+  },
+  curiosities: {
+    label: "Curiosidade",
+    titleKey: "title",
+    defaults: { status: "approved" },
+    fields: [
+      { key: "title", label: "Título *", type: "text", required: true, max: 200 },
+      { key: "body", label: "Conteúdo *", type: "textarea", required: true, max: 8000 },
+      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+    ],
+  },
+};
+
+export function selectColumns(table: ContentTable): string {
+  const s = SCHEMAS[table];
+  const cols = new Set<string>(["id", "status", "created_at", "submitted_by", s.titleKey]);
+  if (s.subtitleKey) cols.add(s.subtitleKey);
+  return Array.from(cols).join(",");
+}
