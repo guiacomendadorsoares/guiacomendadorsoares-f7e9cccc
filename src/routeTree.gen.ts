@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as GuiaRouteImport } from './routes/guia'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OndeComerRoute = OndeComerRouteImport.update({
+  id: '/onde-comer',
+  path: '/onde-comer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ImoveisRoute = ImoveisRouteImport.update({
@@ -51,6 +57,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
+  '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
+  '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -68,20 +76,36 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
+  '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/guia' | '/imoveis' | '/perfil' | '/sitemap.xml' | '/vagas'
+  fullPaths:
+    | '/'
+    | '/guia'
+    | '/imoveis'
+    | '/onde-comer'
+    | '/perfil'
+    | '/sitemap.xml'
+    | '/vagas'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/guia' | '/imoveis' | '/perfil' | '/sitemap.xml' | '/vagas'
+  to:
+    | '/'
+    | '/guia'
+    | '/imoveis'
+    | '/onde-comer'
+    | '/perfil'
+    | '/sitemap.xml'
+    | '/vagas'
   id:
     | '__root__'
     | '/'
     | '/guia'
     | '/imoveis'
+    | '/onde-comer'
     | '/perfil'
     | '/sitemap.xml'
     | '/vagas'
@@ -91,6 +115,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   GuiaRoute: typeof GuiaRoute
   ImoveisRoute: typeof ImoveisRoute
+  OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
@@ -117,6 +142,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onde-comer': {
+      id: '/onde-comer'
+      path: '/onde-comer'
+      fullPath: '/onde-comer'
+      preLoaderRoute: typeof OndeComerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/imoveis': {
@@ -147,6 +179,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   GuiaRoute: GuiaRoute,
   ImoveisRoute: ImoveisRoute,
+  OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
@@ -154,13 +187,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
