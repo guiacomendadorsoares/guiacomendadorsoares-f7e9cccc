@@ -1,5 +1,6 @@
 import type { ContentTable } from "@/lib/approvals";
 import type { BusinessFeatures } from "@/lib/plans";
+import { CATEGORY_OPTIONS } from "@/lib/guia-taxonomy";
 
 export type FieldType =
   | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
