@@ -123,6 +123,12 @@ export const CATEGORIES: Category[] = [
     description: "Mototáxi, fretes, mudanças e transportadoras.",
     subcategories: ["Mototáxi","Táxi","Transportadoras","Fretes","Mudanças"].map(sub),
   },
+  {
+    slug: "marketing-publicidade", label: "Marketing e Publicidade", emoji: "📣", icon: Megaphone,
+    from: "#8a5e1f", to: "#e8b85a", showOnHome: false,
+    description: "Agências, social media, design e publicidade.",
+    subcategories: ["Agências de Marketing","Social Media","Design Gráfico","Produção de Conteúdo","Tráfego Pago","Sites e E-commerce","Gráficas","Comunicação Visual"].map(sub),
+  },
 ];
 
 export const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ value: c.slug, label: `${c.emoji} ${c.label}` }));
