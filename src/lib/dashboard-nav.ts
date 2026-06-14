@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import {
   LayoutDashboard, CheckCircle2, Building2, Briefcase, Home, Newspaper,
   Calendar, Sparkles, Handshake, Users, BarChart3, Settings, Wallet,
-  User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound,
+  User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound, Crown,
 } from "lucide-react";
 import type { AppRole } from "@/hooks/use-auth";
 
