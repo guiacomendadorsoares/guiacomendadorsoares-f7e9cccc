@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as NoticiasRouteImport } from './routes/noticias'
@@ -30,6 +31,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
+import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
 import { Route as AuthenticatedAdminParceirosRouteImport } from './routes/_authenticated/admin.parceiros'
 import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
 import { Route as AuthenticatedAdminInfluenciadoresRouteImport } from './routes/_authenticated/admin.influenciadores'
@@ -55,6 +57,11 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanosRoute = PlanosRouteImport.update({
+  id: '/planos',
+  path: '/planos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -151,6 +158,12 @@ const AuthenticatedAdminRelatoriosRoute =
     path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminPlanosRoute =
+  AuthenticatedAdminPlanosRouteImport.update({
+    id: '/planos',
+    path: '/planos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminParceirosRoute =
   AuthenticatedAdminParceirosRouteImport.update({
     id: '/parceiros',
@@ -226,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -246,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -259,6 +274,7 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -278,6 +294,7 @@ export interface FileRoutesByTo {
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -293,6 +310,7 @@ export interface FileRoutesById {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
@@ -313,6 +331,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/_authenticated/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
   '/_authenticated/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -328,6 +347,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
@@ -348,6 +368,7 @@ export interface FileRouteTypes {
     | '/admin/influenciadores'
     | '/admin/noticias'
     | '/admin/parceiros'
+    | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/admin/vagas'
@@ -361,6 +382,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
@@ -380,6 +402,7 @@ export interface FileRouteTypes {
     | '/admin/influenciadores'
     | '/admin/noticias'
     | '/admin/parceiros'
+    | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/admin/vagas'
@@ -394,6 +417,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
@@ -414,6 +438,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/influenciadores'
     | '/_authenticated/admin/noticias'
     | '/_authenticated/admin/parceiros'
+    | '/_authenticated/admin/planos'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/vagas'
@@ -429,6 +454,7 @@ export interface RootRouteChildren {
   NoticiasRoute: typeof NoticiasRoute
   OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
+  PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
@@ -456,6 +482,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planos': {
+      id: '/planos'
+      path: '/planos'
+      fullPath: '/planos'
+      preLoaderRoute: typeof PlanosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -584,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/planos': {
+      id: '/_authenticated/admin/planos'
+      path: '/planos'
+      fullPath: '/admin/planos'
+      preLoaderRoute: typeof AuthenticatedAdminPlanosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/parceiros': {
       id: '/_authenticated/admin/parceiros'
       path: '/parceiros'
@@ -676,6 +716,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminInfluenciadoresRoute: typeof AuthenticatedAdminInfluenciadoresRoute
   AuthenticatedAdminNoticiasRoute: typeof AuthenticatedAdminNoticiasRoute
   AuthenticatedAdminParceirosRoute: typeof AuthenticatedAdminParceirosRoute
+  AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminVagasRoute: typeof AuthenticatedAdminVagasRoute
@@ -695,6 +736,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
     AuthenticatedAdminInfluenciadoresRoute,
   AuthenticatedAdminNoticiasRoute: AuthenticatedAdminNoticiasRoute,
   AuthenticatedAdminParceirosRoute: AuthenticatedAdminParceirosRoute,
+  AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminVagasRoute: AuthenticatedAdminVagasRoute,
@@ -732,6 +774,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasRoute: NoticiasRoute,
   OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
+  PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
