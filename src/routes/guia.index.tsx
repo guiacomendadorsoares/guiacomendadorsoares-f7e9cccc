@@ -9,7 +9,7 @@ import { CATEGORIES } from "@/lib/guia-taxonomy";
 import { fetchBusinesses, fetchCategoryCounts } from "@/services/businesses.service";
 import { Search, Store, ChevronDown, MapPin } from "lucide-react";
 
-export const Route = createFileRoute("/guia")({
+export const Route = createFileRoute("/guia/")({
   head: () => ({
     meta: [
       { title: "Guia Comercial — Guia CS" },
