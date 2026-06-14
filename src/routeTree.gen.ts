@@ -23,7 +23,19 @@ import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
+import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
+import { Route as AuthenticatedAdminParceirosRouteImport } from './routes/_authenticated/admin.parceiros'
+import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
+import { Route as AuthenticatedAdminInfluenciadoresRouteImport } from './routes/_authenticated/admin.influenciadores'
+import { Route as AuthenticatedAdminImoveisRouteImport } from './routes/_authenticated/admin.imoveis'
+import { Route as AuthenticatedAdminFinanceiroRouteImport } from './routes/_authenticated/admin.financeiro'
+import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
+import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin.empresas'
+import { Route as AuthenticatedAdminCuriosidadesRouteImport } from './routes/_authenticated/admin.curiosidades'
+import { Route as AuthenticatedAdminCorretoresRouteImport } from './routes/_authenticated/admin.corretores'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminAprovacoesRouteImport } from './routes/_authenticated/admin.aprovacoes'
 
 const VagasRoute = VagasRouteImport.update({
@@ -95,10 +107,81 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminVagasRoute = AuthenticatedAdminVagasRouteImport.update({
+  id: '/vagas',
+  path: '/vagas',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
     path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminRelatoriosRoute =
+  AuthenticatedAdminRelatoriosRouteImport.update({
+    id: '/relatorios',
+    path: '/relatorios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminParceirosRoute =
+  AuthenticatedAdminParceirosRouteImport.update({
+    id: '/parceiros',
+    path: '/parceiros',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminNoticiasRoute =
+  AuthenticatedAdminNoticiasRouteImport.update({
+    id: '/noticias',
+    path: '/noticias',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminInfluenciadoresRoute =
+  AuthenticatedAdminInfluenciadoresRouteImport.update({
+    id: '/influenciadores',
+    path: '/influenciadores',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminImoveisRoute =
+  AuthenticatedAdminImoveisRouteImport.update({
+    id: '/imoveis',
+    path: '/imoveis',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminFinanceiroRoute =
+  AuthenticatedAdminFinanceiroRouteImport.update({
+    id: '/financeiro',
+    path: '/financeiro',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEventosRoute =
+  AuthenticatedAdminEventosRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminEmpresasRoute =
+  AuthenticatedAdminEmpresasRouteImport.update({
+    id: '/empresas',
+    path: '/empresas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCuriosidadesRoute =
+  AuthenticatedAdminCuriosidadesRouteImport.update({
+    id: '/curiosidades',
+    path: '/curiosidades',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCorretoresRoute =
+  AuthenticatedAdminCorretoresRouteImport.update({
+    id: '/corretores',
+    path: '/corretores',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminAprovacoesRoute =
@@ -122,7 +205,19 @@ export interface FileRoutesByFullPath {
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
+  '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
+  '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
+  '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -138,7 +233,19 @@ export interface FileRoutesByTo {
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
+  '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
+  '/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
+  '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
+  '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -157,7 +264,19 @@ export interface FileRoutesById {
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/_authenticated/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
+  '/_authenticated/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
+  '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
+  '/_authenticated/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/_authenticated/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
+  '/_authenticated/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
+  '/_authenticated/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/_authenticated/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
+  '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -176,7 +295,19 @@ export interface FileRouteTypes {
     | '/minha-conta'
     | '/empresa/$id'
     | '/admin/aprovacoes'
+    | '/admin/configuracoes'
+    | '/admin/corretores'
+    | '/admin/curiosidades'
+    | '/admin/empresas'
+    | '/admin/eventos'
+    | '/admin/financeiro'
+    | '/admin/imoveis'
+    | '/admin/influenciadores'
+    | '/admin/noticias'
+    | '/admin/parceiros'
+    | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/vagas'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -192,7 +323,19 @@ export interface FileRouteTypes {
     | '/minha-conta'
     | '/empresa/$id'
     | '/admin/aprovacoes'
+    | '/admin/configuracoes'
+    | '/admin/corretores'
+    | '/admin/curiosidades'
+    | '/admin/empresas'
+    | '/admin/eventos'
+    | '/admin/financeiro'
+    | '/admin/imoveis'
+    | '/admin/influenciadores'
+    | '/admin/noticias'
+    | '/admin/parceiros'
+    | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/vagas'
     | '/admin'
   id:
     | '__root__'
@@ -210,7 +353,19 @@ export interface FileRouteTypes {
     | '/_authenticated/minha-conta'
     | '/empresa/$id'
     | '/_authenticated/admin/aprovacoes'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/corretores'
+    | '/_authenticated/admin/curiosidades'
+    | '/_authenticated/admin/empresas'
+    | '/_authenticated/admin/eventos'
+    | '/_authenticated/admin/financeiro'
+    | '/_authenticated/admin/imoveis'
+    | '/_authenticated/admin/influenciadores'
+    | '/_authenticated/admin/noticias'
+    | '/_authenticated/admin/parceiros'
+    | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/vagas'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -328,11 +483,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/vagas': {
+      id: '/_authenticated/admin/vagas'
+      path: '/vagas'
+      fullPath: '/admin/vagas'
+      preLoaderRoute: typeof AuthenticatedAdminVagasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
       fullPath: '/admin/usuarios'
       preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/relatorios': {
+      id: '/_authenticated/admin/relatorios'
+      path: '/relatorios'
+      fullPath: '/admin/relatorios'
+      preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/parceiros': {
+      id: '/_authenticated/admin/parceiros'
+      path: '/parceiros'
+      fullPath: '/admin/parceiros'
+      preLoaderRoute: typeof AuthenticatedAdminParceirosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/noticias': {
+      id: '/_authenticated/admin/noticias'
+      path: '/noticias'
+      fullPath: '/admin/noticias'
+      preLoaderRoute: typeof AuthenticatedAdminNoticiasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/influenciadores': {
+      id: '/_authenticated/admin/influenciadores'
+      path: '/influenciadores'
+      fullPath: '/admin/influenciadores'
+      preLoaderRoute: typeof AuthenticatedAdminInfluenciadoresRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/imoveis': {
+      id: '/_authenticated/admin/imoveis'
+      path: '/imoveis'
+      fullPath: '/admin/imoveis'
+      preLoaderRoute: typeof AuthenticatedAdminImoveisRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/financeiro': {
+      id: '/_authenticated/admin/financeiro'
+      path: '/financeiro'
+      fullPath: '/admin/financeiro'
+      preLoaderRoute: typeof AuthenticatedAdminFinanceiroRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/eventos': {
+      id: '/_authenticated/admin/eventos'
+      path: '/eventos'
+      fullPath: '/admin/eventos'
+      preLoaderRoute: typeof AuthenticatedAdminEventosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/empresas': {
+      id: '/_authenticated/admin/empresas'
+      path: '/empresas'
+      fullPath: '/admin/empresas'
+      preLoaderRoute: typeof AuthenticatedAdminEmpresasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/curiosidades': {
+      id: '/_authenticated/admin/curiosidades'
+      path: '/curiosidades'
+      fullPath: '/admin/curiosidades'
+      preLoaderRoute: typeof AuthenticatedAdminCuriosidadesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/corretores': {
+      id: '/_authenticated/admin/corretores'
+      path: '/corretores'
+      fullPath: '/admin/corretores'
+      preLoaderRoute: typeof AuthenticatedAdminCorretoresRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/aprovacoes': {
@@ -347,13 +586,38 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAprovacoesRoute: typeof AuthenticatedAdminAprovacoesRoute
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminCorretoresRoute: typeof AuthenticatedAdminCorretoresRoute
+  AuthenticatedAdminCuriosidadesRoute: typeof AuthenticatedAdminCuriosidadesRoute
+  AuthenticatedAdminEmpresasRoute: typeof AuthenticatedAdminEmpresasRoute
+  AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
+  AuthenticatedAdminFinanceiroRoute: typeof AuthenticatedAdminFinanceiroRoute
+  AuthenticatedAdminImoveisRoute: typeof AuthenticatedAdminImoveisRoute
+  AuthenticatedAdminInfluenciadoresRoute: typeof AuthenticatedAdminInfluenciadoresRoute
+  AuthenticatedAdminNoticiasRoute: typeof AuthenticatedAdminNoticiasRoute
+  AuthenticatedAdminParceirosRoute: typeof AuthenticatedAdminParceirosRoute
+  AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminVagasRoute: typeof AuthenticatedAdminVagasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAprovacoesRoute: AuthenticatedAdminAprovacoesRoute,
+  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+  AuthenticatedAdminCorretoresRoute: AuthenticatedAdminCorretoresRoute,
+  AuthenticatedAdminCuriosidadesRoute: AuthenticatedAdminCuriosidadesRoute,
+  AuthenticatedAdminEmpresasRoute: AuthenticatedAdminEmpresasRoute,
+  AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
+  AuthenticatedAdminFinanceiroRoute: AuthenticatedAdminFinanceiroRoute,
+  AuthenticatedAdminImoveisRoute: AuthenticatedAdminImoveisRoute,
+  AuthenticatedAdminInfluenciadoresRoute:
+    AuthenticatedAdminInfluenciadoresRoute,
+  AuthenticatedAdminNoticiasRoute: AuthenticatedAdminNoticiasRoute,
+  AuthenticatedAdminParceirosRoute: AuthenticatedAdminParceirosRoute,
+  AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminVagasRoute: AuthenticatedAdminVagasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
