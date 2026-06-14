@@ -236,6 +236,26 @@ function CrudFormDialog({
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {fields.map((f) => {
               const locked = !!f.premium && !businessFeatures[f.premium];
+              if (f.type === "location") {
+                const lat = values[f.latKey ?? "latitude"];
+                const lng = values[f.lngKey ?? "longitude"];
+                const addr = values[f.addressKey ?? "address"];
+                return (
+                  <div key={f.key} className="sm:col-span-2 space-y-1.5">
+                    <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
+                    <LocationPicker
+                      lat={lat != null && lat !== "" ? Number(lat) : null}
+                      lng={lng != null && lng !== "" ? Number(lng) : null}
+                      address={addr}
+                      onChange={(c) => setValues({
+                        ...values,
+                        [f.latKey ?? "latitude"]: c?.lat ?? null,
+                        [f.lngKey ?? "longitude"]: c?.lng ?? null,
+                      })}
+                    />
+                  </div>
+                );
+              }
               return (
                 <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
                   <FieldRender
