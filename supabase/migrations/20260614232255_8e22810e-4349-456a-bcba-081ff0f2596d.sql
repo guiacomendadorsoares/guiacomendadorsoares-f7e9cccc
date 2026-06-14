@@ -1,0 +1,1 @@
+UPDATE public.businesses SET main_category = 'marketing-publicidade', subcategory = 'agencias-de-marketing' WHERE id = 'b0c62730-fa7c-42c1-a509-e01670da9cde';
