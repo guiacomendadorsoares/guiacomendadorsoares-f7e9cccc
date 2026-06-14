@@ -10,6 +10,7 @@ import { EmptyState } from "@/components/ui-bits";
 import {
   Bell,
   MapPin,
+  Search,
   Briefcase,
   Home as HomeIcon,
   Calendar,
@@ -19,6 +20,7 @@ import {
   UtensilsCrossed,
 } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
+
 
 
 export const Route = createFileRoute("/")({
