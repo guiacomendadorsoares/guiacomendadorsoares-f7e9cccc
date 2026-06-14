@@ -66,6 +66,18 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
         else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
       }
+      // Compat: a tabela `businesses` ainda exige category/category_label NOT NULL.
+      // Espelhamos os valores escolhidos na nova taxonomia.
+      if (table === "businesses") {
+        const main = payload.main_category;
+        const sub = payload.subcategory;
+        if (main) {
+          payload.category = main;
+          const subLabel = (await import("@/lib/guia-taxonomy")).findSubcategory(main, sub)?.label;
+          const catLabel = (await import("@/lib/guia-taxonomy")).findCategory(main)?.label;
+          payload.category_label = subLabel ?? catLabel ?? main;
+        }
+      }
       const client = supabase.from(table) as any;
       if (values.id) {
         const { error } = await client.update(payload).eq("id", values.id);
