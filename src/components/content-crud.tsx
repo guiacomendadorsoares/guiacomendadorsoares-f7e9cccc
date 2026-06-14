@@ -300,6 +300,32 @@ function FieldRender({
       </div>
     );
   }
+  if (field.type === "image") {
+    return (
+      <div className="space-y-1.5">
+        {label}
+        <SingleImageUploader
+          value={value ?? null}
+          onChange={onChange}
+          folder={field.folder ?? "misc"}
+          aspect={field.aspect ?? "square"}
+        />
+      </div>
+    );
+  }
+  if (field.type === "gallery") {
+    return (
+      <div className="space-y-1.5">
+        {label}
+        <GalleryUploader
+          value={Array.isArray(value) ? value : []}
+          onChange={onChange}
+          folder={field.folder ?? "misc"}
+          max={galleryMax ?? 1}
+        />
+      </div>
+    );
+  }
   const inputType = field.type === "number" ? "number" : field.type === "datetime" ? "datetime-local" : field.type === "url" ? "url" : "text";
   return (
     <div className="space-y-1.5">
