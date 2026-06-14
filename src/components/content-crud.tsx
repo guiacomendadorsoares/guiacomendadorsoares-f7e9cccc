@@ -21,6 +21,7 @@ import { useCurrentPlan } from "@/lib/plans";
 import { PremiumModal } from "@/components/premium-modal";
 import { SingleImageUploader, GalleryUploader } from "@/components/image-uploader";
 import { LocationPicker } from "@/components/location-picker";
+import { findCategory } from "@/lib/guia-taxonomy";
 
 interface Props {
   table: ContentTable;
