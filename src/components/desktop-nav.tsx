@@ -12,30 +12,31 @@ const items: Item[] = [
   { to: "/perfil", label: "Perfil", icon: User },
 ];
 
-export function BottomNav() {
+export function DesktopNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
     <nav
       aria-label="Navegação principal"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/85 backdrop-blur-lg safe-bottom md:hidden"
+      className="sticky top-0 z-40 hidden border-b border-border bg-background/85 backdrop-blur-lg md:block"
     >
-      <ul className="mx-auto grid max-w-md grid-cols-5">
+      <ul className="mx-auto flex max-w-6xl items-center gap-1 px-8 py-3 lg:px-12">
+        <li className="mr-auto">
+          <Link to="/" className="font-display text-base font-extrabold text-foreground">
+            Guia CS
+          </Link>
+        </li>
         {items.map(({ to, label, icon: Icon }) => {
           const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
           return (
             <li key={to}>
               <Link
                 to={to}
-                className="group flex flex-col items-center justify-center gap-1 px-2 pt-2 pb-1 text-[11px] font-medium text-muted-foreground transition-colors data-[active=true]:text-primary"
                 data-active={active}
+                className="flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[active=true]:bg-secondary data-[active=true]:text-primary"
               >
-                <span
-                  className="grid h-9 w-9 place-items-center rounded-full transition-all group-data-[active=true]:gradient-brand group-data-[active=true]:text-primary-foreground group-data-[active=true]:shadow-elegant"
-                >
-                  <Icon className="h-[18px] w-[18px]" />
-                </span>
-                <span className="leading-none">{label}</span>
+                <Icon className="h-4 w-4" />
+                <span>{label}</span>
               </Link>
             </li>
           );
