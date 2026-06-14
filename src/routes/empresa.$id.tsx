@@ -11,7 +11,14 @@ import {
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
 import { SAMPLE_BUSINESSES } from "@/lib/businesses";
-import { getBusinessProfile, formatReviewDate } from "@/lib/business-profile";
+import {
+  getBusinessProfile,
+  formatReviewDate,
+  type BusinessProfile,
+  type BusinessReview,
+  type BusinessHours,
+} from "@/lib/business-profile";
+import type { Business } from "@/lib/businesses";
 
 export const Route = createFileRoute("/empresa/$id")({
   loader: ({ params }) => {
@@ -40,7 +47,10 @@ export const Route = createFileRoute("/empresa/$id")({
 });
 
 function EmpresaPage() {
-  const { business, profile } = Route.useLoaderData();
+  const { business, profile } = Route.useLoaderData() as {
+    business: Business;
+    profile: BusinessProfile;
+  };
   const waUrl = `https://wa.me/${business.whatsapp}`;
 
   return (
@@ -123,7 +133,7 @@ function EmpresaPage() {
           <SectionTitle>Horário de funcionamento</SectionTitle>
           <GlassCard className="p-4">
             <ul className="flex flex-col gap-2 text-sm">
-              {profile.hours.map((h) => (
+              {profile.hours.map((h: BusinessHours) => (
                 <li key={h.day} className="flex items-center justify-between">
                   <span className="flex items-center gap-2 text-muted-foreground">
                     <Clock className="h-3.5 w-3.5 text-primary-vibrant" />
@@ -141,7 +151,7 @@ function EmpresaPage() {
           <SectionTitle>Galeria</SectionTitle>
           <div className="-mx-5 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="flex gap-3 pb-1">
-              {profile.gallery.map((src, i) => (
+              {profile.gallery.map((src: string, i: number) => (
                 <img
                   key={i}
                   src={src}
@@ -160,7 +170,7 @@ function EmpresaPage() {
         <section className="mt-6">
           <SectionTitle>Avaliações & Comentários</SectionTitle>
           <div className="flex flex-col gap-3">
-            {profile.reviews.map((r) => (
+            {profile.reviews.map((r: BusinessReview) => (
               <GlassCard key={r.id} className="p-4">
                 <div className="mb-2 flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-full gradient-brand text-sm font-bold text-primary-foreground">
