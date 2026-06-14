@@ -85,5 +85,7 @@ export function PropertyCard({ property }: { property: Property }) {
         </div>
       </div>
     </GlassCard>
+    </Link>
   );
 }
+
