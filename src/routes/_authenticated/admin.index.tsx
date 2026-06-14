@@ -63,7 +63,7 @@ function AdminHome() {
               <Link
                 key={t}
                 to={moduleRoute(t)}
-                className="group rounded-2xl border border-border bg-card p-5 shadow-card transition hover:border-primary hover:shadow-elegant"
+                className="group rounded-2xl border border-border bg-card p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant"
               >
                 <div className="flex items-center gap-3">
                   <span className="grid h-10 w-10 place-items-center rounded-xl bg-secondary text-primary">
@@ -94,7 +94,7 @@ function moduleRoute(t: typeof TABLES[number]) {
 
 function KpiCard({ label, value, icon: Icon, accent, href }: { label: string; value: number | string; icon: any; accent?: "gold"; href: string }) {
   return (
-    <Link to={href} className="rounded-2xl border border-border bg-card p-5 shadow-card transition hover:shadow-elegant">
+    <Link to={href} className="rounded-2xl border border-border bg-card p-5 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant">
       <div className="flex items-center justify-between">
         <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</p>
         <span className={`grid h-9 w-9 place-items-center rounded-xl ${accent === "gold" ? "gradient-gold text-gold-foreground" : "gradient-brand text-primary-foreground"}`}>
