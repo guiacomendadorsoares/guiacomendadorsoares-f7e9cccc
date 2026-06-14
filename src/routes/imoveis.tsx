@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { PropertyCard } from "@/components/property-card";
 import {
-  sampleProperties,
   LISTING_FILTERS,
   KIND_FILTERS,
   type ListingType,
   type PropertyKind,
+  type Property,
 } from "@/lib/properties";
+import { fetchProperties } from "@/services/properties.service";
 import { Search, Building2 } from "lucide-react";
 
 export const Route = createFileRoute("/imoveis")({
@@ -22,13 +24,59 @@ export const Route = createFileRoute("/imoveis")({
   component: ImoveisPage,
 });
 
+const KIND_LABELS: Record<string, string> = {
+  casa: "Casa",
+  apartamento: "Apartamento",
+  terreno: "Terreno",
+  comercial: "Comercial",
+};
+
+function formatPrice(price: number | null | undefined, listing: string): string {
+  if (price == null) return "Sob consulta";
+  const formatted = new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
+    maximumFractionDigits: 0,
+  }).format(price);
+  return listing === "aluguel" ? `${formatted}/mês` : formatted;
+}
+
+function mapProperty(row: any): Property {
+  const listing = (row.listing_type ?? "venda") as ListingType;
+  return {
+    id: row.id,
+    title: row.title ?? "",
+    listingType: listing,
+    listingLabel: listing === "aluguel" ? "Aluguel" : "Venda",
+    kind: (row.kind ?? "casa") as PropertyKind,
+    kindLabel: KIND_LABELS[row.kind] ?? "Imóvel",
+    price: row.price_label ?? formatPrice(row.price, listing),
+    bedrooms: row.bedrooms ?? undefined,
+    bathrooms: row.bathrooms ?? undefined,
+    areaM2: row.area_m2 ?? undefined,
+    address: row.address ?? "",
+    image:
+      row.cover_url ??
+      (Array.isArray(row.gallery_urls) && row.gallery_urls[0]) ??
+      "/placeholder.svg",
+    featured: !!row.featured,
+  };
+}
+
 function ImoveisPage() {
   const [listingFilter, setListingFilter] = useState<ListingType | "todos">("todos");
   const [kindFilter, setKindFilter] = useState<PropertyKind | "todos">("todos");
   const [query, setQuery] = useState("");
 
+  const { data: items = [] } = useQuery({
+    queryKey: ["properties"],
+    queryFn: fetchProperties,
+  });
+
+  const properties = useMemo(() => (items as any[]).map(mapProperty), [items]);
+
   const filtered = useMemo(() => {
-    return sampleProperties.filter((p) => {
+    return properties.filter((p) => {
       const matchListing = listingFilter === "todos" || p.listingType === listingFilter;
       const matchKind = kindFilter === "todos" || p.kind === kindFilter;
       const q = query.trim().toLowerCase();
@@ -39,7 +87,7 @@ function ImoveisPage() {
         p.kindLabel.toLowerCase().includes(q);
       return matchListing && matchKind && matchQuery;
     });
-  }, [listingFilter, kindFilter, query]);
+  }, [listingFilter, kindFilter, query, properties]);
 
   return (
     <AppShell title="Imóveis" subtitle="Alugar e comprar no bairro">
@@ -106,8 +154,8 @@ function ImoveisPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={<Building2 className="h-5 w-5" />}
-          title={sampleProperties.length === 0 ? "Nenhum imóvel disponível." : "Nenhum imóvel encontrado"}
-          description={sampleProperties.length === 0 ? "Em breve novos imóveis serão publicados pelos corretores parceiros." : "Tente ajustar os filtros ou busque por outro termo."}
+          title={properties.length === 0 ? "Nenhum imóvel disponível." : "Nenhum imóvel encontrado"}
+          description={properties.length === 0 ? "Em breve novos imóveis serão publicados pelos corretores parceiros." : "Tente ajustar os filtros ou busque por outro termo."}
         />
       ) : (
         <div className="flex flex-col gap-4">
