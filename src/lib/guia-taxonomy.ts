@@ -1,7 +1,7 @@
 import {
   HeartPulse, Scale, GraduationCap, Dumbbell, UtensilsCrossed, Scissors,
   Dog, Car, Home, Wrench, ShoppingBag, Landmark, Building2, Church,
-  PartyPopper, Truck, type LucideIcon,
+  PartyPopper, Truck, Megaphone, type LucideIcon,
 } from "lucide-react";
 
 export type Subcategory = { slug: string; label: string };
@@ -122,6 +122,12 @@ export const CATEGORIES: Category[] = [
     from: "#1f3a2e", to: "#4a8a6b", showOnHome: false,
     description: "Mototáxi, fretes, mudanças e transportadoras.",
     subcategories: ["Mototáxi","Táxi","Transportadoras","Fretes","Mudanças"].map(sub),
+  },
+  {
+    slug: "marketing-publicidade", label: "Marketing e Publicidade", emoji: "📣", icon: Megaphone,
+    from: "#8a5e1f", to: "#e8b85a", showOnHome: false,
+    description: "Agências, social media, design e publicidade.",
+    subcategories: ["Agências de Marketing","Social Media","Design Gráfico","Produção de Conteúdo","Tráfego Pago","Sites e E-commerce","Gráficas","Comunicação Visual"].map(sub),
   },
 ];
 
