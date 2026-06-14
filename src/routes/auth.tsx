@@ -7,7 +7,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, Building2, Home, Megaphone } from "lucide-react";
+import { requestSelfRole } from "@/lib/admin.functions";
+import type { AppRole } from "@/hooks/use-auth";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -25,8 +28,28 @@ const schema = z.object({
   password: z.string().min(6, "Mínimo de 6 caracteres").max(72),
 });
 
+type Profile = "user" | "partner" | "broker" | "influencer";
+
+const PROFILES: { id: Profile; label: string; desc: string; icon: typeof User; redirect: string }[] = [
+  { id: "user", label: "Visitante", desc: "Favoritar, avaliar e acompanhar o Guia", icon: User, redirect: "/minha-conta" },
+  { id: "partner", label: "Empresa", desc: "Cadastrar negócio, vagas e promoções", icon: Building2, redirect: "/painel-empresa" },
+  { id: "broker", label: "Corretor", desc: "Anunciar e gerenciar imóveis", icon: Home, redirect: "/painel-imoveis" },
+  { id: "influencer", label: "Imprensa", desc: "Publicar notícias, eventos e curiosidades", icon: Megaphone, redirect: "/portal-imprensa" },
+];
+
+async function redirectForUser(userId: string, fallback: string): Promise<string> {
+  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const roles = (data ?? []).map((r) => r.role as AppRole);
+  if (roles.includes("admin") || roles.includes("editor")) return "/admin";
+  if (roles.includes("partner")) return "/painel-empresa";
+  if (roles.includes("broker")) return "/painel-imoveis";
+  if (roles.includes("influencer")) return "/portal-imprensa";
+  return fallback;
+}
+
 function AuthPage() {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile>("user");
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,10 +57,15 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) navigate({ to: "/minha-conta" });
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (data.user) {
+        const to = await redirectForUser(data.user.id, "/minha-conta");
+        navigate({ to });
+      }
     });
   }, [navigate]);
+
+  const selected = PROFILES.find((p) => p.id === profile)!;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -49,24 +77,32 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data: signUp, error } = await supabase.auth.signUp({
           email: parsed.data.email,
           password: parsed.data.password,
           options: {
-            emailRedirectTo: `${window.location.origin}/minha-conta`,
-            data: { full_name: fullName.trim() || null },
+            emailRedirectTo: `${window.location.origin}${selected.redirect}`,
+            data: { full_name: fullName.trim() || null, requested_profile: profile },
           },
         });
         if (error) throw error;
-        toast.success("Conta criada! Verifique seu e-mail.");
+        if (signUp.session && profile !== "user") {
+          try { await requestSelfRole({ data: { role: profile } }); } catch { /* ignore */ }
+        }
+        toast.success("Conta criada! Verifique seu e-mail para confirmar.");
+        if (signUp.session) {
+          const to = await redirectForUser(signUp.user!.id, selected.redirect);
+          navigate({ to });
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data: signIn, error } = await supabase.auth.signInWithPassword({
           email: parsed.data.email,
           password: parsed.data.password,
         });
         if (error) throw error;
         toast.success("Bem-vindo!");
-        navigate({ to: "/minha-conta" });
+        const to = await redirectForUser(signIn.user!.id, selected.redirect);
+        navigate({ to });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erro ao autenticar");
@@ -77,8 +113,11 @@ function AuthPage() {
 
   async function handleGoogle() {
     setLoading(true);
+    if (profile !== "user") {
+      sessionStorage.setItem("pending_profile", profile);
+    }
     const result = await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/minha-conta",
+      redirect_uri: window.location.origin + selected.redirect,
     });
     if (result.error) {
       toast.error("Falha no login com Google");
@@ -86,7 +125,11 @@ function AuthPage() {
       return;
     }
     if (!result.redirected) {
-      navigate({ to: "/minha-conta" });
+      const { data } = await supabase.auth.getUser();
+      if (data.user) {
+        const to = await redirectForUser(data.user.id, selected.redirect);
+        navigate({ to });
+      }
     }
   }
 
@@ -109,19 +152,47 @@ function AuthPage() {
     }
   }
 
-
   return (
     <div className="min-h-dvh grid place-items-center bg-gradient-to-br from-background via-background to-secondary px-4 py-10">
-      <div className="w-full max-w-md rounded-3xl border border-border bg-card p-7 shadow-elegant">
+      <div className="w-full max-w-2xl rounded-3xl border border-border bg-card p-7 shadow-elegant">
         <Link to="/" className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
           ← Guia CS
         </Link>
         <h1 className="mt-4 font-display text-2xl font-bold text-foreground">
-          {mode === "signin" ? "Entrar" : "Criar conta"}
+          {mode === "signin" ? "Entrar como…" : "Criar conta como…"}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {mode === "signin" ? "Acesse sua conta para continuar." : "Cadastre-se em poucos segundos."}
+          Escolha o perfil que melhor representa você.
         </p>
+
+        <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {PROFILES.map((p) => {
+            const Icon = p.icon;
+            const active = p.id === profile;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => setProfile(p.id)}
+                className={cn(
+                  "flex flex-col items-center gap-2 rounded-2xl border p-3 text-center transition",
+                  active
+                    ? "border-primary bg-primary/5 shadow-sm"
+                    : "border-border bg-background hover:border-primary/40",
+                )}
+              >
+                <span className={cn(
+                  "grid h-10 w-10 place-items-center rounded-xl",
+                  active ? "bg-primary text-primary-foreground" : "bg-secondary text-primary",
+                )}>
+                  <Icon className="h-5 w-5" />
+                </span>
+                <span className="text-xs font-semibold text-foreground">{p.label}</span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="mt-2 text-xs text-muted-foreground">{selected.desc}</p>
 
         <Button
           type="button"
@@ -163,7 +234,7 @@ function AuthPage() {
             />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Entrar" : "Criar conta"}
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? `Entrar como ${selected.label}` : `Criar conta como ${selected.label}`}
           </Button>
         </form>
 
