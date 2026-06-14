@@ -1,17 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, Crown, Sparkles, Star } from "lucide-react";
+import { Check, X, Crown, Sparkles, Star, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePlans, useCurrentPlan, type PlanSlug } from "@/lib/plans";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/planos")({
   head: () => ({
     meta: [
       { title: "Planos — Guia Comendador Soares" },
-      { name: "description", content: "Escolha o plano ideal para destacar seu negócio no Guia Comendador Soares." },
+      { name: "description", content: "Escolha o plano ideal para destacar seu negócio no Guia Comendador Soares. Free, Destaque e Ouro." },
       { property: "og:title", content: "Planos — Guia Comendador Soares" },
-      { property: "og:description", content: "Free, Destaque e Ouro: encontre o plano certo para sua empresa." },
+      { property: "og:description", content: "Free, Destaque e Ouro: encontre o plano certo para sua empresa, imóveis e vagas." },
     ],
   }),
   component: PlanosPage,
@@ -20,23 +21,74 @@ export const Route = createFileRoute("/planos")({
 const ICONS: Record<PlanSlug, typeof Crown> = { free: Sparkles, destaque: Star, ouro: Crown };
 
 function PlanosPage() {
+  return (
+    <div className="min-h-dvh bg-background">
+      <Header />
+      <Hero />
+      <PlansGrid />
+      <Compare />
+      <FinalCta />
+      <Footer />
+    </div>
+  );
+}
+
+function Header() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-lg">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+        <Link to="/" className="flex items-center gap-2">
+          <img src={logoUrl} alt="" className="h-9 w-9 object-contain" />
+          <span className="font-display text-sm font-bold leading-tight">
+            Guia<br />Comendador Soares
+          </span>
+        </Link>
+        <div className="flex items-center gap-2">
+          <Link to="/anuncie" className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:block">
+            Anuncie
+          </Link>
+          <Button asChild size="sm" variant="premium">
+            <Link to="/auth">Começar agora</Link>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-primary/5 via-card to-background">
+      <div className="absolute inset-0 -z-10 opacity-30" style={{
+        backgroundImage: "radial-gradient(circle at 20% 10%, var(--primary-vibrant) 0%, transparent 40%), radial-gradient(circle at 80% 60%, var(--gold) 0%, transparent 35%)",
+      }} />
+      <div className="mx-auto max-w-4xl px-4 py-14 text-center md:py-20">
+        <span className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-primary">
+          <Sparkles className="h-3 w-3" /> Planos
+        </span>
+        <h1 className="font-display text-4xl font-bold leading-tight tracking-tight md:text-5xl">
+          Escolha o plano ideal para{" "}
+          <span className="bg-gradient-to-r from-primary to-primary-vibrant bg-clip-text text-transparent">
+            seu negócio
+          </span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-base text-muted-foreground md:text-lg">
+          Comece grátis. Suba de plano quando precisar de mais alcance, fotos e prioridade nas buscas.
+        </p>
+        <p className="mt-3 text-xs text-muted-foreground">Sem cartão de crédito • Cancele quando quiser</p>
+      </div>
+    </section>
+  );
+}
+
+function PlansGrid() {
   const { data: plans = [], isLoading } = usePlans();
   const { slug: currentSlug } = useCurrentPlan();
   const { user } = useCurrentUser();
 
   return (
-    <div className="min-h-dvh bg-background">
-      <header className="border-b border-border bg-card/50">
-        <div className="mx-auto max-w-6xl px-4 py-12 text-center md:py-16">
-          <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-primary">Planos</p>
-          <h1 className="font-display text-3xl font-bold md:text-5xl">Escolha o plano ideal para seu negócio</h1>
-          <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
-            Aumente sua visibilidade no Guia Comendador Soares com recursos premium.
-          </p>
-        </div>
-      </header>
-
-      <main className="mx-auto max-w-6xl px-4 py-10 md:py-14">
+    <section className="border-b border-border bg-card/50 py-14 md:py-20">
+      <div className="mx-auto max-w-6xl px-4">
         {isLoading ? (
           <p className="text-center text-muted-foreground">Carregando planos…</p>
         ) : (
@@ -51,8 +103,8 @@ function PlanosPage() {
               return (
                 <div
                   key={p.id}
-                  className={`relative flex flex-col rounded-2xl border-2 p-6 shadow-card transition ${
-                    isGold ? "border-primary bg-gradient-to-b from-primary/5 to-card shadow-elegant" : "border-border bg-card"
+                  className={`relative flex flex-col rounded-2xl border-2 p-6 shadow-card transition-all duration-200 hover:-translate-y-1 ${
+                    isGold ? "border-primary bg-gradient-to-b from-primary/5 to-card shadow-elegant" : "border-border bg-card hover:shadow-elegant"
                   }`}
                 >
                   {isGold && (
@@ -95,32 +147,137 @@ function PlanosPage() {
                       toast.info("Pagamentos estarão disponíveis em breve.");
                     }}
                   >
-                    {isCurrent ? "Plano atual" : "Selecionar plano"}
+                    {isCurrent ? "Plano atual" : `Selecionar ${p.name}`}
                   </Button>
                 </div>
               );
             })}
           </div>
         )}
+      </div>
+    </section>
+  );
+}
 
-        <p className="mt-10 text-center text-xs text-muted-foreground">
-          <Link to="/" className="underline underline-offset-2">Voltar ao Guia</Link>
+const FEATURES: { label: string; free: boolean; destaque: boolean; ouro: boolean }[] = [
+  { label: "Perfil da empresa", free: true, destaque: true, ouro: true },
+  { label: "Logo + horário de funcionamento", free: true, destaque: true, ouro: true },
+  { label: "WhatsApp + redes sociais", free: false, destaque: true, ouro: true },
+  { label: "Banner + galeria de fotos", free: false, destaque: true, ouro: true },
+  { label: "Selo Empresa Verificada", free: false, destaque: true, ouro: true },
+  { label: "Promoções e cupons", free: false, destaque: true, ouro: true },
+  { label: "Destaque na Home", free: false, destaque: false, ouro: true },
+  { label: "Prioridade nas buscas", free: false, destaque: false, ouro: true },
+  { label: "Estatísticas avançadas", free: false, destaque: false, ouro: true },
+  { label: "Vídeos e imóveis ilimitados", free: false, destaque: false, ouro: true },
+];
+
+function Compare() {
+  return (
+    <section className="mx-auto max-w-5xl px-4 py-16 md:py-20">
+      <div className="text-center">
+        <p className="mb-2 text-sm font-semibold uppercase tracking-widest text-primary">Comparativo</p>
+        <h2 className="font-display text-3xl font-bold md:text-4xl">Tudo o que você ganha</h2>
+      </div>
+      <div className="mt-10 overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-secondary/50">
+              <th className="px-4 py-3 text-left font-semibold">Recurso</th>
+              <th className="px-4 py-3 text-center font-semibold">Free</th>
+              <th className="px-4 py-3 text-center font-semibold">Destaque</th>
+              <th className="px-4 py-3 text-center font-semibold text-primary">Ouro</th>
+            </tr>
+          </thead>
+          <tbody>
+            {FEATURES.map((f, i) => (
+              <tr key={f.label} className={i % 2 ? "bg-secondary/20" : ""}>
+                <td className="px-4 py-3 font-medium">{f.label}</td>
+                <td className="px-4 py-3 text-center"><Cell on={f.free} /></td>
+                <td className="px-4 py-3 text-center"><Cell on={f.destaque} /></td>
+                <td className="px-4 py-3 text-center"><Cell on={f.ouro} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function Cell({ on }: { on: boolean }) {
+  return on ? (
+    <Check className="mx-auto h-4 w-4 text-primary" />
+  ) : (
+    <X className="mx-auto h-4 w-4 text-muted-foreground/40" />
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="px-4 py-16 md:py-24">
+      <div className="mx-auto max-w-4xl overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary to-primary-vibrant p-10 text-center text-primary-foreground shadow-elegant md:p-16">
+        <h2 className="font-display text-3xl font-bold md:text-5xl">Pronto para anunciar?</h2>
+        <p className="mx-auto mt-4 max-w-xl text-primary-foreground/85">
+          Cadastre-se grátis em poucos minutos e apareça para o bairro inteiro.
         </p>
-      </main>
-    </div>
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Button asChild size="lg" variant="gold">
+            <Link to="/auth">Criar conta grátis <ArrowRight className="h-4 w-4" /></Link>
+          </Button>
+          <Button asChild size="lg" variant="premium">
+            <Link to="/anuncie">Saber mais</Link>
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-border bg-card">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-6 text-xs text-muted-foreground sm:flex-row">
+        <p>© {new Date().getFullYear()} Guia Comendador Soares.</p>
+        <div className="flex gap-4">
+          <Link to="/" className="hover:text-foreground">Início</Link>
+          <Link to="/anuncie" className="hover:text-foreground">Anuncie</Link>
+          <Link to="/auth" className="hover:text-foreground">Entrar</Link>
+        </div>
+      </div>
+    </footer>
   );
 }
 
 function buildBullets(slug: PlanSlug, b: any, p: any): string[] {
   const out: string[] = [];
   if (slug === "free") {
-    out.push("Nome, categoria, endereço e telefone", "Logo da empresa", "Horário de funcionamento", `Até ${p.max_listings} imóveis · ${p.max_photos} fotos cada`);
+    out.push(
+      "Nome, categoria, endereço e telefone",
+      "Logo da empresa",
+      "Horário de funcionamento",
+      `Até ${p.max_listings ?? 3} imóveis · ${p.max_photos ?? 5} fotos cada`,
+    );
   }
   if (slug === "destaque") {
-    out.push("Tudo do Free", "Banner e galeria de fotos", "Redes sociais + WhatsApp", "Promoções e estatísticas básicas", "Selo Empresa Verificada", `Até ${p.max_listings} imóveis · ${p.max_photos} fotos`);
+    out.push(
+      "Tudo do Free",
+      "Banner e galeria de fotos",
+      "Redes sociais + WhatsApp",
+      "Promoções e estatísticas básicas",
+      "Selo Empresa Verificada",
+      `Até ${p.max_listings ?? 10} imóveis · ${p.max_photos ?? 15} fotos`,
+    );
   }
   if (slug === "ouro") {
-    out.push("Tudo do Destaque", "Destaque na Home e na categoria", "Banner rotativo + prioridade nas buscas", "Estatísticas avançadas", "Postagens patrocinadas", "Imóveis ilimitados + vídeos");
+    out.push(
+      "Tudo do Destaque",
+      "Destaque na Home e na categoria",
+      "Banner rotativo + prioridade nas buscas",
+      "Estatísticas avançadas",
+      "Postagens patrocinadas",
+      "Imóveis ilimitados + vídeos",
+    );
   }
   return out;
 }
