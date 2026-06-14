@@ -250,10 +250,10 @@ function CrudFormDialog({
 }
 
 function FieldRender({
-  field, value, onChange, locked, onLockedClick,
+  field, value, onChange, locked, onLockedClick, galleryMax,
 }: {
   field: FieldDef; value: any; onChange: (v: any) => void;
-  locked?: boolean; onLockedClick?: () => void;
+  locked?: boolean; onLockedClick?: () => void; galleryMax?: number;
 }) {
   const label = (
     <Label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
