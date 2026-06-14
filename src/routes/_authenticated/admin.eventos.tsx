@@ -1,3 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ContentTable_ } from "@/components/admin-content-table";
-export const Route = createFileRoute("/_authenticated/admin/eventos")({ component: () => <ContentTable_ table="events" /> });
+import { ContentCrud } from "@/components/content-crud";
+export const Route = createFileRoute("/_authenticated/admin/eventos")({
+  component: () => <ContentCrud table="events" />,
+});

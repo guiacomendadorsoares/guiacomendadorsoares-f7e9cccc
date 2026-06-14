@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, useRequireAnyRole } from "@/components/dashboard-shell";
-import { ComingSoon } from "@/components/admin-content-table";
+import { ContentCrud } from "@/components/content-crud";
+import { useCurrentUser } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/_authenticated/painel-imoveis")({
   component: PainelImoveis,
@@ -8,10 +9,11 @@ export const Route = createFileRoute("/_authenticated/painel-imoveis")({
 
 function PainelImoveis() {
   const { ready } = useRequireAnyRole(["broker", "admin"]);
-  if (!ready) return null;
+  const { user } = useCurrentUser();
+  if (!ready || !user) return null;
   return (
     <DashboardShell role="broker" title="Painel de Imóveis" subtitle="Cadastre e acompanhe seus imóveis">
-      <ComingSoon title="Painel do Corretor / Imobiliária" />
+      <ContentCrud table="properties" ownerOnly={user.id} forcePending />
     </DashboardShell>
   );
 }
