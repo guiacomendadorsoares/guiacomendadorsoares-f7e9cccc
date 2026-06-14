@@ -105,13 +105,8 @@ function EmpresaPage() {
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {b.categoryLabel || b.category_label || b.subcategory || b.main_category}
               </p>
-              {rating > 0 && (
-                <div className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-                  <Star className="h-3.5 w-3.5 fill-gold text-gold" />
-                  <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
-                  <span>({reviews} avaliações)</span>
-                </div>
-              )}
+
+
             </div>
           </div>
 
