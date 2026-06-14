@@ -1,2 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /minha-conta
+Disallow: /painel-empresa
+Disallow: /painel-imoveis
+Disallow: /portal-imprensa
+
+Sitemap: https://guiacomendadorsoares.lovable.app/sitemap.xml
