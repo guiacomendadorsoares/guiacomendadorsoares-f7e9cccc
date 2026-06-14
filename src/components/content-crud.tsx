@@ -258,6 +258,30 @@ function CrudFormDialog({
                   </div>
                 );
               }
+              if (f.type === "subcategory") {
+                const parent = values[f.dependsOn ?? "main_category"];
+                const cat = findCategory(parent);
+                const opts = cat?.subcategories ?? [];
+                return (
+                  <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
+                      <Select
+                        value={values[f.key] ?? ""}
+                        onValueChange={(v) => setValues({ ...values, [f.key]: v })}
+                        disabled={!cat}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={cat ? "Selecione…" : "Escolha a categoria primeiro"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {opts.map((o) => <SelectItem key={o.slug} value={o.slug}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                );
+              }
               return (
                 <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
                   <FieldRender
