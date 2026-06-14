@@ -13,10 +13,12 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { StatusBadge } from "@/components/dashboard-shell";
-import { Loader2, Plus, Pencil, Trash2 } from "lucide-react";
+import { Loader2, Plus, Pencil, Trash2, Lock } from "lucide-react";
 import { toast } from "sonner";
 import type { ContentTable } from "@/lib/approvals";
 import { SCHEMAS, selectColumns, type FieldDef } from "@/lib/content-schemas";
+import { useCurrentPlan } from "@/lib/plans";
+import { PremiumModal } from "@/components/premium-modal";
 
 interface Props {
   table: ContentTable;
