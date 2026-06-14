@@ -191,6 +191,8 @@ function CrudFormDialog({
     for (const f of fields) {
       const v = initial ? initial[f.key] : defaults[f.key];
       if (f.type === "boolean") init[f.key] = !!v;
+      else if (f.type === "gallery") init[f.key] = Array.isArray(v) ? v : [];
+      else if (f.type === "image") init[f.key] = v ?? null;
       else if (f.type === "datetime" && v) init[f.key] = new Date(v).toISOString().slice(0, 16);
       else init[f.key] = v ?? "";
     }
