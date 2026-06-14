@@ -154,8 +154,8 @@ function ImoveisPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={<Building2 className="h-5 w-5" />}
-          title={sampleProperties.length === 0 ? "Nenhum imóvel disponível." : "Nenhum imóvel encontrado"}
-          description={sampleProperties.length === 0 ? "Em breve novos imóveis serão publicados pelos corretores parceiros." : "Tente ajustar os filtros ou busque por outro termo."}
+          title={properties.length === 0 ? "Nenhum imóvel disponível." : "Nenhum imóvel encontrado"}
+          description={properties.length === 0 ? "Em breve novos imóveis serão publicados pelos corretores parceiros." : "Tente ajustar os filtros ou busque por outro termo."}
         />
       ) : (
         <div className="flex flex-col gap-4">
