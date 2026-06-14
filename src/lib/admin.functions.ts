@@ -103,3 +103,20 @@ export const revokeRole = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+const SELF_ROLES = ["partner", "broker", "influencer"] as const;
+const selfRoleSchema = z.object({ role: z.enum(SELF_ROLES) });
+
+export const requestSelfRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => selfRoleSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("user_roles")
+      .insert({ user_id: context.userId, role: data.role });
+    if (error && !error.message.toLowerCase().includes("duplicate")) {
+      throw new Error(error.message);
+    }
+    return { ok: true };
+  });
