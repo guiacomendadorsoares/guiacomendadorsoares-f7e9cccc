@@ -1,11 +1,14 @@
 import { MapPin, BedDouble, Bath, Maximize, ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { Property } from "@/lib/properties";
 import { GlassCard } from "@/components/cards";
 import { getListingBadgeColor } from "@/lib/properties";
 
 export function PropertyCard({ property }: { property: Property }) {
   return (
+    <Link to="/imoveis/$id" params={{ id: property.id }} className="block">
     <GlassCard interactive className="group overflow-hidden">
+
       {/* Image area */}
       <div className="relative h-48 w-full overflow-hidden">
         <img
@@ -82,5 +85,7 @@ export function PropertyCard({ property }: { property: Property }) {
         </div>
       </div>
     </GlassCard>
+    </Link>
   );
 }
+
