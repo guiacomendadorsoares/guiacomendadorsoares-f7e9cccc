@@ -29,6 +29,7 @@ function PainelEmpresa() {
           <ContentCrud table="events" ownerOnly={user.id} forcePending />
         </TabsContent>
       </Tabs>
+      </div>
     </DashboardShell>
   );
 }
