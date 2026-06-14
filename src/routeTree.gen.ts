@@ -22,6 +22,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnuncieRouteImport } from './routes/anuncie'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuiaCategoriaRouteImport } from './routes/guia.$categoria'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
 import { Route as AuthenticatedPortalImprensaRouteImport } from './routes/_authenticated/portal-imprensa'
 import { Route as AuthenticatedPainelImoveisRouteImport } from './routes/_authenticated/painel-imoveis'
@@ -29,6 +30,7 @@ import { Route as AuthenticatedPainelEmpresaRouteImport } from './routes/_authen
 import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as GuiaCategoriaSubcategoriaRouteImport } from './routes/guia.$categoria.$subcategoria'
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
@@ -109,6 +111,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuiaCategoriaRoute = GuiaCategoriaRouteImport.update({
+  id: '/$categoria',
+  path: '/$categoria',
+  getParentRoute: () => GuiaRoute,
+} as any)
 const EmpresaIdRoute = EmpresaIdRouteImport.update({
   id: '/empresa/$id',
   path: '/empresa/$id',
@@ -147,6 +154,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const GuiaCategoriaSubcategoriaRoute =
+  GuiaCategoriaSubcategoriaRouteImport.update({
+    id: '/$subcategoria',
+    path: '/$subcategoria',
+    getParentRoute: () => GuiaCategoriaRoute,
+  } as any)
 const AuthenticatedAdminVagasRoute = AuthenticatedAdminVagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
@@ -241,7 +254,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
-  '/guia': typeof GuiaRoute
+  '/guia': typeof GuiaRouteWithChildren
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
@@ -256,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -271,13 +285,14 @@ export interface FileRoutesByFullPath {
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
-  '/guia': typeof GuiaRoute
+  '/guia': typeof GuiaRouteWithChildren
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
@@ -291,6 +306,7 @@ export interface FileRoutesByTo {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -306,6 +322,7 @@ export interface FileRoutesByTo {
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -314,7 +331,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
-  '/guia': typeof GuiaRoute
+  '/guia': typeof GuiaRouteWithChildren
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
@@ -329,6 +346,7 @@ export interface FileRoutesById {
   '/_authenticated/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/_authenticated/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -344,6 +362,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -367,6 +386,7 @@ export interface FileRouteTypes {
     | '/painel-imoveis'
     | '/portal-imprensa'
     | '/empresa/$id'
+    | '/guia/$categoria'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
     | '/admin/corretores'
@@ -382,6 +402,7 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/admin/vagas'
+    | '/guia/$categoria/$subcategoria'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -402,6 +423,7 @@ export interface FileRouteTypes {
     | '/painel-imoveis'
     | '/portal-imprensa'
     | '/empresa/$id'
+    | '/guia/$categoria'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
     | '/admin/corretores'
@@ -417,6 +439,7 @@ export interface FileRouteTypes {
     | '/admin/relatorios'
     | '/admin/usuarios'
     | '/admin/vagas'
+    | '/guia/$categoria/$subcategoria'
     | '/admin'
   id:
     | '__root__'
@@ -439,6 +462,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel-imoveis'
     | '/_authenticated/portal-imprensa'
     | '/empresa/$id'
+    | '/guia/$categoria'
     | '/_authenticated/admin/aprovacoes'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/corretores'
@@ -454,6 +478,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/vagas'
+    | '/guia/$categoria/$subcategoria'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -462,7 +487,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
-  GuiaRoute: typeof GuiaRoute
+  GuiaRoute: typeof GuiaRouteWithChildren
   ImoveisRoute: typeof ImoveisRoute
   NoticiasRoute: typeof NoticiasRoute
   OndeComerRoute: typeof OndeComerRoute
@@ -567,6 +592,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guia/$categoria': {
+      id: '/guia/$categoria'
+      path: '/$categoria'
+      fullPath: '/guia/$categoria'
+      preLoaderRoute: typeof GuiaCategoriaRouteImport
+      parentRoute: typeof GuiaRoute
+    }
     '/empresa/$id': {
       id: '/empresa/$id'
       path: '/empresa/$id'
@@ -615,6 +647,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/guia/$categoria/$subcategoria': {
+      id: '/guia/$categoria/$subcategoria'
+      path: '/$subcategoria'
+      fullPath: '/guia/$categoria/$subcategoria'
+      preLoaderRoute: typeof GuiaCategoriaSubcategoriaRouteImport
+      parentRoute: typeof GuiaCategoriaRoute
     }
     '/_authenticated/admin/vagas': {
       id: '/_authenticated/admin/vagas'
@@ -785,12 +824,34 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface GuiaCategoriaRouteChildren {
+  GuiaCategoriaSubcategoriaRoute: typeof GuiaCategoriaSubcategoriaRoute
+}
+
+const GuiaCategoriaRouteChildren: GuiaCategoriaRouteChildren = {
+  GuiaCategoriaSubcategoriaRoute: GuiaCategoriaSubcategoriaRoute,
+}
+
+const GuiaCategoriaRouteWithChildren = GuiaCategoriaRoute._addFileChildren(
+  GuiaCategoriaRouteChildren,
+)
+
+interface GuiaRouteChildren {
+  GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
+}
+
+const GuiaRouteChildren: GuiaRouteChildren = {
+  GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
+}
+
+const GuiaRouteWithChildren = GuiaRoute._addFileChildren(GuiaRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
-  GuiaRoute: GuiaRoute,
+  GuiaRoute: GuiaRouteWithChildren,
   ImoveisRoute: ImoveisRoute,
   NoticiasRoute: NoticiasRoute,
   OndeComerRoute: OndeComerRoute,
