@@ -29,7 +29,6 @@ export function AppShell({
       <SiteFooter />
       <BottomNav />
     </div>
-    </div>
   );
 
 }
