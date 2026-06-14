@@ -127,67 +127,44 @@ function EmpresaPage() {
           )}
         </div>
 
-        <section className="mt-6">
-          <SectionTitle>Horário de funcionamento</SectionTitle>
-          <GlassCard className="p-4">
-            <ul className="flex flex-col gap-2 text-sm">
-              {profile.hours.map((h: BusinessHours) => (
-                <li key={h.day} className="flex items-center justify-between">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5 text-primary-vibrant" />
-                    {h.day}
-                  </span>
-                  <span className="font-semibold text-foreground">{h.hours}</span>
-                </li>
-              ))}
-            </ul>
-          </GlassCard>
-        </section>
+        {hours.length > 0 && (
+          <section className="mt-6">
+            <SectionTitle>Horário de funcionamento</SectionTitle>
+            <GlassCard className="p-4">
+              <ul className="flex flex-col gap-2 text-sm">
+                {hours.map((h) => (
+                  <li key={h.day} className="flex items-center justify-between">
+                    <span className="flex items-center gap-2 text-muted-foreground">
+                      <Clock className="h-3.5 w-3.5 text-primary-vibrant" />
+                      {h.day}
+                    </span>
+                    <span className="font-semibold text-foreground">{h.hours}</span>
+                  </li>
+                ))}
+              </ul>
+            </GlassCard>
+          </section>
+        )}
 
-        <section className="mt-6">
-          <SectionTitle>Galeria</SectionTitle>
-          <div className="-mx-5 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="flex gap-3 pb-1">
-              {profile.gallery.map((src: string, i: number) => (
-                <img
-                  key={i}
-                  src={src}
-                  alt={`Foto ${i + 1} de ${b.name}`}
-                  loading="lazy"
-                  className="h-40 w-40 shrink-0 rounded-2xl object-cover shadow-card"
-                />
-              ))}
+        {gallery.length > 0 && (
+          <section className="mt-6">
+            <SectionTitle>Galeria</SectionTitle>
+            <div className="-mx-5 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-3 pb-1">
+                {gallery.map((src, i) => (
+                  <img
+                    key={i}
+                    src={src}
+                    alt={`Foto ${i + 1} de ${b.name}`}
+                    loading="lazy"
+                    className="h-40 w-40 shrink-0 rounded-2xl object-cover shadow-card"
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        )}
 
-        <section className="mt-6">
-          <SectionTitle>Avaliações & Comentários</SectionTitle>
-          <div className="flex flex-col gap-3">
-            {profile.reviews.map((r: BusinessReview) => (
-              <GlassCard key={r.id} className="p-4">
-                <div className="mb-2 flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-full gradient-brand text-sm font-bold text-primary-foreground">
-                    {r.initials}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-foreground">{r.author}</p>
-                    <p className="text-[11px] text-muted-foreground">{formatReviewDate(r.date)}</p>
-                  </div>
-                  <div className="flex items-center gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`h-3.5 w-3.5 ${i < r.rating ? "fill-gold text-gold" : "text-muted"}`}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="text-sm leading-relaxed text-muted-foreground">{r.comment}</p>
-              </GlassCard>
-            ))}
-          </div>
-        </section>
       </main>
 
       {whatsapp && (
