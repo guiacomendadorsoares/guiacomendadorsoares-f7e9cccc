@@ -55,8 +55,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "logo_url", label: "Logo", type: "image", folder: "businesses/logo", aspect: "square", half: true },
       { key: "banner_url", label: "Banner", type: "image", folder: "businesses/banner", aspect: "wide", half: true, premium: "banner" },
       { key: "gallery_urls", label: "Galeria de fotos", type: "gallery", folder: "businesses/gallery", limitFrom: "business" },
-      { key: "latitude", label: "Latitude", type: "number", half: true, placeholder: "-22.7654" },
-      { key: "longitude", label: "Longitude", type: "number", half: true, placeholder: "-43.4321" },
+      { key: "__location", label: "Localização no mapa", type: "location", addressKey: "address", latKey: "latitude", lngKey: "longitude" },
     ],
   },
   jobs: {
