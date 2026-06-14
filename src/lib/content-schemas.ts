@@ -22,6 +22,11 @@ export interface FieldDef {
   aspect?: "square" | "wide";
   /** gallery only — which plan section drives the max count */
   limitFrom?: "business" | "properties";
+  /** location only — sibling field with address text used for geocoding */
+  addressKey?: string;
+  /** location only — db columns for lat/lng */
+  latKey?: string;
+  lngKey?: string;
 }
 
 export interface TableSchema {
