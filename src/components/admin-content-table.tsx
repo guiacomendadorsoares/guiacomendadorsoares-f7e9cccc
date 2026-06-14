@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { StatusBadge } from "@/components/dashboard-shell";
-import { Loader2 } from "lucide-react";
+
 import type { ContentTable } from "@/lib/approvals";
 import { titleColumn } from "@/lib/approvals";
 
