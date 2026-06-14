@@ -47,7 +47,10 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
     defaults: { status: "approved" },
     fields: [
       { key: "name", label: "Nome *", type: "text", required: true, max: 120 },
-      { key: "category", label: "Categoria *", type: "text", required: true, max: 60, half: true },
+      { key: "main_category", label: "Categoria *", type: "select", required: true, half: true,
+        options: [], // populadas dinamicamente em runtime a partir da taxonomia
+      },
+      { key: "subcategory", label: "Subcategoria *", type: "subcategory", required: true, half: true, dependsOn: "main_category" },
       { key: "address", label: "Endereço *", type: "text", required: true, max: 255, half: true },
       { key: "description", label: "Descrição", type: "textarea", max: 2000 },
       { key: "phone", label: "Telefone", type: "text", max: 40, half: true },
