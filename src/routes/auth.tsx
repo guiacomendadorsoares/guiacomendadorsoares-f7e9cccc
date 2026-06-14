@@ -90,6 +90,26 @@ function AuthPage() {
     }
   }
 
+  async function handleForgot() {
+    const parsed = z.string().trim().email().max(255).safeParse(email);
+    if (!parsed.success) {
+      toast.error("Informe seu e-mail acima para receber o link de recuperação.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Enviamos um link de redefinição para seu e-mail.");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Não foi possível enviar o e-mail.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-dvh grid place-items-center bg-gradient-to-br from-background via-background to-secondary px-4 py-10">
       <div className="w-full max-w-md rounded-3xl border border-border bg-card p-7 shadow-elegant">
@@ -146,6 +166,17 @@ function AuthPage() {
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : mode === "signin" ? "Entrar" : "Criar conta"}
           </Button>
         </form>
+
+        {mode === "signin" && (
+          <button
+            type="button"
+            onClick={handleForgot}
+            disabled={loading}
+            className="mt-3 w-full text-center text-xs font-medium text-primary-vibrant hover:underline"
+          >
+            Esqueci minha senha
+          </button>
+        )}
 
         <button
           type="button"

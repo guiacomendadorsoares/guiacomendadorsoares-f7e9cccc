@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { CONTENT_TABLES, approve, reject, listPending, titleColumn, type ContentTable } from "@/lib/approvals";
-import { useCurrentUser } from "@/hooks/use-auth";
+import { CONTENT_TABLES, listPending, titleColumn, type ContentTable } from "@/lib/approvals";
+import { approveContent, rejectContent } from "@/lib/admin.functions";
 import { toast } from "sonner";
 import { Check, X, Loader2 } from "lucide-react";
 
@@ -32,10 +33,11 @@ function AprovacoesPage() {
 }
 
 function ApprovalList({ table }: { table: ContentTable }) {
-  const { user } = useCurrentUser();
   const qc = useQueryClient();
   const [rejecting, setRejecting] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const approveFn = useServerFn(approveContent);
+  const rejectFn = useServerFn(rejectContent);
 
   const { data, isLoading } = useQuery({
     queryKey: ["pending", table],
@@ -43,7 +45,7 @@ function ApprovalList({ table }: { table: ContentTable }) {
   });
 
   const approveMut = useMutation({
-    mutationFn: (id: string) => approve(table, id, user!.id),
+    mutationFn: (id: string) => approveFn({ data: { table, id } }),
     onSuccess: () => {
       toast.success("Aprovado");
       qc.invalidateQueries({ queryKey: ["pending", table] });
@@ -53,7 +55,8 @@ function ApprovalList({ table }: { table: ContentTable }) {
   });
 
   const rejectMut = useMutation({
-    mutationFn: () => reject(table, rejecting!, user!.id, reason.trim() || "Sem motivo informado"),
+    mutationFn: () =>
+      rejectFn({ data: { table, id: rejecting!, reason: reason.trim() || "Sem motivo informado" } }),
     onSuccess: () => {
       toast.success("Rejeitado");
       setRejecting(null);

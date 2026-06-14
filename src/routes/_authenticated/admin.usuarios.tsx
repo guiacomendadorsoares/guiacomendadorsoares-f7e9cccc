@@ -1,11 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { toast } from "sonner";
 import type { AppRole } from "@/hooks/use-auth";
+import { grantRole, revokeRole } from "@/lib/admin.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/usuarios")({
   component: UsuariosPage,
@@ -15,6 +17,9 @@ const ROLES: AppRole[] = ["admin", "editor", "partner", "broker", "influencer", 
 
 function UsuariosPage() {
   const qc = useQueryClient();
+  const grantFn = useServerFn(grantRole);
+  const revokeFn = useServerFn(revokeRole);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
@@ -32,10 +37,8 @@ function UsuariosPage() {
   });
 
   const addRole = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: AppRole }) => {
-      const { error } = await supabase.from("user_roles").insert({ user_id: userId, role });
-      if (error) throw error;
-    },
+    mutationFn: ({ userId, role }: { userId: string; role: AppRole }) =>
+      grantFn({ data: { userId, role } }),
     onSuccess: () => {
       toast.success("Perfil adicionado");
       qc.invalidateQueries({ queryKey: ["admin-users"] });
@@ -44,10 +47,8 @@ function UsuariosPage() {
   });
 
   const removeRole = useMutation({
-    mutationFn: async ({ userId, role }: { userId: string; role: AppRole }) => {
-      const { error } = await supabase.from("user_roles").delete().eq("user_id", userId).eq("role", role);
-      if (error) throw error;
-    },
+    mutationFn: ({ userId, role }: { userId: string; role: AppRole }) =>
+      revokeFn({ data: { userId, role } }),
     onSuccess: () => {
       toast.success("Perfil removido");
       qc.invalidateQueries({ queryKey: ["admin-users"] });

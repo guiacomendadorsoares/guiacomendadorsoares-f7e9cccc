@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as NoticiasRouteImport } from './routes/noticias'
@@ -49,6 +50,11 @@ const VagasRoute = VagasRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PerfilRoute = PerfilRouteImport.update({
@@ -220,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -285,6 +293,7 @@ export interface FileRoutesById {
   '/noticias': typeof NoticiasRoute
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -319,6 +328,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
     | '/admin'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
     | '/minha-conta'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/noticias'
     | '/onde-comer'
     | '/perfil'
+    | '/reset-password'
     | '/sitemap.xml'
     | '/vagas'
     | '/_authenticated/admin'
@@ -417,6 +429,7 @@ export interface RootRouteChildren {
   NoticiasRoute: typeof NoticiasRoute
   OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
@@ -436,6 +449,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/perfil': {
@@ -712,6 +732,7 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasRoute: NoticiasRoute,
   OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
