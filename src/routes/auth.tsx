@@ -98,17 +98,17 @@ function AuthPage() {
     }
     setLoading(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(parsed.data, {
+      await supabase.auth.resetPasswordForEmail(parsed.data, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
-      if (error) throw error;
-      toast.success("Enviamos um link de redefinição para seu e-mail.");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Não foi possível enviar o e-mail.");
+    } catch {
+      // intentionally swallow to prevent user enumeration
     } finally {
       setLoading(false);
+      toast.success("Se este e-mail estiver cadastrado, enviaremos as instruções em instantes.");
     }
   }
+
 
   return (
     <div className="min-h-dvh grid place-items-center bg-gradient-to-br from-background via-background to-secondary px-4 py-10">
