@@ -58,12 +58,13 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
         else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
       }
+      const client = supabase.from(table) as any;
       if (values.id) {
-        const { error } = await supabase.from(table).update(payload).eq("id", values.id);
+        const { error } = await client.update(payload).eq("id", values.id);
         if (error) throw error;
       } else {
         const { data: u } = await supabase.auth.getUser();
-        const { error } = await supabase.from(table).insert({ ...payload, submitted_by: ownerOnly ?? u.user?.id ?? null });
+        const { error } = await client.insert({ ...payload, submitted_by: ownerOnly ?? u.user?.id ?? null });
         if (error) throw error;
       }
     },
