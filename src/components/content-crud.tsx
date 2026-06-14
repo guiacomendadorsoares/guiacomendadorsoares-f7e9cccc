@@ -53,10 +53,12 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
       const payload: Record<string, any> = { ...schema.defaults, ...values };
       delete payload.id;
       if (forcePending) payload.status = "pending";
-      // Coerce empty strings to null and numbers
+      // Coerce empty strings to null and numbers; pass arrays through
       for (const f of schema.fields) {
         const v = payload[f.key];
-        if (v === "" || v === undefined) payload[f.key] = null;
+        if (f.type === "gallery") payload[f.key] = Array.isArray(v) ? v : [];
+        else if (f.type === "image") payload[f.key] = v || null;
+        else if (v === "" || v === undefined) payload[f.key] = null;
         else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
       }
