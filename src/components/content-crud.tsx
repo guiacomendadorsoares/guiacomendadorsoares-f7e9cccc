@@ -206,17 +206,30 @@ function CrudFormDialog({
     onSubmit(values);
   }
 
+  const { plan } = useCurrentPlan();
+  const businessFeatures = (plan?.features as any)?.business ?? {};
+  const [lockedFeature, setLockedFeature] = useState<string | null>(null);
+
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-lg">
         <DialogHeader><DialogTitle>{title}</DialogTitle></DialogHeader>
         <form onSubmit={handleSubmit} id="crud-form" className="space-y-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {fields.map((f) => (
-              <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
-                <FieldRender field={f} value={values[f.key]} onChange={(v) => setValues({ ...values, [f.key]: v })} />
-              </div>
-            ))}
+            {fields.map((f) => {
+              const locked = !!f.premium && !businessFeatures[f.premium];
+              return (
+                <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
+                  <FieldRender
+                    field={f}
+                    value={values[f.key]}
+                    onChange={(v) => setValues({ ...values, [f.key]: v })}
+                    locked={locked}
+                    onLockedClick={() => setLockedFeature(f.label.replace(" *", ""))}
+                  />
+                </div>
+              );
+            })}
           </div>
         </form>
         <DialogFooter>
@@ -225,13 +238,34 @@ function CrudFormDialog({
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : "Salvar"}
           </Button>
         </DialogFooter>
+        <PremiumModal open={!!lockedFeature} onOpenChange={(o) => !o && setLockedFeature(null)} feature={lockedFeature ?? undefined} />
       </DialogContent>
     </Dialog>
   );
 }
 
-function FieldRender({ field, value, onChange }: { field: FieldDef; value: any; onChange: (v: any) => void }) {
-  const label = <Label className="text-xs font-semibold text-muted-foreground">{field.label}</Label>;
+function FieldRender({
+  field, value, onChange, locked, onLockedClick,
+}: {
+  field: FieldDef; value: any; onChange: (v: any) => void;
+  locked?: boolean; onLockedClick?: () => void;
+}) {
+  const label = (
+    <Label className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground">
+      {field.label}
+      {locked && <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-primary"><Lock className="h-2.5 w-2.5" /> Premium</span>}
+    </Label>
+  );
+  if (locked) {
+    return (
+      <button type="button" onClick={onLockedClick} className="w-full space-y-1.5 text-left">
+        {label}
+        <div className="flex h-10 items-center gap-2 rounded-md border border-dashed border-border bg-muted/40 px-3 text-xs text-muted-foreground">
+          <Lock className="h-3.5 w-3.5" /> Disponível em planos pagos
+        </div>
+      </button>
+    );
+  }
   if (field.type === "boolean") {
     return (
       <div className="flex items-center justify-between rounded-md border border-input bg-transparent px-3 py-2">
