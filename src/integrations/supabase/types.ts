@@ -35,12 +35,14 @@ export type Database = {
           latitude: number | null
           logo_url: string | null
           longitude: number | null
+          main_category: string | null
           name: string
           owner_id: string | null
           phone: string | null
           rejection_reason: string | null
           slug: string | null
           status: Database["public"]["Enums"]["content_status"]
+          subcategory: string | null
           submitted_by: string | null
           updated_at: string
           verified: boolean
@@ -66,12 +68,14 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          main_category?: string | null
           name: string
           owner_id?: string | null
           phone?: string | null
           rejection_reason?: string | null
           slug?: string | null
           status?: Database["public"]["Enums"]["content_status"]
+          subcategory?: string | null
           submitted_by?: string | null
           updated_at?: string
           verified?: boolean
@@ -97,12 +101,14 @@ export type Database = {
           latitude?: number | null
           logo_url?: string | null
           longitude?: number | null
+          main_category?: string | null
           name?: string
           owner_id?: string | null
           phone?: string | null
           rejection_reason?: string | null
           slug?: string | null
           status?: Database["public"]["Enums"]["content_status"]
+          subcategory?: string | null
           submitted_by?: string | null
           updated_at?: string
           verified?: boolean
