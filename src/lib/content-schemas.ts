@@ -27,6 +27,8 @@ export interface FieldDef {
   /** location only — db columns for lat/lng */
   latKey?: string;
   lngKey?: string;
+  /** subcategory only — sibling field whose value selects which subcat list to show */
+  dependsOn?: string;
 }
 
 export interface TableSchema {
