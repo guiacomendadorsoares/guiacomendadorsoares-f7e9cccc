@@ -62,7 +62,7 @@ function AdminHome() {
             return (
               <Link
                 key={t}
-                to={`/admin/${moduleRoute(t)}` as string}
+                to={moduleRoute(t)}
                 className="group rounded-2xl border border-border bg-card p-5 shadow-card transition hover:border-primary hover:shadow-elegant"
               >
                 <div className="flex items-center gap-3">
