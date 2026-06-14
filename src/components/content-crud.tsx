@@ -63,7 +63,13 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
         if (f.type === "gallery") payload[f.key] = Array.isArray(v) ? v : [];
         else if (f.type === "image") payload[f.key] = v || null;
         else if (v === "" || v === undefined) payload[f.key] = null;
-        else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
+        else if (f.type === "number" && v !== null) {
+          const s = String(v).trim();
+          // Brazilian format: thousands "." and decimal ",". Strip "." then replace "," with ".".
+          const normalized = s.includes(",") ? s.replace(/\./g, "").replace(",", ".") : s;
+          const n = Number(normalized);
+          payload[f.key] = Number.isFinite(n) ? n : null;
+        }
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
       }
       // Compat: a tabela `businesses` ainda exige category/category_label NOT NULL.
