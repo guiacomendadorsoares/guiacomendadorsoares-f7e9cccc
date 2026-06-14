@@ -17,11 +17,15 @@ function PainelEmpresa() {
     <DashboardShell role="partner" title="Painel da Empresa" subtitle="Gerencie sua presença no Guia">
       <div className="space-y-6">
         <MyPlanCard kind="business" />
-        <Tabs defaultValue="vagas">
+        <Tabs defaultValue="empresa">
         <TabsList>
+          <TabsTrigger value="empresa">Empresa</TabsTrigger>
           <TabsTrigger value="vagas">Vagas</TabsTrigger>
           <TabsTrigger value="eventos">Eventos</TabsTrigger>
         </TabsList>
+        <TabsContent value="empresa" className="mt-4">
+          <ContentCrud table="businesses" ownerOnly={user.id} forcePending />
+        </TabsContent>
         <TabsContent value="vagas" className="mt-4">
           <ContentCrud table="jobs" ownerOnly={user.id} forcePending />
         </TabsContent>
