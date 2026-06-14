@@ -248,7 +248,7 @@ function CrudFormDialog({
                       lat={lat != null && lat !== "" ? Number(lat) : null}
                       lng={lng != null && lng !== "" ? Number(lng) : null}
                       address={addr}
-                      onChange={(c) => setValues({
+                      onChange={(c: { lat: number; lng: number } | null) => setValues({
                         ...values,
                         [f.latKey ?? "latitude"]: c?.lat ?? null,
                         [f.lngKey ?? "longitude"]: c?.lng ?? null,
