@@ -19,6 +19,7 @@ import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as GuiaRouteImport } from './routes/guia'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AnuncieRouteImport } from './routes/anuncie'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
@@ -92,6 +93,11 @@ const GuiaRoute = GuiaRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnuncieRoute = AnuncieRouteImport.update({
+  id: '/anuncie',
+  path: '/anuncie',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -233,6 +239,7 @@ const AuthenticatedAdminAprovacoesRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
@@ -268,6 +275,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
@@ -304,6 +312,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
@@ -341,6 +350,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/anuncie'
     | '/auth'
     | '/guia'
     | '/imoveis'
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/anuncie'
     | '/auth'
     | '/guia'
     | '/imoveis'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/anuncie'
     | '/auth'
     | '/guia'
     | '/imoveis'
@@ -448,6 +460,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
   GuiaRoute: typeof GuiaRoute
   ImoveisRoute: typeof ImoveisRoute
@@ -531,6 +544,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/anuncie': {
+      id: '/anuncie'
+      path: '/anuncie'
+      fullPath: '/anuncie'
+      preLoaderRoute: typeof AnuncieRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -768,6 +788,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
   GuiaRoute: GuiaRoute,
   ImoveisRoute: ImoveisRoute,
