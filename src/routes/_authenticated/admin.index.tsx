@@ -54,6 +54,27 @@ function AdminHome() {
       </div>
 
       <section>
+        <h2 className="mb-3 font-display text-lg font-bold">Cadastro rápido</h2>
+        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {TABLES.map((t) => {
+            const Icon = ICONS[t];
+            return (
+              <Link
+                key={`new-${t}`}
+                to={moduleRoute(t)}
+                className="flex items-center gap-3 rounded-xl border border-border bg-card p-3 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant"
+              >
+                <span className="grid h-9 w-9 place-items-center rounded-lg gradient-brand text-primary-foreground">
+                  <Icon className="h-4 w-4" />
+                </span>
+                <span className="text-sm font-semibold">Cadastrar {LABELS[t].replace(/s$/, "").toLowerCase()}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <section>
         <h2 className="mb-3 font-display text-lg font-bold">Conteúdo por módulo</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {TABLES.map((t) => {
@@ -81,6 +102,7 @@ function AdminHome() {
           })}
         </div>
       </section>
+
     </div>
   );
 }

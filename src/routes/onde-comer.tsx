@@ -78,8 +78,8 @@ function OndeComerPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={<UtensilsCrossed className="h-5 w-5" />}
-          title="Nada por aqui"
-          description="Tente outra categoria ou termo de busca."
+          title={sampleRestaurants.length === 0 ? "Nenhum restaurante cadastrado ainda." : "Nada por aqui"}
+          description={sampleRestaurants.length === 0 ? "Em breve os estabelecimentos do bairro estarão aqui." : "Tente outra categoria ou termo de busca."}
         />
       ) : (
         <div className="flex flex-col gap-4">

@@ -1,27 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
 import { InstallPrompt } from "@/components/install-prompt";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
-import { GlassCard, HScroll, SectionHeader } from "@/components/cards";
+import { SectionHeader } from "@/components/cards";
+import { EmptyState } from "@/components/ui-bits";
 import {
-  Search,
   Bell,
-  Star,
   MapPin,
+  Search,
   Briefcase,
   Home as HomeIcon,
-  Bed,
-  Bath,
   Calendar,
   Newspaper,
   Lightbulb,
+  Building2,
+  UtensilsCrossed,
 } from "lucide-react";
-import food1 from "@/assets/food-1.jpg";
-import food2 from "@/assets/food-2.jpg";
-import event1 from "@/assets/event-1.jpg";
-import news1 from "@/assets/news-1.jpg";
 import logoUrl from "@/assets/logo.png";
+
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -99,263 +99,119 @@ function TopBar() {
   );
 }
 
-/* ---------- Featured companies ---------- */
+/* ---------- Section helpers ---------- */
 
-type Company = { name: string; cat: string; rating: number; tag?: string };
-const companies: Company[] = [
-  { name: "Padaria do Sô", cat: "Padaria · Café", rating: 4.9, tag: "Top do bairro" },
-  { name: "Auto Center JR", cat: "Mecânica", rating: 4.8 },
-  { name: "Studio Bella", cat: "Beleza", rating: 4.9, tag: "Novo" },
-];
+function useApprovedCount(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities") {
+  return useQuery({
+    queryKey: ["home-count", table],
+    queryFn: async () => {
+      const { count } = await supabase
+        .from(table)
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved");
+      return count ?? 0;
+    },
+  });
+}
 
 function FeaturedCompanies() {
+  const { data: count } = useApprovedCount("businesses");
   return (
     <section className="mb-7">
       <SectionHeader title="Empresas em destaque" subtitle="Os queridinhos do bairro" to="/guia" />
-      <HScroll>
-        {companies.map((c) => (
-          <GlassCard interactive key={c.name} className="w-[220px] shrink-0 overflow-hidden">
-            <div
-              className="relative h-24 w-full"
-              style={{
-                background:
-                  "linear-gradient(135deg, var(--primary) 0%, var(--primary-vibrant) 100%)",
-              }}
-            >
-              {c.tag && (
-                <span className="absolute left-3 top-3 rounded-full bg-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-foreground shadow-gold">
-                  {c.tag}
-                </span>
-              )}
-              <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-full bg-black/35 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur">
-                <Star className="h-3 w-3 fill-gold text-gold" /> {c.rating}
-              </span>
-            </div>
-            <div className="p-3">
-              <p className="font-display text-sm font-bold text-foreground">{c.name}</p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">{c.cat}</p>
-            </div>
-          </GlassCard>
-        ))}
-      </HScroll>
+      {!count ? (
+        <EmptyState icon={<Building2 className="h-5 w-5" />} title="Nenhuma empresa cadastrada ainda." description="Em breve, as empresas do bairro estarão por aqui." />
+      ) : (
+        <Link to="/guia" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
+          Ver {count} empresa{count === 1 ? "" : "s"} no guia →
+        </Link>
+      )}
     </section>
   );
 }
 
-/* ---------- Latest jobs ---------- */
-
-type Job = { title: string; company: string; type: string; salary: string };
-const jobs: Job[] = [
-  { title: "Atendente de loja", company: "Mercadinho Bom Preço", type: "CLT", salary: "R$ 1.600" },
-  { title: "Auxiliar administrativo", company: "Imobiliária CS", type: "CLT", salary: "R$ 1.800" },
-  { title: "Garçom", company: "Cantina da Esquina", type: "CLT", salary: "R$ 1.500 + gorjetas" },
-];
-
 function LatestJobs() {
+  const { data: count } = useApprovedCount("jobs");
   return (
     <section className="mb-7">
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
-      <div className="space-y-2.5">
-        {jobs.map((j) => (
-          <GlassCard interactive key={j.title} className="p-3.5">
-            <div className="flex items-center gap-3">
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl gradient-brand text-primary-foreground shadow-elegant">
-                <Briefcase className="h-5 w-5" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-display text-sm font-bold text-foreground">
-                  {j.title}
-                </p>
-                <p className="truncate text-[11px] text-muted-foreground">{j.company}</p>
-              </div>
-              <div className="shrink-0 text-right">
-                <p className="text-[11px] font-semibold text-primary-vibrant">{j.salary}</p>
-                <span className="mt-0.5 inline-block rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold text-primary">
-                  {j.type}
-                </span>
-              </div>
-            </div>
-          </GlassCard>
-        ))}
-      </div>
+      {!count ? (
+        <EmptyState icon={<Briefcase className="h-5 w-5" />} title="Nenhuma vaga publicada." description="As empresas parceiras ainda não publicaram oportunidades." />
+      ) : (
+        <Link to="/vagas" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
+          Ver {count} vaga{count === 1 ? "" : "s"} →
+        </Link>
+      )}
     </section>
   );
 }
 
-/* ---------- Recent properties ---------- */
-
-type Property = { title: string; price: string; rooms: number; baths: number; area: string };
-const props: Property[] = [
-  { title: "Apto 2 quartos — Centro", price: "R$ 1.200/mês", rooms: 2, baths: 1, area: "55m²" },
-  { title: "Casa com quintal", price: "R$ 1.800/mês", rooms: 3, baths: 2, area: "90m²" },
-];
-
 function RecentProperties() {
+  const { data: count } = useApprovedCount("properties");
   return (
     <section className="mb-7">
       <SectionHeader title="Imóveis recentes" subtitle="Alugar e comprar" to="/imoveis" />
-      <HScroll>
-        {props.map((p) => (
-          <GlassCard interactive key={p.title} className="w-[260px] shrink-0 overflow-hidden">
-            <div
-              className="grid h-28 place-items-center"
-              style={{ background: "linear-gradient(135deg, #1f3a2e, #4a8a6b)" }}
-            >
-              <HomeIcon className="h-10 w-10 text-white/80" />
-            </div>
-            <div className="p-3">
-              <p className="font-display text-sm font-bold text-foreground">{p.title}</p>
-              <p className="mt-0.5 text-[13px] font-bold text-primary-vibrant">{p.price}</p>
-              <div className="mt-2 flex items-center gap-3 text-[11px] text-muted-foreground">
-                <span className="inline-flex items-center gap-1">
-                  <Bed className="h-3.5 w-3.5" /> {p.rooms}
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <Bath className="h-3.5 w-3.5" /> {p.baths}
-                </span>
-                <span>{p.area}</span>
-              </div>
-            </div>
-          </GlassCard>
-        ))}
-      </HScroll>
+      {!count ? (
+        <EmptyState icon={<HomeIcon className="h-5 w-5" />} title="Nenhum imóvel disponível." description="Em breve novos imóveis pelos corretores parceiros." />
+      ) : (
+        <Link to="/imoveis" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
+          Ver {count} imóve{count === 1 ? "l" : "is"} →
+        </Link>
+      )}
     </section>
   );
 }
 
-/* ---------- Upcoming events ---------- */
-
 function UpcomingEvents() {
-  const events = [
-    { date: "Sáb 14", title: "Feirinha da Praça", place: "Praça Central", img: event1 },
-    { date: "Dom 22", title: "Roda de samba do bairro", place: "Bar do Léo", img: event1 },
-  ];
+  const { data: count } = useApprovedCount("events");
   return (
     <section className="mb-7">
       <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
-      <div className="space-y-3">
-        {events.map((e) => (
-          <GlassCard interactive key={e.title} className="flex gap-3 overflow-hidden p-2">
-            <img
-              src={e.img}
-              alt=""
-              loading="lazy"
-              className="h-20 w-20 shrink-0 rounded-xl object-cover"
-            />
-            <div className="flex min-w-0 flex-1 flex-col justify-center pr-2">
-              <span className="inline-flex w-fit items-center gap-1 rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-bold text-gold-foreground">
-                <Calendar className="h-3 w-3" /> {e.date}
-              </span>
-              <p className="mt-1 truncate font-display text-sm font-bold text-foreground">
-                {e.title}
-              </p>
-              <p className="truncate text-[11px] text-muted-foreground">{e.place}</p>
-            </div>
-          </GlassCard>
-        ))}
-      </div>
+      {!count ? (
+        <EmptyState icon={<Calendar className="h-5 w-5" />} title="Nenhum evento cadastrado." description="Eventos do bairro aparecerão aqui assim que forem publicados." />
+      ) : (
+        <p className="rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">{count} evento{count === 1 ? "" : "s"} agendado{count === 1 ? "" : "s"}</p>
+      )}
     </section>
   );
 }
-
-/* ---------- Neighborhood news ---------- */
 
 function NeighborhoodNews() {
-  const items = [
-    {
-      tag: "Comunidade",
-      title: "Mutirão de limpeza reúne moradores na praça",
-      img: news1,
-    },
-    {
-      tag: "Comércio",
-      title: "Nova feira de produtores começa neste sábado",
-      img: news1,
-    },
-  ];
+  const { data: count } = useApprovedCount("news");
   return (
     <section className="mb-7">
-      <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" />
-      <div className="space-y-3">
-        {items.map((n) => (
-          <GlassCard interactive key={n.title} className="overflow-hidden">
-            <div className="relative h-32 w-full">
-              <img
-                src={n.img}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-              <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-primary">
-                <Newspaper className="h-3 w-3" /> {n.tag}
-              </span>
-              <p className="absolute inset-x-3 bottom-2 font-display text-sm font-bold text-white drop-shadow">
-                {n.title}
-              </p>
-            </div>
-          </GlassCard>
-        ))}
-      </div>
+      <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" to="/noticias" />
+      {!count ? (
+        <EmptyState icon={<Newspaper className="h-5 w-5" />} title="Nenhuma notícia disponível." description="A redação está preparando os próximos conteúdos." />
+      ) : (
+        <Link to="/noticias" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
+          Ver {count} notícia{count === 1 ? "" : "s"} →
+        </Link>
+      )}
     </section>
   );
 }
-
-/* ---------- Where to eat ---------- */
 
 function WhereToEat() {
-  const places = [
-    { name: "Cantina da Esquina", tag: "Italiana", rating: 4.8, img: food2 },
-    { name: "Sabor da Roça", tag: "Caseira", rating: 4.9, img: food1 },
-  ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/guia" />
-      <HScroll>
-        {places.map((p) => (
-          <GlassCard interactive key={p.name} className="w-[220px] shrink-0 overflow-hidden">
-            <div className="relative h-32">
-              <img
-                src={p.img}
-                alt=""
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/45 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur">
-                <Star className="h-3 w-3 fill-gold text-gold" /> {p.rating}
-              </span>
-            </div>
-            <div className="p-3">
-              <p className="font-display text-sm font-bold text-foreground">{p.name}</p>
-              <p className="mt-0.5 text-[11px] text-muted-foreground">{p.tag}</p>
-            </div>
-          </GlassCard>
-        ))}
-      </HScroll>
+      <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/onde-comer" />
+      <EmptyState icon={<UtensilsCrossed className="h-5 w-5" />} title="Nenhum restaurante cadastrado ainda." description="Em breve os estabelecimentos do bairro estarão aqui." />
     </section>
   );
 }
 
-/* ---------- Curiosities ---------- */
-
 function Curiosities() {
-  const facts = [
-    "Comendador Soares é um dos bairros mais movimentados de Nova Iguaçu.",
-    "A estação ferroviária local é um ponto histórico desde o início do século XX.",
-  ];
+  const { data: count } = useApprovedCount("curiosities");
   return (
     <section className="mb-2">
       <SectionHeader title="Curiosidades" subtitle="Você sabia?" />
-      <div className="space-y-2.5">
-        {facts.map((f, i) => (
-          <GlassCard key={i} className="flex items-start gap-3 p-3.5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl gradient-gold text-gold-foreground shadow-gold">
-              <Lightbulb className="h-4 w-4" />
-            </span>
-            <p className="pt-1 text-sm leading-snug text-foreground">{f}</p>
-          </GlassCard>
-        ))}
-      </div>
+      {!count ? (
+        <EmptyState icon={<Lightbulb className="h-5 w-5" />} title="Nenhuma curiosidade cadastrada ainda." description="Histórias e fatos do bairro aparecerão aqui em breve." />
+      ) : (
+        <p className="rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">{count} curiosidade{count === 1 ? "" : "s"} disponíve{count === 1 ? "l" : "is"}</p>
+      )}
     </section>
   );
 }
+
