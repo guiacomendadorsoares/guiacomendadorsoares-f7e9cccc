@@ -3,7 +3,7 @@ import type { BusinessFeatures } from "@/lib/plans";
 
 export type FieldType =
   | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
-  | "image" | "gallery";
+  | "image" | "gallery" | "location";
 
 export interface FieldDef {
   key: string;
