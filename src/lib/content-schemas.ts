@@ -1,4 +1,5 @@
 import type { ContentTable } from "@/lib/approvals";
+import type { BusinessFeatures } from "@/lib/plans";
 
 export type FieldType = "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url";
 
@@ -11,6 +12,8 @@ export interface FieldDef {
   max?: number;
   placeholder?: string;
   half?: boolean; // render in 2-col grid
+  /** when set, field is gated behind this business plan feature */
+  premium?: keyof BusinessFeatures;
 }
 
 export interface TableSchema {
@@ -25,8 +28,21 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
   businesses: {
     label: "Empresa",
     titleKey: "name",
-    fields: [],
-    defaults: {},
+    subtitleKey: "address",
+    defaults: { status: "approved" },
+    fields: [
+      { key: "name", label: "Nome *", type: "text", required: true, max: 120 },
+      { key: "category", label: "Categoria *", type: "text", required: true, max: 60, half: true },
+      { key: "address", label: "Endereço *", type: "text", required: true, max: 255, half: true },
+      { key: "description", label: "Descrição", type: "textarea", max: 2000 },
+      { key: "phone", label: "Telefone", type: "text", max: 40, half: true },
+      { key: "email", label: "E-mail", type: "text", max: 255, half: true },
+      { key: "logo_url", label: "URL do logo", type: "url", max: 500 },
+      { key: "whatsapp", label: "WhatsApp", type: "text", max: 40, half: true, premium: "whatsapp" },
+      { key: "instagram", label: "Instagram", type: "text", max: 120, half: true, premium: "social" },
+      { key: "banner_url", label: "URL do banner", type: "url", max: 500, premium: "banner" },
+      { key: "gallery_urls", label: "Galeria (URLs separadas por vírgula)", type: "textarea", max: 4000, premium: "gallery" },
+    ],
   },
   jobs: {
     label: "Vaga",
