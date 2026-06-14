@@ -101,7 +101,12 @@ function AuthPage() {
         });
         if (error) throw error;
         if (profile !== "user") {
-          try { await requestSelfRole({ data: { role: profile } }); } catch { /* ignore */ }
+          try {
+            await requestSelfRole({ data: { role: profile } });
+          } catch (e) {
+            console.error("requestSelfRole failed", e);
+            toast.error("Não foi possível ativar este perfil. Verifique sua conta.");
+          }
         }
         toast.success("Bem-vindo!");
         const to = await redirectForUser(signIn.user!.id, selected.redirect);
