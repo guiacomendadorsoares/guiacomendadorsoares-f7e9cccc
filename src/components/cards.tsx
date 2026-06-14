@@ -5,13 +5,17 @@ import { Link } from "@tanstack/react-router";
 export function GlassCard({
   children,
   className = "",
+  interactive = false,
 }: {
   children: ReactNode;
   className?: string;
+  interactive?: boolean;
 }) {
   return (
     <div
-      className={`rounded-2xl border border-white/40 bg-white/70 shadow-card backdrop-blur-md dark:border-white/10 dark:bg-white/[0.04] ${className}`}
+      className={`rounded-2xl border border-white/40 bg-white/70 shadow-card backdrop-blur-md transition-all duration-200 dark:border-white/10 dark:bg-white/[0.04] ${
+        interactive ? "hover:-translate-y-0.5 hover:shadow-elegant hover:border-primary/30 cursor-pointer" : ""
+      } ${className}`}
     >
       {children}
     </div>
