@@ -1,27 +1,25 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
 import { InstallPrompt } from "@/components/install-prompt";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
-import { GlassCard, HScroll, SectionHeader } from "@/components/cards";
+import { SectionHeader } from "@/components/cards";
+import { EmptyState } from "@/components/ui-bits";
 import {
-  Search,
   Bell,
-  Star,
   MapPin,
   Briefcase,
   Home as HomeIcon,
-  Bed,
-  Bath,
   Calendar,
   Newspaper,
   Lightbulb,
+  Building2,
+  UtensilsCrossed,
 } from "lucide-react";
-import food1 from "@/assets/food-1.jpg";
-import food2 from "@/assets/food-2.jpg";
-import event1 from "@/assets/event-1.jpg";
-import news1 from "@/assets/news-1.jpg";
 import logoUrl from "@/assets/logo.png";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
