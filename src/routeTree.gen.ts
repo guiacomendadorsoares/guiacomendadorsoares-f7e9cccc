@@ -16,8 +16,11 @@ import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as GuiaRouteImport } from './routes/guia'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
+import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authenticated/minha-conta'
 
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
@@ -54,6 +57,15 @@ const GuiaRoute = GuiaRouteImport.update({
   path: '/guia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -64,9 +76,15 @@ const EmpresaIdRoute = EmpresaIdRouteImport.update({
   path: '/empresa/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMinhaContaRoute = AuthenticatedMinhaContaRouteImport.update({
+  id: '/minha-conta',
+  path: '/minha-conta',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
@@ -74,10 +92,12 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
@@ -85,11 +105,14 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
   '/guia': typeof GuiaRoute
   '/imoveis': typeof ImoveisRoute
   '/noticias': typeof NoticiasRoute
@@ -97,12 +120,14 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vagas': typeof VagasRoute
+  '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/empresa/$id': typeof EmpresaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/auth'
     | '/guia'
     | '/imoveis'
     | '/noticias'
@@ -110,10 +135,12 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/sitemap.xml'
     | '/vagas'
+    | '/minha-conta'
     | '/empresa/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/auth'
     | '/guia'
     | '/imoveis'
     | '/noticias'
@@ -121,10 +148,13 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/sitemap.xml'
     | '/vagas'
+    | '/minha-conta'
     | '/empresa/$id'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
+    | '/auth'
     | '/guia'
     | '/imoveis'
     | '/noticias'
@@ -132,11 +162,14 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/sitemap.xml'
     | '/vagas'
+    | '/_authenticated/minha-conta'
     | '/empresa/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
   GuiaRoute: typeof GuiaRoute
   ImoveisRoute: typeof ImoveisRoute
   NoticiasRoute: typeof NoticiasRoute
@@ -198,6 +231,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuiaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -212,11 +259,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EmpresaIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/minha-conta': {
+      id: '/_authenticated/minha-conta'
+      path: '/minha-conta'
+      fullPath: '/minha-conta'
+      preLoaderRoute: typeof AuthenticatedMinhaContaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedMinhaContaRoute: typeof AuthenticatedMinhaContaRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedMinhaContaRoute: AuthenticatedMinhaContaRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
   GuiaRoute: GuiaRoute,
   ImoveisRoute: ImoveisRoute,
   NoticiasRoute: NoticiasRoute,

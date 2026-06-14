@@ -1,6 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/components/app-shell";
 import { User, LogIn, Settings, HelpCircle, ChevronRight } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-auth";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/perfil")({
   head: () => ({
@@ -18,6 +20,13 @@ const items = [
 ];
 
 function PerfilPage() {
+  const { user, loading } = useCurrentUser();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/minha-conta", replace: true });
+  }, [loading, user, navigate]);
+
   return (
     <AppShell title="Perfil">
       <div className="mb-6 rounded-2xl border border-border gradient-brand p-5 text-primary-foreground shadow-elegant">
@@ -30,10 +39,13 @@ function PerfilPage() {
             <p className="text-xs opacity-85">Entre para anunciar e favoritar.</p>
           </div>
         </div>
-        <button className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-bold text-gold-foreground shadow-gold">
+        <Link
+          to="/auth"
+          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-4 py-2.5 text-sm font-bold text-gold-foreground shadow-gold"
+        >
           <LogIn className="h-4 w-4" />
           Entrar ou criar conta
-        </button>
+        </Link>
       </div>
 
       <ul className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
