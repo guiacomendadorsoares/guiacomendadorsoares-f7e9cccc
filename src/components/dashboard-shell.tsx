@@ -8,6 +8,7 @@ import { useCurrentUser, useUserRoles, type AppRole } from "@/hooks/use-auth";
 import { navForRole, type NavSection } from "@/lib/dashboard-nav";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import logoUrl from "@/assets/logo.png";
 
 function useDark() {
   const [dark, setDark] = useState(() =>
