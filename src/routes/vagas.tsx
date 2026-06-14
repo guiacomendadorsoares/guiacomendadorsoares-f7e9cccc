@@ -94,8 +94,8 @@ function VagasPage() {
       {filtered.length === 0 ? (
         <EmptyState
           icon={<Briefcase className="h-5 w-5" />}
-          title="Nenhuma vaga encontrada"
-          description="Tente ajustar os filtros ou a busca para encontrar oportunidades."
+          title={sampleJobs.length === 0 ? "Nenhuma vaga publicada." : "Nenhuma vaga encontrada"}
+          description={sampleJobs.length === 0 ? "As empresas parceiras ainda não publicaram oportunidades. Volte em breve." : "Tente ajustar os filtros ou a busca para encontrar oportunidades."}
         />
       ) : (
         <div className="space-y-3 pb-2">
