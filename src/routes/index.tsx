@@ -21,6 +21,7 @@ import food1 from "@/assets/food-1.jpg";
 import food2 from "@/assets/food-2.jpg";
 import event1 from "@/assets/event-1.jpg";
 import news1 from "@/assets/news-1.jpg";
+import logoUrl from "@/assets/logo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
