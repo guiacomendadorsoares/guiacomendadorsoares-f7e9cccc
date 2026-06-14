@@ -1,9 +1,10 @@
 import type { ContentTable } from "@/lib/approvals";
 import type { BusinessFeatures } from "@/lib/plans";
+import { CATEGORY_OPTIONS } from "@/lib/guia-taxonomy";
 
 export type FieldType =
   | "text" | "textarea" | "select" | "number" | "boolean" | "datetime" | "url"
-  | "image" | "gallery" | "location";
+  | "image" | "gallery" | "location" | "subcategory";
 
 export interface FieldDef {
   key: string;
@@ -27,6 +28,8 @@ export interface FieldDef {
   /** location only — db columns for lat/lng */
   latKey?: string;
   lngKey?: string;
+  /** subcategory only — sibling field whose value selects which subcat list to show */
+  dependsOn?: string;
 }
 
 export interface TableSchema {
@@ -45,7 +48,10 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
     defaults: { status: "approved" },
     fields: [
       { key: "name", label: "Nome *", type: "text", required: true, max: 120 },
-      { key: "category", label: "Categoria *", type: "text", required: true, max: 60, half: true },
+      { key: "main_category", label: "Categoria *", type: "select", required: true, half: true,
+        options: CATEGORY_OPTIONS,
+      },
+      { key: "subcategory", label: "Subcategoria *", type: "subcategory", required: true, half: true, dependsOn: "main_category" },
       { key: "address", label: "Endereço *", type: "text", required: true, max: 255, half: true },
       { key: "description", label: "Descrição", type: "textarea", max: 2000 },
       { key: "phone", label: "Telefone", type: "text", max: 40, half: true },

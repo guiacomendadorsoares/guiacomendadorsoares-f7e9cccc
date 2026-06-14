@@ -18,16 +18,21 @@ export type Business = {
   category: Exclude<BusinessCategory, "all">;
   categoryLabel: string;
   address: string;
-  whatsapp: string; // E.164 digits, no symbols
+  whatsapp: string;
   rating: number;
   reviews: number;
-  /** Two-letter initials shown in the logo placeholder */
   initials: string;
-  /** Gradient used for the logo tile */
   from: string;
   to: string;
   verified?: boolean;
   distanceKm?: number;
+  // Campos da taxonomia escalável (Supabase)
+  main_category?: string | null;
+  subcategory?: string | null;
+  logo_url?: string | null;
+  banner_url?: string | null;
+  description?: string | null;
+  featured?: boolean | null;
 };
 
 export const SAMPLE_BUSINESSES: Business[] = [

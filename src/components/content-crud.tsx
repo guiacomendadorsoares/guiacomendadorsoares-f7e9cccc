@@ -21,6 +21,7 @@ import { useCurrentPlan } from "@/lib/plans";
 import { PremiumModal } from "@/components/premium-modal";
 import { SingleImageUploader, GalleryUploader } from "@/components/image-uploader";
 import { LocationPicker } from "@/components/location-picker";
+import { findCategory } from "@/lib/guia-taxonomy";
 
 interface Props {
   table: ContentTable;
@@ -64,6 +65,18 @@ export function ContentCrud({ table, ownerOnly, forcePending }: Props) {
         else if (v === "" || v === undefined) payload[f.key] = null;
         else if (f.type === "number" && v !== null) payload[f.key] = Number(v);
         else if (f.type === "datetime" && v) payload[f.key] = new Date(v).toISOString();
+      }
+      // Compat: a tabela `businesses` ainda exige category/category_label NOT NULL.
+      // Espelhamos os valores escolhidos na nova taxonomia.
+      if (table === "businesses") {
+        const main = payload.main_category;
+        const sub = payload.subcategory;
+        if (main) {
+          payload.category = main;
+          const subLabel = (await import("@/lib/guia-taxonomy")).findSubcategory(main, sub)?.label;
+          const catLabel = (await import("@/lib/guia-taxonomy")).findCategory(main)?.label;
+          payload.category_label = subLabel ?? catLabel ?? main;
+        }
       }
       const client = supabase.from(table) as any;
       if (values.id) {
@@ -254,6 +267,30 @@ function CrudFormDialog({
                         [f.lngKey ?? "longitude"]: c?.lng ?? null,
                       })}
                     />
+                  </div>
+                );
+              }
+              if (f.type === "subcategory") {
+                const parent = values[f.dependsOn ?? "main_category"];
+                const cat = findCategory(parent);
+                const opts = cat?.subcategories ?? [];
+                return (
+                  <div key={f.key} className={f.half ? "" : "sm:col-span-2"}>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs font-semibold text-muted-foreground">{f.label}</Label>
+                      <Select
+                        value={values[f.key] ?? ""}
+                        onValueChange={(v) => setValues({ ...values, [f.key]: v })}
+                        disabled={!cat}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder={cat ? "Selecione…" : "Escolha a categoria primeiro"} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {opts.map((o) => <SelectItem key={o.slug} value={o.slug}>{o.label}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 );
               }
