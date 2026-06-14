@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -214,24 +214,24 @@ function BusinessFormDialog({
 }) {
   const [values, setValues] = useState<FormValues>(emptyForm);
 
-  // sync when dialog opens
-  useState(() => values); // noop, keeps lint happy
-  if (open && initial && values.name !== initial.name && values.address !== initial.address) {
-    setValues({
-      name: initial.name,
-      category: initial.category,
-      address: initial.address,
-      description: initial.description ?? "",
-      phone: initial.phone ?? "",
-      whatsapp: initial.whatsapp ?? "",
-      email: initial.email ?? "",
-      instagram: initial.instagram ?? "",
-      logo_url: initial.logo_url ?? "",
-    });
-  }
-  if (open && !initial && values.name && !values.category && !values.address) {
-    // entering create mode after edit, reset
-  }
+  useEffect(() => {
+    if (!open) return;
+    setValues(
+      initial
+        ? {
+            name: initial.name,
+            category: initial.category,
+            address: initial.address,
+            description: initial.description ?? "",
+            phone: initial.phone ?? "",
+            whatsapp: initial.whatsapp ?? "",
+            email: initial.email ?? "",
+            instagram: initial.instagram ?? "",
+            logo_url: initial.logo_url ?? "",
+          }
+        : emptyForm,
+    );
+  }, [open, initial]);
 
   function handleClose() {
     setValues(emptyForm);
