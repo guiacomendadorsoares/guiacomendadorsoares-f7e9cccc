@@ -123,17 +123,20 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
   return useQuery({
     queryKey: ["home-items", table],
     queryFn: async () => {
+      const hasFeatured = table === "businesses" || table === "properties";
       const cols = table === "businesses"
         ? "id,name,logo_url,banner_url,featured"
-        : table === "properties"
+        : hasFeatured
         ? "id,title,cover_url,featured"
-        : "id,title,cover_url,featured";
-      const { data } = await supabase
-        .from(table)
-        .select(cols)
-        .eq("status", "approved")
-        .order("featured", { ascending: false })
-        .limit(3);
+        : "id,title,cover_url";
+      let q = supabase.from(table).select(cols).eq("status", "approved");
+      if (hasFeatured) q = q.order("featured", { ascending: false });
+      else q = q.order("created_at", { ascending: false });
+      const { data, error } = await q.limit(3);
+      if (error) {
+        console.error(`[home] ${table} fetch error:`, error.message);
+        return [];
+      }
       return Promise.all(
         ((data ?? []) as unknown as ApprovedItem[]).map(async (item) => ({
           ...item,
