@@ -75,9 +75,7 @@ export const brokerNav: NavSection[] = [
     title: "Imobiliário",
     items: [
       { to: "/painel-imoveis", label: "Meus imóveis", icon: Home },
-      { to: "/painel-imoveis/novo", label: "Cadastrar imóvel", icon: FileEdit },
-      { to: "/painel-imoveis/leads", label: "Leads", icon: MessageSquare },
-      { to: "/painel-imoveis/estatisticas", label: "Estatísticas", icon: BarChart3 },
+      { to: "/minha-conta", label: "Minha conta", icon: FileEdit },
     ],
   },
 ];
