@@ -122,3 +122,11 @@
 @utility gradient-gold {
   background-image: linear-gradient(135deg, var(--gold) 0%, color-mix(in oklab, var(--gold) 70%, white) 100%);
 }
+
+/* Hide Lovable badge */
+#lovable-badge,
+#lovable-badge-v2,
+[id^="lovable-badge"],
+a[href*="lovable.dev"][target="_blank"] {
+  display: none !important;
+}
