@@ -268,8 +268,8 @@ function NeighborhoodNews() {
   const { data: items = [] } = useApprovedItems("news");
   const placeholders: PHCard[] = [
     { title: "Notícias do bairro", subtitle: "A redação está preparando os conteúdos.", image: phNoticia.url },
-    { title: "Comunidade", subtitle: "Histórias dos moradores.", image: phNoticia.url },
-    { title: "Acontece em CS", subtitle: "Acompanhe o que rola por aqui.", image: phNoticia.url },
+    { title: "Comunidade", subtitle: "Histórias dos moradores.", image: phNoticia2.url },
+    { title: "Acontece em CS", subtitle: "Acompanhe o que rola por aqui.", image: phNoticia3.url },
   ];
   return (
     <section className="mb-7">
