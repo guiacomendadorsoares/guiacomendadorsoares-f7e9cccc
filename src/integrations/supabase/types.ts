@@ -635,6 +635,66 @@ export type Database = {
           },
         ]
       }
+      public_services: {
+        Row: {
+          active: boolean
+          address: string | null
+          category: string
+          created_at: string
+          description: string | null
+          email: string | null
+          hours: string | null
+          id: string
+          is_emergency: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          phone: string | null
+          phones: string[] | null
+          source: string | null
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          active?: boolean
+          address?: string | null
+          category: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          hours?: string | null
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          phone?: string | null
+          phones?: string[] | null
+          source?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          active?: boolean
+          address?: string | null
+          category?: string
+          created_at?: string
+          description?: string | null
+          email?: string | null
+          hours?: string | null
+          id?: string
+          is_emergency?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          phone?: string | null
+          phones?: string[] | null
+          source?: string | null
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       ratings: {
         Row: {
           author_id: string | null
