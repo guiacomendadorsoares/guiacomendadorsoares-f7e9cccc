@@ -1,6 +1,17 @@
 // Service layer for businesses. Reads exclusively from Supabase — no sample fallback.
 import { supabase } from "@/integrations/supabase/client";
 import type { Business } from "@/lib/businesses";
+import { getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
+
+async function hydrateBusinessImages(row: any): Promise<Business> {
+  return {
+    ...row,
+    logo_url: await getDisplayImageUrl(row.logo_url),
+    banner_url: await getDisplayImageUrl(row.banner_url),
+    cover_url: await getDisplayImageUrl(row.cover_url ?? row.banner_url ?? row.logo_url),
+    gallery_urls: await getDisplayImageUrls(row.gallery_urls),
+  } as unknown as Business;
+}
 
 export async function fetchBusinesses(): Promise<Business[]> {
   const { data, error } = await supabase
@@ -14,7 +25,7 @@ export async function fetchBusinesses(): Promise<Business[]> {
     console.error("[businesses.service] fetch error:", error.message);
     return [];
   }
-  return (data ?? []) as unknown as Business[];
+  return Promise.all((data ?? []).map(hydrateBusinessImages));
 }
 
 export async function fetchBusinessById(id: string): Promise<Business | null> {
@@ -28,7 +39,7 @@ export async function fetchBusinessById(id: string): Promise<Business | null> {
     console.error("[businesses.service] fetch by id error:", error.message);
     return null;
   }
-  return (data as unknown as Business) ?? null;
+  return data ? hydrateBusinessImages(data) : null;
 }
 
 export async function fetchBusinessesByCategory(mainCategory: string): Promise<Business[]> {
@@ -43,7 +54,7 @@ export async function fetchBusinessesByCategory(mainCategory: string): Promise<B
     console.error("[businesses.service] by category error:", error.message);
     return [];
   }
-  return (data ?? []) as unknown as Business[];
+  return Promise.all((data ?? []).map(hydrateBusinessImages));
 }
 
 export async function fetchBusinessesBySubcategory(
@@ -62,7 +73,7 @@ export async function fetchBusinessesBySubcategory(
     console.error("[businesses.service] by subcategory error:", error.message);
     return [];
   }
-  return (data ?? []) as unknown as Business[];
+  return Promise.all((data ?? []).map(hydrateBusinessImages));
 }
 
 export async function fetchCategoryCounts(): Promise<Record<string, number>> {
