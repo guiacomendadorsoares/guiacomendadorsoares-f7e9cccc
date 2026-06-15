@@ -253,8 +253,8 @@ function UpcomingEvents() {
   const { data: items = [] } = useApprovedItems("events");
   const placeholders: PHCard[] = [
     { title: "Festas do bairro", subtitle: "Eventos da comunidade aparecerão aqui.", image: phEvento.url },
-    { title: "Shows e feiras", subtitle: "Fique por dentro da agenda local.", image: phEvento.url },
-    { title: "Encontros culturais", subtitle: "Cultura e lazer pertinho de você.", image: phEvento.url },
+    { title: "Shows e feiras", subtitle: "Fique por dentro da agenda local.", image: phEvento2.url },
+    { title: "Encontros culturais", subtitle: "Cultura e lazer pertinho de você.", image: phEvento3.url },
   ];
   return (
     <section className="mb-7">
