@@ -8,6 +8,21 @@ import { AppShell } from "@/components/app-shell";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { directionsUrl } from "@/lib/geocode";
+import imgPrefeitura from "@/assets/util/prefeitura.jpg";
+import imgOuvidoria from "@/assets/util/ouvidoria.jpg";
+import imgDefesa from "@/assets/util/defesa-civil.jpg";
+import imgEmergencia from "@/assets/util/emergencia.jpg";
+import imgSecretarias from "@/assets/util/secretarias.jpg";
+import imgOrgaos from "@/assets/util/orgaos.jpg";
+
+const CATEGORY_IMAGES: Record<string, string> = {
+  "Prefeitura": imgPrefeitura,
+  "Ouvidoria": imgOuvidoria,
+  "Defesa Civil": imgDefesa,
+  "Emergência": imgEmergencia,
+  "Secretarias Municipais": imgSecretarias,
+  "Órgãos Municipais": imgOrgaos,
+};
 
 type PublicService = {
   id: string;
