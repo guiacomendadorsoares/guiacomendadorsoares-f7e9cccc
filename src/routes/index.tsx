@@ -208,8 +208,8 @@ function FeaturedCompanies() {
   const { data: items = [] } = useApprovedItems("businesses");
   const placeholders: PHCard[] = [
     { title: "Sua empresa aqui", subtitle: "Anuncie seu negócio e apareça em destaque.", image: phEmpresa.url },
-    { title: "Comércio local", subtitle: "Conecte-se com clientes da sua vizinhança.", image: phEmpresa.url },
-    { title: "Plano Ouro", subtitle: "Tenha prioridade no guia com o premium.", image: phEmpresa.url },
+    { title: "Comércio local", subtitle: "Conecte-se com clientes da sua vizinhança.", image: phEmpresa2.url },
+    { title: "Plano Ouro", subtitle: "Tenha prioridade no guia com o premium.", image: phEmpresa3.url },
   ];
   return (
     <section className="mb-7">
