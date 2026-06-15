@@ -10,12 +10,26 @@ import { getDisplayImageUrl } from "@/lib/storage";
 import { Bell, MapPin, Search, Sparkles } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
 import phEmpresa from "@/assets/placeholders/empresa.jpg.asset.json";
+import phEmpresa2 from "@/assets/placeholders/empresa-2.jpg.asset.json";
+import phEmpresa3 from "@/assets/placeholders/empresa-3.jpg.asset.json";
 import phVaga from "@/assets/placeholders/vaga.jpg.asset.json";
+import phVaga2 from "@/assets/placeholders/vaga-2.jpg.asset.json";
+import phVaga3 from "@/assets/placeholders/vaga-3.jpg.asset.json";
 import phImovel from "@/assets/placeholders/imovel.jpg.asset.json";
+import phImovel2 from "@/assets/placeholders/imovel-2.jpg.asset.json";
+import phImovel3 from "@/assets/placeholders/imovel-3.jpg.asset.json";
 import phEvento from "@/assets/placeholders/evento.jpg.asset.json";
+import phEvento2 from "@/assets/placeholders/evento-2.jpg.asset.json";
+import phEvento3 from "@/assets/placeholders/evento-3.jpg.asset.json";
 import phNoticia from "@/assets/placeholders/noticia.jpg.asset.json";
+import phNoticia2 from "@/assets/placeholders/noticia-2.jpg.asset.json";
+import phNoticia3 from "@/assets/placeholders/noticia-3.jpg.asset.json";
 import phComer from "@/assets/placeholders/comer.jpg.asset.json";
+import phComer2 from "@/assets/placeholders/comer-2.jpg.asset.json";
+import phComer3 from "@/assets/placeholders/comer-3.jpg.asset.json";
 import phCuriosidade from "@/assets/placeholders/curiosidade.jpg.asset.json";
+import phCuriosidade2 from "@/assets/placeholders/curiosidade-2.jpg.asset.json";
+import phCuriosidade3 from "@/assets/placeholders/curiosidade-3.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
