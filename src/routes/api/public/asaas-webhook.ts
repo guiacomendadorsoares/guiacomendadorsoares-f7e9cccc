@@ -58,17 +58,15 @@ export const Route = createFileRoute("/api/public/asaas-webhook")({
         const newStatus = statusMap[event];
 
         if (subscriptionId && newStatus) {
-          // Update local subscription
-          const updates: Record<string, unknown> = {
-            status: newStatus,
-            asaas_payment_id: p?.id ?? null,
-            invoice_url: p?.invoiceUrl ?? null,
-            next_due_date: p?.dueDate ?? null,
-            updated_at: new Date().toISOString(),
-          };
           await supabaseAdmin
             .from("subscriptions")
-            .update(updates)
+            .update({
+              status: newStatus,
+              asaas_payment_id: p?.id ?? null,
+              invoice_url: p?.invoiceUrl ?? null,
+              next_due_date: p?.dueDate ?? null,
+              updated_at: new Date().toISOString(),
+            })
             .eq("asaas_subscription_id", subscriptionId);
 
           // On confirmed payment, upgrade profile.current_plan
