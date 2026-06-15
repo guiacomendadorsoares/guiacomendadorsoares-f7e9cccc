@@ -297,8 +297,8 @@ function Curiosities() {
   const { data: items = [] } = useApprovedItems("curiosities");
   const placeholders: PHCard[] = [
     { title: "Você sabia?", subtitle: "Histórias e fatos do bairro em breve.", image: phCuriosidade.url },
-    { title: "Memórias de CS", subtitle: "O passado contado pelos moradores.", image: phCuriosidade.url },
-    { title: "Cantinhos do bairro", subtitle: "Lugares que poucos conhecem.", image: phCuriosidade.url },
+    { title: "Memórias de CS", subtitle: "O passado contado pelos moradores.", image: phCuriosidade2.url },
+    { title: "Cantinhos do bairro", subtitle: "Lugares que poucos conhecem.", image: phCuriosidade3.url },
   ];
   return (
     <section className="mb-2">
