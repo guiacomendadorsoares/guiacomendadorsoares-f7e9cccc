@@ -135,7 +135,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       },
       { key: "summary", label: "Resumo", type: "textarea", max: 500 },
       { key: "content", label: "Conteúdo", type: "textarea", max: 20000 },
-      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "cover_url", label: "Foto da capa", type: "image", folder: "news/cover", aspect: "wide" },
       { key: "published", label: "Publicado", type: "boolean" },
     ],
   },
@@ -154,7 +154,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
       { key: "price", label: "Preço (R$)", type: "number", half: true },
       { key: "is_free", label: "Gratuito", type: "boolean", half: true },
       { key: "url", label: "Link de inscrição", type: "url", max: 500 },
-      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "cover_url", label: "Foto da capa", type: "image", folder: "events/cover", aspect: "wide" },
       { key: "__location", label: "Localização no mapa", type: "location", addressKey: "location", latKey: "latitude", lngKey: "longitude" },
     ],
   },
@@ -165,7 +165,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
     fields: [
       { key: "title", label: "Título *", type: "text", required: true, max: 200 },
       { key: "body", label: "Conteúdo *", type: "textarea", required: true, max: 8000 },
-      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "cover_url", label: "Foto da capa", type: "image", folder: "curiosities/cover", aspect: "wide" },
     ],
   },
 };

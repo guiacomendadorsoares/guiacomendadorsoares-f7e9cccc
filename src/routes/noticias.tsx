@@ -1,10 +1,12 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Newspaper } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Newspaper, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { NewsCard } from "@/components/news-card";
-import { sampleNews, NEWS_FILTERS, type NewsCategory } from "@/lib/news";
+import { NEWS_FILTERS, type NewsCategory } from "@/lib/news";
+import { fetchNews } from "@/services/news.service";
 
 export const Route = createFileRoute("/noticias")({
   head: () => ({
@@ -22,10 +24,14 @@ export const Route = createFileRoute("/noticias")({
 function NoticiasPage() {
   const [filter, setFilter] = useState<NewsCategory | "todos">("todos");
 
+  const { data: allNews = [], isLoading } = useQuery({
+    queryKey: ["news", "public"],
+    queryFn: fetchNews,
+  });
+
   const items = useMemo(
-    () =>
-      filter === "todos" ? sampleNews : sampleNews.filter((n) => n.category === filter),
-    [filter],
+    () => (filter === "todos" ? allNews : allNews.filter((n) => n.category === filter)),
+    [filter, allNews],
   );
 
   const [featured, ...rest] = items;
@@ -54,11 +60,13 @@ function NoticiasPage() {
         </div>
       </div>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+      ) : items.length === 0 ? (
         <EmptyState
           icon={<Newspaper className="h-5 w-5" />}
-          title={sampleNews.length === 0 ? "Nenhuma notícia disponível." : "Sem notícias nesta categoria"}
-          description={sampleNews.length === 0 ? "A redação está preparando os próximos conteúdos sobre o bairro." : "Volte em breve ou escolha outra editoria."}
+          title={allNews.length === 0 ? "Nenhuma notícia disponível." : "Sem notícias nesta categoria"}
+          description={allNews.length === 0 ? "A redação está preparando os próximos conteúdos sobre o bairro." : "Volte em breve ou escolha outra editoria."}
         />
       ) : (
         <div className="flex flex-col gap-4">
