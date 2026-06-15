@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { uploadImage, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
@@ -101,7 +101,7 @@ interface GalleryProps {
 export function GalleryUploader({ value, onChange, folder, max }: GalleryProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const items = value ?? [];
+  const items = useMemo(() => value ?? [], [value]);
   const remaining = Math.max(0, max - items.length);
   const [displayItems, setDisplayItems] = useState<string[]>(items);
 
