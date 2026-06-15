@@ -41,6 +41,7 @@ export const adminNav: NavSection[] = [
   {
     title: "Sistema",
     items: [
+      { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
       { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
       { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
       { to: "/admin/planos", label: "Planos", icon: Crown },
