@@ -60,11 +60,13 @@ function NoticiasPage() {
         </div>
       </div>
 
-      {items.length === 0 ? (
+      {isLoading ? (
+        <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+      ) : items.length === 0 ? (
         <EmptyState
           icon={<Newspaper className="h-5 w-5" />}
-          title={sampleNews.length === 0 ? "Nenhuma notícia disponível." : "Sem notícias nesta categoria"}
-          description={sampleNews.length === 0 ? "A redação está preparando os próximos conteúdos sobre o bairro." : "Volte em breve ou escolha outra editoria."}
+          title={allNews.length === 0 ? "Nenhuma notícia disponível." : "Sem notícias nesta categoria"}
+          description={allNews.length === 0 ? "A redação está preparando os próximos conteúdos sobre o bairro." : "Volte em breve ou escolha outra editoria."}
         />
       ) : (
         <div className="flex flex-col gap-4">
