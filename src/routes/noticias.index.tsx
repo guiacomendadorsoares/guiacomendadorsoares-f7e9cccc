@@ -8,7 +8,7 @@ import { NewsCard } from "@/components/news-card";
 import { NEWS_FILTERS, type NewsCategory } from "@/lib/news";
 import { fetchNews } from "@/services/news.service";
 
-export const Route = createFileRoute("/noticias")({
+export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
       { title: "Notícias do Bairro — Guia CS" },
