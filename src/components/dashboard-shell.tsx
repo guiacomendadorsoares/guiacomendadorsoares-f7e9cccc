@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, Moon, Sun, LogOut, Bell, ChevronDown } from "lucide-react";
+import { Menu, Moon, Sun, LogOut, ChevronDown } from "lucide-react";
+import { NotificationsBell } from "@/components/notifications-bell";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -143,9 +144,7 @@ export function DashboardShell({
             <Button variant="ghost" size="icon" onClick={toggle} aria-label="Tema">
               {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
-            <Button variant="ghost" size="icon" aria-label="Notificações">
-              <Bell className="h-4 w-4" />
-            </Button>
+            <NotificationsBell variant="ghost" />
             <div className="hidden items-center gap-2 rounded-full border border-border bg-card px-2 py-1 sm:flex">
               <span className="grid h-7 w-7 place-items-center rounded-full gradient-brand text-[11px] font-bold text-primary-foreground">
                 {(user?.email ?? "?").slice(0, 1).toUpperCase()}

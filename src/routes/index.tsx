@@ -7,7 +7,8 @@ import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
 import { getDisplayImageUrl } from "@/lib/storage";
-import { Bell, MapPin, Search, Sparkles } from "lucide-react";
+import { MapPin, Search, Sparkles } from "lucide-react";
+import { NotificationsBell } from "@/components/notifications-bell";
 import logoUrl from "@/assets/logo.png";
 import phEmpresa from "@/assets/placeholders/empresa.jpg.asset.json";
 import phEmpresa2 from "@/assets/placeholders/empresa-2.jpg.asset.json";
@@ -88,13 +89,9 @@ function TopBar() {
             </p>
           </div>
         </Link>
-        <button
-          aria-label="Notificações"
-          className="relative ml-auto grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-foreground shadow-card"
-        >
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-gold ring-2 ring-card" />
-        </button>
+        <div className="ml-auto">
+          <NotificationsBell variant="card" />
+        </div>
       </div>
       <Link
         to="/guia"

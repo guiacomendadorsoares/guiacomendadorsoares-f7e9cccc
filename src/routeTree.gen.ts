@@ -40,6 +40,7 @@ import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
 import { Route as AuthenticatedAdminParceirosRouteImport } from './routes/_authenticated/admin.parceiros'
+import { Route as AuthenticatedAdminNotificacoesRouteImport } from './routes/_authenticated/admin.notificacoes'
 import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
 import { Route as AuthenticatedAdminInfluenciadoresRouteImport } from './routes/_authenticated/admin.influenciadores'
 import { Route as AuthenticatedAdminImoveisRouteImport } from './routes/_authenticated/admin.imoveis'
@@ -214,6 +215,12 @@ const AuthenticatedAdminParceirosRoute =
     path: '/parceiros',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminNotificacoesRoute =
+  AuthenticatedAdminNotificacoesRouteImport.update({
+    id: '/notificacoes',
+    path: '/notificacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminNoticiasRoute =
   AuthenticatedAdminNoticiasRouteImport.update({
     id: '/noticias',
@@ -308,6 +315,7 @@ export interface FileRoutesByFullPath {
   '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -349,6 +357,7 @@ export interface FileRoutesByTo {
   '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -393,6 +402,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/_authenticated/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/_authenticated/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
+  '/_authenticated/admin/notificacoes': typeof AuthenticatedAdminNotificacoesRoute
   '/_authenticated/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
@@ -437,6 +447,7 @@ export interface FileRouteTypes {
     | '/admin/imoveis'
     | '/admin/influenciadores'
     | '/admin/noticias'
+    | '/admin/notificacoes'
     | '/admin/parceiros'
     | '/admin/planos'
     | '/admin/relatorios'
@@ -478,6 +489,7 @@ export interface FileRouteTypes {
     | '/admin/imoveis'
     | '/admin/influenciadores'
     | '/admin/noticias'
+    | '/admin/notificacoes'
     | '/admin/parceiros'
     | '/admin/planos'
     | '/admin/relatorios'
@@ -521,6 +533,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/imoveis'
     | '/_authenticated/admin/influenciadores'
     | '/_authenticated/admin/noticias'
+    | '/_authenticated/admin/notificacoes'
     | '/_authenticated/admin/parceiros'
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/relatorios'
@@ -770,6 +783,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminParceirosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/notificacoes': {
+      id: '/_authenticated/admin/notificacoes'
+      path: '/notificacoes'
+      fullPath: '/admin/notificacoes'
+      preLoaderRoute: typeof AuthenticatedAdminNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/noticias': {
       id: '/_authenticated/admin/noticias'
       path: '/noticias'
@@ -854,6 +874,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminImoveisRoute: typeof AuthenticatedAdminImoveisRoute
   AuthenticatedAdminInfluenciadoresRoute: typeof AuthenticatedAdminInfluenciadoresRoute
   AuthenticatedAdminNoticiasRoute: typeof AuthenticatedAdminNoticiasRoute
+  AuthenticatedAdminNotificacoesRoute: typeof AuthenticatedAdminNotificacoesRoute
   AuthenticatedAdminParceirosRoute: typeof AuthenticatedAdminParceirosRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
@@ -875,6 +896,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminInfluenciadoresRoute:
     AuthenticatedAdminInfluenciadoresRoute,
   AuthenticatedAdminNoticiasRoute: AuthenticatedAdminNoticiasRoute,
+  AuthenticatedAdminNotificacoesRoute: AuthenticatedAdminNotificacoesRoute,
   AuthenticatedAdminParceirosRoute: AuthenticatedAdminParceirosRoute,
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
