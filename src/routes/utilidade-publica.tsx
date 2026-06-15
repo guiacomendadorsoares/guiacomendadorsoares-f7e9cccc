@@ -185,6 +185,7 @@ function ServiceCard({ s }: { s: PublicService }) {
           Fonte oficial: Prefeitura de Nova Iguaçu
         </p>
       )}
+      </div>
     </article>
   );
 }
