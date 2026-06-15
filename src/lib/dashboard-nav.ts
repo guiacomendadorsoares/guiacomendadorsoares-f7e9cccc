@@ -64,11 +64,8 @@ export const partnerNav: NavSection[] = [
   {
     title: "Empresa",
     items: [
-      { to: "/painel-empresa", label: "Visão geral", icon: LayoutDashboard },
-      { to: "/painel-empresa/perfil", label: "Perfil comercial", icon: Building2 },
-      { to: "/painel-empresa/vagas", label: "Vagas", icon: Briefcase },
-      { to: "/painel-empresa/promocoes", label: "Promoções", icon: Megaphone },
-      { to: "/painel-empresa/estatisticas", label: "Estatísticas", icon: BarChart3 },
+      { to: "/painel-empresa", label: "Painel da empresa", icon: LayoutDashboard },
+      { to: "/minha-conta", label: "Minha conta", icon: Building2 },
     ],
   },
 ];
@@ -78,9 +75,7 @@ export const brokerNav: NavSection[] = [
     title: "Imobiliário",
     items: [
       { to: "/painel-imoveis", label: "Meus imóveis", icon: Home },
-      { to: "/painel-imoveis/novo", label: "Cadastrar imóvel", icon: FileEdit },
-      { to: "/painel-imoveis/leads", label: "Leads", icon: MessageSquare },
-      { to: "/painel-imoveis/estatisticas", label: "Estatísticas", icon: BarChart3 },
+      { to: "/minha-conta", label: "Minha conta", icon: FileEdit },
     ],
   },
 ];
