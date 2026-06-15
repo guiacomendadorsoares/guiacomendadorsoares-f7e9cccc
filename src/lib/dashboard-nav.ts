@@ -64,11 +64,8 @@ export const partnerNav: NavSection[] = [
   {
     title: "Empresa",
     items: [
-      { to: "/painel-empresa", label: "Visão geral", icon: LayoutDashboard },
-      { to: "/painel-empresa/perfil", label: "Perfil comercial", icon: Building2 },
-      { to: "/painel-empresa/vagas", label: "Vagas", icon: Briefcase },
-      { to: "/painel-empresa/promocoes", label: "Promoções", icon: Megaphone },
-      { to: "/painel-empresa/estatisticas", label: "Estatísticas", icon: BarChart3 },
+      { to: "/painel-empresa", label: "Painel da empresa", icon: LayoutDashboard },
+      { to: "/minha-conta", label: "Minha conta", icon: Building2 },
     ],
   },
 ];
