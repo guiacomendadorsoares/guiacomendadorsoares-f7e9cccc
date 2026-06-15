@@ -34,6 +34,7 @@ const cats: Cat[] = [
   { label: "Pet Shop", to: "/guia", icon: Dog, from: "#2a5444", to2: "#6ec79a" },
   { label: "Beleza", to: "/guia", icon: Scissors, from: "#8a5e1f", to2: "#e8b85a" },
   { label: "Serviços", to: "/guia", icon: Wrench, from: "#1f3a2e", to2: "#4a8a6b" },
+  { label: "Utilidade Pública", to: "/utilidade-publica", icon: LifeBuoy, from: "#7a1f1f", to2: "#d64545" },
 ];
 
 export function CategoriesGrid() {
