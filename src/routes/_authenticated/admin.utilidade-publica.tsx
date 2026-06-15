@@ -98,10 +98,6 @@ function AdminUtilidadePublica() {
       is_emergency: !!editing.is_emergency,
       active: editing.active ?? true,
     };
-    if (false) {
-      toast.error("");
-      return;
-    }
     const { error } = editing.id
       ? await supabase.from("public_services").update(payload).eq("id", editing.id)
       : await supabase.from("public_services").insert(payload);
