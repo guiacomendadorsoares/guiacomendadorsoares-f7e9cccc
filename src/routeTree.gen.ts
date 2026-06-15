@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as UtilidadePublicaRouteImport } from './routes/utilidade-publica'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -51,6 +52,11 @@ import { Route as AuthenticatedAdminAprovacoesRouteImport } from './routes/_auth
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilidadePublicaRoute = UtilidadePublicaRouteImport.update({
+  id: '/utilidade-publica',
+  path: '/utilidade-publica',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
@@ -346,6 +354,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -387,6 +396,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/admin'
     | '/minha-conta'
@@ -426,6 +436,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/minha-conta'
     | '/painel-empresa'
@@ -465,6 +476,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/_authenticated/admin'
     | '/_authenticated/minha-conta'
@@ -506,6 +518,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
@@ -519,6 +532,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilidade-publica': {
+      id: '/utilidade-publica'
+      path: '/utilidade-publica'
+      fullPath: '/utilidade-publica'
+      preLoaderRoute: typeof UtilidadePublicaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -879,6 +899,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
