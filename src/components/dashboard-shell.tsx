@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { Menu, Moon, Sun, LogOut, Bell, ChevronDown } from "lucide-react";
+import { Menu, Moon, Sun, LogOut, ChevronDown } from "lucide-react";
+import { NotificationsBell } from "@/components/notifications-bell";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
