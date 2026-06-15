@@ -238,8 +238,8 @@ function RecentProperties() {
   const { data: items = [] } = useApprovedItems("properties");
   const placeholders: PHCard[] = [
     { title: "Casas para alugar", subtitle: "Confira opções por aqui em breve.", image: phImovel.url },
-    { title: "Imóveis à venda", subtitle: "Corretores parceiros publicam aqui.", image: phImovel.url },
-    { title: "Terrenos", subtitle: "Oportunidades para investir no bairro.", image: phImovel.url },
+    { title: "Imóveis à venda", subtitle: "Corretores parceiros publicam aqui.", image: phImovel2.url },
+    { title: "Terrenos", subtitle: "Oportunidades para investir no bairro.", image: phImovel3.url },
   ];
   return (
     <section className="mb-7">
