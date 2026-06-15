@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      asaas_webhook_events: {
+        Row: {
+          event: string
+          event_id: string | null
+          id: string
+          payload: Json
+          processed_at: string
+        }
+        Insert: {
+          event: string
+          event_id?: string | null
+          id?: string
+          payload: Json
+          processed_at?: string
+        }
+        Update: {
+          event?: string
+          event_id?: string | null
+          id?: string
+          payload?: Json
+          processed_at?: string
+        }
+        Relationships: []
+      }
       broadcasts: {
         Row: {
           active: boolean
@@ -536,8 +560,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          asaas_customer_id: string | null
           avatar_url: string | null
           bio: string | null
+          cpf_cnpj: string | null
           created_at: string
           current_plan: string
           email: string | null
@@ -548,8 +574,10 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          asaas_customer_id?: string | null
           avatar_url?: string | null
           bio?: string | null
+          cpf_cnpj?: string | null
           created_at?: string
           current_plan?: string
           email?: string | null
@@ -560,8 +588,10 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          asaas_customer_id?: string | null
           avatar_url?: string | null
           bio?: string | null
+          cpf_cnpj?: string | null
           created_at?: string
           current_plan?: string
           email?: string | null
@@ -882,34 +912,55 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          asaas_customer_id: string | null
+          asaas_payment_id: string | null
+          asaas_subscription_id: string | null
+          billing_type: string | null
           created_at: string
           expires_at: string | null
           id: string
+          invoice_url: string | null
+          next_due_date: string | null
           plan_id: string
           starts_at: string
           status: string
           updated_at: string
           user_id: string
+          value: number | null
         }
         Insert: {
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
+          asaas_subscription_id?: string | null
+          billing_type?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
+          invoice_url?: string | null
+          next_due_date?: string | null
           plan_id: string
           starts_at?: string
           status?: string
           updated_at?: string
           user_id: string
+          value?: number | null
         }
         Update: {
+          asaas_customer_id?: string | null
+          asaas_payment_id?: string | null
+          asaas_subscription_id?: string | null
+          billing_type?: string | null
           created_at?: string
           expires_at?: string | null
           id?: string
+          invoice_url?: string | null
+          next_due_date?: string | null
           plan_id?: string
           starts_at?: string
           status?: string
           updated_at?: string
           user_id?: string
+          value?: number | null
         }
         Relationships: [
           {

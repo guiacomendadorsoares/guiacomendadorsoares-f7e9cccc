@@ -1,11 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, X, Crown, Sparkles, Star, ArrowRight } from "lucide-react";
+import { Check, X, Crown, Sparkles, Star, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { usePlans, useCurrentPlan, type PlanSlug } from "@/lib/plans";
+import { usePlans, useCurrentPlan, type PlanSlug, type Plan } from "@/lib/plans";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
 import logoUrl from "@/assets/logo.png";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { createPlanCheckout } from "@/lib/asaas.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const Route = createFileRoute("/planos")({
   head: () => ({
@@ -86,6 +93,7 @@ function PlansGrid() {
   const { data: plans = [], isLoading } = usePlans();
   const { slug: currentSlug } = useCurrentPlan();
   const { user } = useCurrentUser();
+  const [selected, setSelected] = useState<Plan | null>(null);
 
   return (
     <section className="border-b border-border bg-card/50 py-14 md:py-20">
@@ -145,7 +153,8 @@ function PlansGrid() {
                     disabled={isCurrent}
                     onClick={() => {
                       if (!user) { window.location.href = "/auth"; return; }
-                      toast.info("Pagamentos estarão disponíveis em breve.");
+                      if (p.slug === "free") { toast.info("Você já pode usar o plano Free."); return; }
+                      setSelected(p);
                     }}
                   >
                     {isCurrent ? "Plano atual" : `Selecionar ${p.name}`}
@@ -156,7 +165,72 @@ function PlansGrid() {
           </div>
         )}
       </div>
+      <CheckoutDialog plan={selected} onClose={() => setSelected(null)} />
     </section>
+  );
+}
+
+function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => void }) {
+  const { user } = useCurrentUser();
+  const checkout = useServerFn(createPlanCheckout);
+  const [loading, setLoading] = useState(false);
+  const [fullName, setFullName] = useState(user?.user_metadata?.full_name ?? "");
+  const [cpfCnpj, setCpfCnpj] = useState("");
+  const [billingType, setBillingType] = useState<"UNDEFINED" | "PIX" | "BOLETO" | "CREDIT_CARD">("UNDEFINED");
+
+  async function submit() {
+    if (!plan) return;
+    if (cpfCnpj.replace(/\D/g, "").length < 11) { toast.error("Informe um CPF/CNPJ válido"); return; }
+    if (fullName.trim().length < 2) { toast.error("Informe o nome completo"); return; }
+    setLoading(true);
+    try {
+      const r = await checkout({ data: { planSlug: plan.slug as "destaque" | "ouro", cpfCnpj, fullName, billingType } });
+      toast.success("Assinatura criada! Abrindo fatura…");
+      onClose();
+      if (r.invoiceUrl) window.open(r.invoiceUrl, "_blank");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <Dialog open={!!plan} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Assinar plano {plan?.name}</DialogTitle>
+          <DialogDescription>
+            R$ {Number(plan?.price ?? 0).toFixed(2).replace(".", ",")} / mês — cobrança mensal via Asaas.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label htmlFor="fn">Nome completo</Label>
+            <Input id="fn" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="cpf">CPF ou CNPJ</Label>
+            <Input id="cpf" value={cpfCnpj} onChange={(e) => setCpfCnpj(e.target.value)} placeholder="000.000.000-00" />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Forma de pagamento</Label>
+            <RadioGroup value={billingType} onValueChange={(v) => setBillingType(v as any)} className="grid grid-cols-2 gap-2">
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="UNDEFINED" /> Escolher na fatura</label>
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="PIX" /> Pix</label>
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="BOLETO" /> Boleto</label>
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="CREDIT_CARD" /> Cartão</label>
+            </RadioGroup>
+          </div>
+        </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={loading}>Cancelar</Button>
+          <Button onClick={submit} disabled={loading}>
+            {loading && <Loader2 className="h-4 w-4 animate-spin" />} Continuar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

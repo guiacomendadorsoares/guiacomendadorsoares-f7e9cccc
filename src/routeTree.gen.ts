@@ -35,6 +35,7 @@ import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as GuiaCategoriaSubcategoriaRouteImport } from './routes/guia.$categoria.$subcategoria'
+import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes/_authenticated/admin.utilidade-publica'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
@@ -186,6 +187,11 @@ const GuiaCategoriaSubcategoriaRoute =
     path: '/$subcategoria',
     getParentRoute: () => GuiaCategoriaRoute,
   } as any)
+const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
+  id: '/api/public/asaas-webhook',
+  path: '/api/public/asaas-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminVagasRoute = AuthenticatedAdminVagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
@@ -329,6 +335,7 @@ export interface FileRoutesByFullPath {
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
+  '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -464,6 +473,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/admin/utilidade-publica'
     | '/admin/vagas'
+    | '/api/public/asaas-webhook'
     | '/guia/$categoria/$subcategoria'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -507,6 +517,7 @@ export interface FileRouteTypes {
     | '/admin/usuarios'
     | '/admin/utilidade-publica'
     | '/admin/vagas'
+    | '/api/public/asaas-webhook'
     | '/guia/$categoria/$subcategoria'
     | '/admin'
   id:
@@ -552,6 +563,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/utilidade-publica'
     | '/_authenticated/admin/vagas'
+    | '/api/public/asaas-webhook'
     | '/guia/$categoria/$subcategoria'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -575,6 +587,7 @@ export interface RootRouteChildren {
   NoticiasIdRoute: typeof NoticiasIdRoute
   GuiaIndexRoute: typeof GuiaIndexRoute
   NoticiasIndexRoute: typeof NoticiasIndexRoute
+  ApiPublicAsaasWebhookRoute: typeof ApiPublicAsaasWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -760,6 +773,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guia/$categoria/$subcategoria'
       preLoaderRoute: typeof GuiaCategoriaSubcategoriaRouteImport
       parentRoute: typeof GuiaCategoriaRoute
+    }
+    '/api/public/asaas-webhook': {
+      id: '/api/public/asaas-webhook'
+      path: '/api/public/asaas-webhook'
+      fullPath: '/api/public/asaas-webhook'
+      preLoaderRoute: typeof ApiPublicAsaasWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/vagas': {
       id: '/_authenticated/admin/vagas'
@@ -991,17 +1011,8 @@ const rootRouteChildren: RootRouteChildren = {
   NoticiasIdRoute: NoticiasIdRoute,
   GuiaIndexRoute: GuiaIndexRoute,
   NoticiasIndexRoute: NoticiasIndexRoute,
+  ApiPublicAsaasWebhookRoute: ApiPublicAsaasWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
