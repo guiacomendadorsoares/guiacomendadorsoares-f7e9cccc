@@ -6,22 +6,29 @@ export function BusinessCard({ b }: { b: Business }) {
   const waLink = `https://wa.me/${b.whatsapp}?text=${encodeURIComponent(
     `Olá! Encontrei vocês no Guia Comendador Soares.`,
   )}`;
+  const logo = b.logo_url;
 
   return (
     <GlassCard interactive className="p-3.5">
       <div className="flex gap-3">
         {/* 3D logo */}
         <div
-          className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl text-white"
+          className="relative grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-2xl text-white"
           style={{
             background: `linear-gradient(135deg, ${b.from} 0%, ${b.to} 100%)`,
             boxShadow: `0 10px 22px -10px ${b.from}cc, inset 0 1px 0 rgba(255,255,255,0.3), inset 0 -3px 8px rgba(0,0,0,0.2)`,
           }}
         >
-          <span className="pointer-events-none absolute inset-x-2 top-1.5 h-3 rounded-full bg-white/35 blur-[2px]" />
-          <span className="relative font-display text-lg font-extrabold tracking-tight drop-shadow">
-            {b.initials}
-          </span>
+          {logo ? (
+            <img src={logo} alt={b.name} className="h-full w-full object-cover" loading="lazy" />
+          ) : (
+            <>
+              <span className="pointer-events-none absolute inset-x-2 top-1.5 h-3 rounded-full bg-white/35 blur-[2px]" />
+              <span className="relative font-display text-lg font-extrabold tracking-tight drop-shadow">
+                {b.initials}
+              </span>
+            </>
+          )}
         </div>
 
         <div className="min-w-0 flex-1">

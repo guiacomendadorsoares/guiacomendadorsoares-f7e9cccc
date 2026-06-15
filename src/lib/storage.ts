@@ -1,6 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 const BUCKET = "uploads";
+const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24;
 
 export async function uploadImage(file: File, folder: string): Promise<string> {
   const { data: u } = await supabase.auth.getUser();
@@ -24,10 +25,33 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
 }
 
 export function storagePathFromPublicUrl(url: string): string | null {
-  const marker = `/storage/v1/object/public/${BUCKET}/`;
+  if (!url) return null;
+  if (!/^https?:\/\//i.test(url) && !url.startsWith("data:") && !url.startsWith("blob:")) return url;
+
+  const publicMarker = `/storage/v1/object/public/${BUCKET}/`;
+  const signedMarker = `/storage/v1/object/sign/${BUCKET}/`;
+  const marker = url.includes(publicMarker) ? publicMarker : url.includes(signedMarker) ? signedMarker : null;
+  if (!marker) return null;
   const i = url.indexOf(marker);
-  if (i === -1) return null;
-  return url.slice(i + marker.length);
+  return decodeURIComponent(url.slice(i + marker.length).split("?")[0]);
+}
+
+export async function getDisplayImageUrl(url: string | null | undefined): Promise<string | null> {
+  if (!url) return null;
+  const path = storagePathFromPublicUrl(url);
+  if (!path) return url;
+
+  const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
+  if (error) {
+    console.error("[storage] signed url error:", error.message);
+    return url;
+  }
+  return data.signedUrl;
+}
+
+export async function getDisplayImageUrls(urls: string[] | null | undefined): Promise<string[]> {
+  if (!Array.isArray(urls)) return [];
+  return Promise.all(urls.map(async (url) => (await getDisplayImageUrl(url)) ?? url));
 }
 
 export async function deleteImageByUrl(url: string): Promise<void> {

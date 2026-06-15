@@ -174,5 +174,14 @@ export function selectColumns(table: ContentTable): string {
   const s = SCHEMAS[table];
   const cols = new Set<string>(["id", "status", "created_at", "submitted_by", s.titleKey]);
   if (s.subtitleKey) cols.add(s.subtitleKey);
+  for (const field of s.fields) {
+    if (field.type === "location") {
+      if (field.latKey) cols.add(field.latKey);
+      if (field.lngKey) cols.add(field.lngKey);
+      continue;
+    }
+    if (field.type !== "subcategory") cols.add(field.key);
+    else cols.add(field.key);
+  }
   return Array.from(cols).join(",");
 }

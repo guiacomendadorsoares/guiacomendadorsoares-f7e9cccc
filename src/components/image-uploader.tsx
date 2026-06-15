@@ -1,7 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon } from "lucide-react";
 import { toast } from "sonner";
-import { uploadImage, deleteImageByUrl } from "@/lib/storage";
+import { uploadImage, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
 
 interface SingleProps {
   value: string | null | undefined;
@@ -14,6 +14,15 @@ interface SingleProps {
 export function SingleImageUploader({ value, onChange, folder, aspect = "square" }: SingleProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
+  const [displayUrl, setDisplayUrl] = useState<string | null>(value ?? null);
+
+  useEffect(() => {
+    let alive = true;
+    getDisplayImageUrl(value).then((url) => {
+      if (alive) setDisplayUrl(url);
+    });
+    return () => { alive = false; };
+  }, [value]);
 
   async function handleFile(file: File) {
     setUploading(true);
@@ -38,9 +47,9 @@ export function SingleImageUploader({ value, onChange, folder, aspect = "square"
   return (
     <div className="space-y-2">
       <div className={`relative ${ratio} w-full overflow-hidden rounded-lg border border-dashed border-border bg-muted/30`}>
-        {value ? (
+        {displayUrl ? (
           <>
-            <img src={value} alt="preview" className="h-full w-full object-cover" />
+            <img src={displayUrl} alt="preview" className="h-full w-full object-cover" />
             <button
               type="button"
               onClick={handleRemove}
@@ -92,8 +101,17 @@ interface GalleryProps {
 export function GalleryUploader({ value, onChange, folder, max }: GalleryProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const items = value ?? [];
+  const items = useMemo(() => value ?? [], [value]);
   const remaining = Math.max(0, max - items.length);
+  const [displayItems, setDisplayItems] = useState<string[]>(items);
+
+  useEffect(() => {
+    let alive = true;
+    getDisplayImageUrls(items).then((urls) => {
+      if (alive) setDisplayItems(urls);
+    });
+    return () => { alive = false; };
+  }, [items]);
 
   async function handleFiles(files: FileList) {
     if (remaining === 0) {
@@ -139,7 +157,7 @@ export function GalleryUploader({ value, onChange, folder, max }: GalleryProps) 
       <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
         {items.map((url, i) => (
           <div key={url + i} className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-muted">
-            <img src={url} alt={`foto ${i + 1}`} className="h-full w-full object-cover" />
+            <img src={displayItems[i] ?? url} alt={`foto ${i + 1}`} className="h-full w-full object-cover" />
             {i === 0 && (
               <span className="absolute left-1 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-foreground">
                 Principal
