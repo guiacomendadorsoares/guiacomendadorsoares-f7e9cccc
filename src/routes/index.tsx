@@ -100,6 +100,7 @@ type ApprovedItem = {
   name?: string;
   title?: string;
   cover_url?: string | null;
+  logo_url?: string | null;
   banner_url?: string | null;
   featured?: boolean;
 };
@@ -122,8 +123,9 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
       return Promise.all(
         ((data ?? []) as unknown as ApprovedItem[]).map(async (item) => ({
           ...item,
-          cover_url: await getDisplayImageUrl(item.cover_url ?? item.banner_url ?? null),
+          cover_url: await getDisplayImageUrl(item.cover_url ?? item.banner_url ?? item.logo_url ?? null),
           banner_url: await getDisplayImageUrl(item.banner_url ?? null),
+          logo_url: await getDisplayImageUrl(item.logo_url ?? null),
         })),
       );
     },
