@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as UtilidadePublicaRouteImport } from './routes/utilidade-publica'
+import { Route as TestarNotificacoesRouteImport } from './routes/testar-notificacoes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -58,6 +59,11 @@ const VagasRoute = VagasRouteImport.update({
 const UtilidadePublicaRoute = UtilidadePublicaRouteImport.update({
   id: '/utilidade-publica',
   path: '/utilidade-publica',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TestarNotificacoesRoute = TestarNotificacoesRouteImport.update({
+  id: '/testar-notificacoes',
+  path: '/testar-notificacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -280,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -321,6 +328,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -363,6 +371,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -406,6 +415,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/admin'
@@ -447,6 +457,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/minha-conta'
@@ -488,6 +499,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/_authenticated/admin'
@@ -531,6 +543,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TestarNotificacoesRoute: typeof TestarNotificacoesRoute
   UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
@@ -552,6 +565,13 @@ declare module '@tanstack/react-router' {
       path: '/utilidade-publica'
       fullPath: '/utilidade-publica'
       preLoaderRoute: typeof UtilidadePublicaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/testar-notificacoes': {
+      id: '/testar-notificacoes'
+      path: '/testar-notificacoes'
+      fullPath: '/testar-notificacoes'
+      preLoaderRoute: typeof TestarNotificacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -922,6 +942,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TestarNotificacoesRoute: TestarNotificacoesRoute,
   UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
@@ -931,13 +952,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
