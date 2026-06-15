@@ -86,22 +86,29 @@ function ServiceCard({ s }: { s: PublicService }) {
   const phones = (s.phones ?? []).filter(Boolean);
   if (s.phone) phones.unshift(s.phone);
   const primary = phones[0];
+  const img = s.is_emergency ? CATEGORY_IMAGES["Emergência"] : CATEGORY_IMAGES[s.category];
   return (
     <article
-      className={`rounded-2xl border bg-card p-5 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${
+      className={`overflow-hidden rounded-2xl border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${
         s.is_emergency ? "border-destructive/40" : "border-border"
       }`}
     >
+      {img && (
+        <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+          <img src={img} alt={s.category} loading="lazy" className="h-full w-full object-cover" />
+          {s.is_emergency && (
+            <span className="absolute right-2 top-2 inline-flex items-center gap-1 rounded-full bg-destructive px-2 py-1 text-[10px] font-bold uppercase text-destructive-foreground shadow">
+              <AlertTriangle className="h-3 w-3" /> SOS
+            </span>
+          )}
+        </div>
+      )}
+      <div className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{s.category}</p>
           <h3 className="font-display text-lg font-bold leading-tight">{s.name}</h3>
         </div>
-        {s.is_emergency && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-destructive/10 px-2 py-1 text-[10px] font-bold uppercase text-destructive">
-            <AlertTriangle className="h-3 w-3" /> SOS
-          </span>
-        )}
       </div>
 
       {s.description && <p className="mt-2 text-sm text-muted-foreground">{s.description}</p>}
