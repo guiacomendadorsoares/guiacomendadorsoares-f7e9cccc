@@ -10,6 +10,7 @@ import {
   Dog,
   Scissors,
   Wrench,
+  LifeBuoy,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
