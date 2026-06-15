@@ -24,6 +24,7 @@ import { Route as AnuncieRouteImport } from './routes/anuncie'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as GuiaIndexRouteImport } from './routes/guia.index'
+import { Route as NoticiasIdRouteImport } from './routes/noticias.$id'
 import { Route as ImoveisIdRouteImport } from './routes/imoveis.$id'
 import { Route as GuiaCategoriaRouteImport } from './routes/guia.$categoria'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
@@ -125,6 +126,11 @@ const GuiaIndexRoute = GuiaIndexRouteImport.update({
   id: '/guia/',
   path: '/guia/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const NoticiasIdRoute = NoticiasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => NoticiasRoute,
 } as any)
 const ImoveisIdRoute = ImoveisIdRouteImport.update({
   id: '/$id',
@@ -287,7 +293,7 @@ export interface FileRoutesByFullPath {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRoute
+  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -304,6 +310,7 @@ export interface FileRoutesByFullPath {
   '/empresa/$id': typeof EmpresaIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
+  '/noticias/$id': typeof NoticiasIdRoute
   '/guia/': typeof GuiaIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -330,7 +337,7 @@ export interface FileRoutesByTo {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRoute
+  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -346,6 +353,7 @@ export interface FileRoutesByTo {
   '/empresa/$id': typeof EmpresaIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
+  '/noticias/$id': typeof NoticiasIdRoute
   '/guia': typeof GuiaIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -374,7 +382,7 @@ export interface FileRoutesById {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRoute
+  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -391,6 +399,7 @@ export interface FileRoutesById {
   '/empresa/$id': typeof EmpresaIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
+  '/noticias/$id': typeof NoticiasIdRoute
   '/guia/': typeof GuiaIndexRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
@@ -436,6 +445,7 @@ export interface FileRouteTypes {
     | '/empresa/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
+    | '/noticias/$id'
     | '/guia/'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
@@ -478,6 +488,7 @@ export interface FileRouteTypes {
     | '/empresa/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
+    | '/noticias/$id'
     | '/guia'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
@@ -522,6 +533,7 @@ export interface FileRouteTypes {
     | '/empresa/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
+    | '/noticias/$id'
     | '/guia/'
     | '/_authenticated/admin/aprovacoes'
     | '/_authenticated/admin/configuracoes'
@@ -550,7 +562,7 @@ export interface RootRouteChildren {
   AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
   ImoveisRoute: typeof ImoveisRouteWithChildren
-  NoticiasRoute: typeof NoticiasRoute
+  NoticiasRoute: typeof NoticiasRouteWithChildren
   OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
   PlanosRoute: typeof PlanosRoute
@@ -670,6 +682,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guia/'
       preLoaderRoute: typeof GuiaIndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/noticias/$id': {
+      id: '/noticias/$id'
+      path: '/$id'
+      fullPath: '/noticias/$id'
+      preLoaderRoute: typeof NoticiasIdRouteImport
+      parentRoute: typeof NoticiasRoute
     }
     '/imoveis/$id': {
       id: '/imoveis/$id'
@@ -940,6 +959,18 @@ const ImoveisRouteChildren: ImoveisRouteChildren = {
 const ImoveisRouteWithChildren =
   ImoveisRoute._addFileChildren(ImoveisRouteChildren)
 
+interface NoticiasRouteChildren {
+  NoticiasIdRoute: typeof NoticiasIdRoute
+}
+
+const NoticiasRouteChildren: NoticiasRouteChildren = {
+  NoticiasIdRoute: NoticiasIdRoute,
+}
+
+const NoticiasRouteWithChildren = NoticiasRoute._addFileChildren(
+  NoticiasRouteChildren,
+)
+
 interface GuiaCategoriaRouteChildren {
   GuiaCategoriaSubcategoriaRoute: typeof GuiaCategoriaSubcategoriaRoute
 }
@@ -958,7 +989,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
   ImoveisRoute: ImoveisRouteWithChildren,
-  NoticiasRoute: NoticiasRoute,
+  NoticiasRoute: NoticiasRouteWithChildren,
   OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
   PlanosRoute: PlanosRoute,
