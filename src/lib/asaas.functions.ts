@@ -1,0 +1,100 @@
+import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+const checkoutInput = z.object({
+  planSlug: z.enum(["destaque", "ouro"]),
+  cpfCnpj: z.string().min(11).max(20).regex(/^[0-9./-]+$/),
+  fullName: z.string().min(2).max(120),
+  billingType: z.enum(["UNDEFINED", "PIX", "BOLETO", "CREDIT_CARD"]).default("UNDEFINED"),
+});
+
+export const createPlanCheckout = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => checkoutInput.parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const {
+      findOrCreateCustomer,
+      createSubscription,
+      getFirstSubscriptionPayment,
+    } = await import("./asaas.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Get plan + profile
+    const [{ data: plan, error: planErr }, { data: profile }] = await Promise.all([
+      supabase.from("subscription_plans").select("*").eq("slug", data.planSlug).maybeSingle(),
+      supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
+    ]);
+    if (planErr || !plan) throw new Error("Plano não encontrado");
+    if (!profile?.email) throw new Error("Perfil sem e-mail");
+
+    // Customer
+    const customer = await findOrCreateCustomer({
+      name: data.fullName || profile.full_name || profile.email,
+      email: profile.email,
+      cpfCnpj: data.cpfCnpj.replace(/\D/g, ""),
+      externalReference: userId,
+    });
+
+    // Subscription (starts tomorrow)
+    const nextDue = new Date();
+    nextDue.setDate(nextDue.getDate() + 1);
+    const nextDueDate = nextDue.toISOString().slice(0, 10);
+
+    const subscription = await createSubscription({
+      customer: customer.id,
+      value: Number(plan.price),
+      nextDueDate,
+      billingType: data.billingType,
+      description: `Plano ${plan.name} — Guia Comendador Soares`,
+      externalReference: userId,
+    });
+
+    const firstPayment = await getFirstSubscriptionPayment(subscription.id).catch(() => null);
+
+    // Persist (admin client — bypass RLS to store cross-table refs safely)
+    await supabaseAdmin
+      .from("profiles")
+      .update({ asaas_customer_id: customer.id, cpf_cnpj: data.cpfCnpj.replace(/\D/g, ""), full_name: data.fullName })
+      .eq("user_id", userId);
+
+    await supabaseAdmin.from("subscriptions").insert({
+      user_id: userId,
+      plan_id: plan.id,
+      status: "pending",
+      asaas_customer_id: customer.id,
+      asaas_subscription_id: subscription.id,
+      asaas_payment_id: firstPayment?.id ?? null,
+      billing_type: subscription.billingType,
+      value: subscription.value,
+      next_due_date: subscription.nextDueDate,
+      invoice_url: firstPayment?.invoiceUrl ?? null,
+      starts_at: new Date().toISOString(),
+    });
+
+    return {
+      subscriptionId: subscription.id,
+      invoiceUrl: firstPayment?.invoiceUrl ?? null,
+    };
+  });
+
+export const listAsaasFinancials = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+    if (!isAdmin) throw new Error("Forbidden");
+    const { listSubscriptions, listPayments, isSandbox } = await import("./asaas.server");
+    const [subs, pays] = await Promise.all([
+      listSubscriptions({ limit: 50 }),
+      listPayments({ limit: 50 }),
+    ]);
+    return {
+      sandbox: isSandbox(),
+      subscriptions: subs.data,
+      payments: pays.data,
+      subTotal: subs.totalCount,
+      payTotal: pays.totalCount,
+    };
+  });
