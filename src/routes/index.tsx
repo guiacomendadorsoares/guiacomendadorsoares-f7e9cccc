@@ -89,13 +89,9 @@ function TopBar() {
             </p>
           </div>
         </Link>
-        <button
-          aria-label="Notificações"
-          className="relative ml-auto grid h-10 w-10 place-items-center rounded-full border border-border bg-card text-foreground shadow-card"
-        >
-          <Bell className="h-[18px] w-[18px]" />
-          <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-gold ring-2 ring-card" />
-        </button>
+        <div className="ml-auto">
+          <NotificationsBell variant="card" />
+        </div>
       </div>
       <Link
         to="/guia"
