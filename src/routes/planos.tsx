@@ -1,11 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, X, Crown, Sparkles, Star, ArrowRight } from "lucide-react";
+import { Check, X, Crown, Sparkles, Star, ArrowRight, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { usePlans, useCurrentPlan, type PlanSlug } from "@/lib/plans";
+import { usePlans, useCurrentPlan, type PlanSlug, type Plan } from "@/lib/plans";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/site-footer";
 import logoUrl from "@/assets/logo.png";
+import { useState } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { createPlanCheckout } from "@/lib/asaas.functions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export const Route = createFileRoute("/planos")({
   head: () => ({
