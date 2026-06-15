@@ -223,8 +223,8 @@ function LatestJobs() {
   const { data: items = [] } = useApprovedItems("jobs");
   const placeholders: PHCard[] = [
     { title: "Vagas no bairro", subtitle: "Empresas locais publicarão oportunidades aqui.", image: phVaga.url },
-    { title: "Trabalhe perto de casa", subtitle: "Menos deslocamento, mais qualidade de vida.", image: phVaga.url },
-    { title: "Cadastre sua vaga", subtitle: "Encontre talentos da vizinhança.", image: phVaga.url },
+    { title: "Trabalhe perto de casa", subtitle: "Menos deslocamento, mais qualidade de vida.", image: phVaga2.url },
+    { title: "Cadastre sua vaga", subtitle: "Encontre talentos da vizinhança.", image: phVaga3.url },
   ];
   return (
     <section className="mb-7">
