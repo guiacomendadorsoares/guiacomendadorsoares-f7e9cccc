@@ -165,7 +165,7 @@ export const SCHEMAS: Record<ContentTable, TableSchema> = {
     fields: [
       { key: "title", label: "Título *", type: "text", required: true, max: 200 },
       { key: "body", label: "Conteúdo *", type: "textarea", required: true, max: 8000 },
-      { key: "cover_url", label: "URL da capa", type: "url", max: 500 },
+      { key: "cover_url", label: "Foto da capa", type: "image", folder: "curiosities/cover", aspect: "wide" },
     ],
   },
 };
