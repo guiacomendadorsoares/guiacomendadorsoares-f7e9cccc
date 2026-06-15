@@ -6,22 +6,15 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
-import { EmptyState } from "@/components/ui-bits";
-import {
-  Bell,
-  MapPin,
-  Search,
-  Briefcase,
-  Home as HomeIcon,
-  Calendar,
-  Newspaper,
-  Lightbulb,
-  Building2,
-  UtensilsCrossed,
-} from "lucide-react";
+import { Bell, MapPin, Search, Sparkles } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
-
-
+import phEmpresa from "@/assets/placeholders/empresa.jpg.asset.json";
+import phVaga from "@/assets/placeholders/vaga.jpg.asset.json";
+import phImovel from "@/assets/placeholders/imovel.jpg.asset.json";
+import phEvento from "@/assets/placeholders/evento.jpg.asset.json";
+import phNoticia from "@/assets/placeholders/noticia.jpg.asset.json";
+import phComer from "@/assets/placeholders/comer.jpg.asset.json";
+import phCuriosidade from "@/assets/placeholders/curiosidade.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -99,119 +92,193 @@ function TopBar() {
   );
 }
 
-/* ---------- Section helpers ---------- */
+/* ---------- Shared row helpers ---------- */
 
-function useApprovedCount(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities") {
+type ApprovedItem = {
+  id: string;
+  name?: string;
+  title?: string;
+  cover_url?: string | null;
+  banner_url?: string | null;
+  featured?: boolean;
+};
+
+function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities") {
   return useQuery({
-    queryKey: ["home-count", table],
+    queryKey: ["home-items", table],
     queryFn: async () => {
-      const { count } = await supabase
+      const cols = table === "businesses" || table === "properties"
+        ? "id,name,cover_url,featured"
+        : "id,title,cover_url,featured";
+      const { data } = await supabase
         .from(table)
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved");
-      return count ?? 0;
+        .select(cols)
+        .eq("status", "approved")
+        .order("featured", { ascending: false })
+        .limit(3);
+      return (data ?? []) as unknown as ApprovedItem[];
     },
   });
 }
 
+type PHCard = { title: string; subtitle: string; image: string };
+
+function PlaceholderRow({ cards }: { cards: PHCard[] }) {
+  return (
+    <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {cards.map((c, i) => (
+        <article
+          key={i}
+          className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card"
+        >
+          <div className="relative h-32 w-full overflow-hidden">
+            <img src={c.image} alt={c.title} loading="lazy" className="h-full w-full object-cover" />
+            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground backdrop-blur">
+              <Sparkles className="h-3 w-3" /> Em breve
+            </span>
+          </div>
+          <div className="p-3">
+            <p className="text-sm font-semibold leading-tight">{c.title}</p>
+            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{c.subtitle}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => string; fallbackImage: string }) {
+  return (
+    <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {items.map((it) => {
+        const cover = it.cover_url || it.banner_url || fallbackImage;
+        const title = it.name || it.title || "Sem título";
+        return (
+          <Link
+            key={it.id}
+            to={to(it.id)}
+            className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
+          >
+            <div className="relative h-32 w-full overflow-hidden">
+              <img src={cover} alt={title} loading="lazy" className="h-full w-full object-cover" />
+              {it.featured ? (
+                <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold text-gold-foreground">
+                  <Sparkles className="h-3 w-3" /> Ouro
+                </span>
+              ) : null}
+            </div>
+            <div className="p-3">
+              <p className="text-sm font-semibold leading-tight line-clamp-2">{title}</p>
+            </div>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+/* ---------- Sections ---------- */
+
 function FeaturedCompanies() {
-  const { data: count } = useApprovedCount("businesses");
+  const { data: items = [] } = useApprovedItems("businesses");
+  const placeholders: PHCard[] = [
+    { title: "Sua empresa aqui", subtitle: "Anuncie seu negócio e apareça em destaque.", image: phEmpresa.url },
+    { title: "Comércio local", subtitle: "Conecte-se com clientes da sua vizinhança.", image: phEmpresa.url },
+    { title: "Plano Ouro", subtitle: "Tenha prioridade no guia com o premium.", image: phEmpresa.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Empresas em destaque" subtitle="Os queridinhos do bairro" to="/guia" />
-      {!count ? (
-        <EmptyState icon={<Building2 className="h-5 w-5" />} title="Nenhuma empresa cadastrada ainda." description="Em breve, as empresas do bairro estarão por aqui." />
-      ) : (
-        <Link to="/guia" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
-          Ver {count} empresa{count === 1 ? "" : "s"} no guia →
-        </Link>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/empresa/${id}`} fallbackImage={phEmpresa.url} />}
     </section>
   );
 }
 
 function LatestJobs() {
-  const { data: count } = useApprovedCount("jobs");
+  const { data: items = [] } = useApprovedItems("jobs");
+  const placeholders: PHCard[] = [
+    { title: "Vagas no bairro", subtitle: "Empresas locais publicarão oportunidades aqui.", image: phVaga.url },
+    { title: "Trabalhe perto de casa", subtitle: "Menos deslocamento, mais qualidade de vida.", image: phVaga.url },
+    { title: "Cadastre sua vaga", subtitle: "Encontre talentos da vizinhança.", image: phVaga.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
-      {!count ? (
-        <EmptyState icon={<Briefcase className="h-5 w-5" />} title="Nenhuma vaga publicada." description="As empresas parceiras ainda não publicaram oportunidades." />
-      ) : (
-        <Link to="/vagas" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
-          Ver {count} vaga{count === 1 ? "" : "s"} →
-        </Link>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/vagas"} fallbackImage={phVaga.url} />}
     </section>
   );
 }
 
 function RecentProperties() {
-  const { data: count } = useApprovedCount("properties");
+  const { data: items = [] } = useApprovedItems("properties");
+  const placeholders: PHCard[] = [
+    { title: "Casas para alugar", subtitle: "Confira opções por aqui em breve.", image: phImovel.url },
+    { title: "Imóveis à venda", subtitle: "Corretores parceiros publicam aqui.", image: phImovel.url },
+    { title: "Terrenos", subtitle: "Oportunidades para investir no bairro.", image: phImovel.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Imóveis recentes" subtitle="Alugar e comprar" to="/imoveis" />
-      {!count ? (
-        <EmptyState icon={<HomeIcon className="h-5 w-5" />} title="Nenhum imóvel disponível." description="Em breve novos imóveis pelos corretores parceiros." />
-      ) : (
-        <Link to="/imoveis" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
-          Ver {count} imóve{count === 1 ? "l" : "is"} →
-        </Link>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/imoveis/${id}`} fallbackImage={phImovel.url} />}
     </section>
   );
 }
 
 function UpcomingEvents() {
-  const { data: count } = useApprovedCount("events");
+  const { data: items = [] } = useApprovedItems("events");
+  const placeholders: PHCard[] = [
+    { title: "Festas do bairro", subtitle: "Eventos da comunidade aparecerão aqui.", image: phEvento.url },
+    { title: "Shows e feiras", subtitle: "Fique por dentro da agenda local.", image: phEvento.url },
+    { title: "Encontros culturais", subtitle: "Cultura e lazer pertinho de você.", image: phEvento.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
-      {!count ? (
-        <EmptyState icon={<Calendar className="h-5 w-5" />} title="Nenhum evento cadastrado." description="Eventos do bairro aparecerão aqui assim que forem publicados." />
-      ) : (
-        <p className="rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">{count} evento{count === 1 ? "" : "s"} agendado{count === 1 ? "" : "s"}</p>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/"} fallbackImage={phEvento.url} />}
     </section>
   );
 }
 
 function NeighborhoodNews() {
-  const { data: count } = useApprovedCount("news");
+  const { data: items = [] } = useApprovedItems("news");
+  const placeholders: PHCard[] = [
+    { title: "Notícias do bairro", subtitle: "A redação está preparando os conteúdos.", image: phNoticia.url },
+    { title: "Comunidade", subtitle: "Histórias dos moradores.", image: phNoticia.url },
+    { title: "Acontece em CS", subtitle: "Acompanhe o que rola por aqui.", image: phNoticia.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" to="/noticias" />
-      {!count ? (
-        <EmptyState icon={<Newspaper className="h-5 w-5" />} title="Nenhuma notícia disponível." description="A redação está preparando os próximos conteúdos." />
-      ) : (
-        <Link to="/noticias" className="block rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">
-          Ver {count} notícia{count === 1 ? "" : "s"} →
-        </Link>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/noticias"} fallbackImage={phNoticia.url} />}
     </section>
   );
 }
 
 function WhereToEat() {
+  const placeholders: PHCard[] = [
+    { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
+    { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer.url },
+    { title: "Cafés e padarias", subtitle: "Comece bem o dia no comércio local.", image: phComer.url },
+  ];
   return (
     <section className="mb-7">
       <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/onde-comer" />
-      <EmptyState icon={<UtensilsCrossed className="h-5 w-5" />} title="Nenhum restaurante cadastrado ainda." description="Em breve os estabelecimentos do bairro estarão aqui." />
+      <PlaceholderRow cards={placeholders} />
     </section>
   );
 }
 
 function Curiosities() {
-  const { data: count } = useApprovedCount("curiosities");
+  const { data: items = [] } = useApprovedItems("curiosities");
+  const placeholders: PHCard[] = [
+    { title: "Você sabia?", subtitle: "Histórias e fatos do bairro em breve.", image: phCuriosidade.url },
+    { title: "Memórias de CS", subtitle: "O passado contado pelos moradores.", image: phCuriosidade.url },
+    { title: "Cantinhos do bairro", subtitle: "Lugares que poucos conhecem.", image: phCuriosidade.url },
+  ];
   return (
     <section className="mb-2">
       <SectionHeader title="Curiosidades" subtitle="Você sabia?" />
-      {!count ? (
-        <EmptyState icon={<Lightbulb className="h-5 w-5" />} title="Nenhuma curiosidade cadastrada ainda." description="Histórias e fatos do bairro aparecerão aqui em breve." />
-      ) : (
-        <p className="rounded-2xl border border-border bg-card p-4 text-center text-sm font-semibold text-primary shadow-card">{count} curiosidade{count === 1 ? "" : "s"} disponíve{count === 1 ? "l" : "is"}</p>
-      )}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/"} fallbackImage={phCuriosidade.url} />}
     </section>
   );
 }
-
