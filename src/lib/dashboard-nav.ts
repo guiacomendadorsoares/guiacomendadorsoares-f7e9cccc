@@ -26,6 +26,7 @@ export const adminNav: NavSection[] = [
       { to: "/admin/noticias", label: "Notícias", icon: Newspaper },
       { to: "/admin/eventos", label: "Eventos", icon: Calendar },
       { to: "/admin/curiosidades", label: "Curiosidades", icon: Sparkles },
+      { to: "/admin/utilidade-publica", label: "Utilidade Pública", icon: LifeBuoy },
     ],
   },
   {
