@@ -282,8 +282,8 @@ function NeighborhoodNews() {
 function WhereToEat() {
   const placeholders: PHCard[] = [
     { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
-    { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer.url },
-    { title: "Cafés e padarias", subtitle: "Comece bem o dia no comércio local.", image: phComer.url },
+    { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer2.url },
+    { title: "Cafés e padarias", subtitle: "Comece bem o dia no comércio local.", image: phComer3.url },
   ];
   return (
     <section className="mb-7">
