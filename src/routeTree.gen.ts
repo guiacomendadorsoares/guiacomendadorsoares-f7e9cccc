@@ -17,12 +17,12 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OndeComerRouteImport } from './routes/onde-comer'
-import { Route as NoticiasRouteImport } from './routes/noticias'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnuncieRouteImport } from './routes/anuncie'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as GuiaIndexRouteImport } from './routes/guia.index'
 import { Route as NoticiasIdRouteImport } from './routes/noticias.$id'
 import { Route as ImoveisIdRouteImport } from './routes/imoveis.$id'
@@ -93,11 +93,6 @@ const OndeComerRoute = OndeComerRouteImport.update({
   path: '/onde-comer',
   getParentRoute: () => rootRouteImport,
 } as any)
-const NoticiasRoute = NoticiasRouteImport.update({
-  id: '/noticias',
-  path: '/noticias',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ImoveisRoute = ImoveisRouteImport.update({
   id: '/imoveis',
   path: '/imoveis',
@@ -122,15 +117,20 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NoticiasIndexRoute = NoticiasIndexRouteImport.update({
+  id: '/noticias/',
+  path: '/noticias/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GuiaIndexRoute = GuiaIndexRouteImport.update({
   id: '/guia/',
   path: '/guia/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoticiasIdRoute = NoticiasIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => NoticiasRoute,
+  id: '/noticias/$id',
+  path: '/noticias/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const ImoveisIdRoute = ImoveisIdRouteImport.update({
   id: '/$id',
@@ -293,7 +293,6 @@ export interface FileRoutesByFullPath {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -312,6 +311,7 @@ export interface FileRoutesByFullPath {
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
   '/guia/': typeof GuiaIndexRoute
+  '/noticias/': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -337,7 +337,6 @@ export interface FileRoutesByTo {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -355,6 +354,7 @@ export interface FileRoutesByTo {
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
   '/guia': typeof GuiaIndexRoute
+  '/noticias': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -382,7 +382,6 @@ export interface FileRoutesById {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/imoveis': typeof ImoveisRouteWithChildren
-  '/noticias': typeof NoticiasRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
   '/planos': typeof PlanosRoute
@@ -401,6 +400,7 @@ export interface FileRoutesById {
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
   '/guia/': typeof GuiaIndexRoute
+  '/noticias/': typeof NoticiasIndexRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
@@ -428,7 +428,6 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/imoveis'
-    | '/noticias'
     | '/onde-comer'
     | '/perfil'
     | '/planos'
@@ -447,6 +446,7 @@ export interface FileRouteTypes {
     | '/imoveis/$id'
     | '/noticias/$id'
     | '/guia/'
+    | '/noticias/'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
     | '/admin/corretores'
@@ -472,7 +472,6 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/imoveis'
-    | '/noticias'
     | '/onde-comer'
     | '/perfil'
     | '/planos'
@@ -490,6 +489,7 @@ export interface FileRouteTypes {
     | '/imoveis/$id'
     | '/noticias/$id'
     | '/guia'
+    | '/noticias'
     | '/admin/aprovacoes'
     | '/admin/configuracoes'
     | '/admin/corretores'
@@ -516,7 +516,6 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/imoveis'
-    | '/noticias'
     | '/onde-comer'
     | '/perfil'
     | '/planos'
@@ -535,6 +534,7 @@ export interface FileRouteTypes {
     | '/imoveis/$id'
     | '/noticias/$id'
     | '/guia/'
+    | '/noticias/'
     | '/_authenticated/admin/aprovacoes'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/corretores'
@@ -562,7 +562,6 @@ export interface RootRouteChildren {
   AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
   ImoveisRoute: typeof ImoveisRouteWithChildren
-  NoticiasRoute: typeof NoticiasRouteWithChildren
   OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
   PlanosRoute: typeof PlanosRoute
@@ -573,7 +572,9 @@ export interface RootRouteChildren {
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
+  NoticiasIdRoute: typeof NoticiasIdRoute
   GuiaIndexRoute: typeof GuiaIndexRoute
+  NoticiasIndexRoute: typeof NoticiasIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -634,13 +635,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OndeComerRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/noticias': {
-      id: '/noticias'
-      path: '/noticias'
-      fullPath: '/noticias'
-      preLoaderRoute: typeof NoticiasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/imoveis': {
       id: '/imoveis'
       path: '/imoveis'
@@ -676,6 +670,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/noticias/': {
+      id: '/noticias/'
+      path: '/noticias'
+      fullPath: '/noticias/'
+      preLoaderRoute: typeof NoticiasIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/guia/': {
       id: '/guia/'
       path: '/guia'
@@ -685,10 +686,10 @@ declare module '@tanstack/react-router' {
     }
     '/noticias/$id': {
       id: '/noticias/$id'
-      path: '/$id'
+      path: '/noticias/$id'
       fullPath: '/noticias/$id'
       preLoaderRoute: typeof NoticiasIdRouteImport
-      parentRoute: typeof NoticiasRoute
+      parentRoute: typeof rootRouteImport
     }
     '/imoveis/$id': {
       id: '/imoveis/$id'
@@ -959,18 +960,6 @@ const ImoveisRouteChildren: ImoveisRouteChildren = {
 const ImoveisRouteWithChildren =
   ImoveisRoute._addFileChildren(ImoveisRouteChildren)
 
-interface NoticiasRouteChildren {
-  NoticiasIdRoute: typeof NoticiasIdRoute
-}
-
-const NoticiasRouteChildren: NoticiasRouteChildren = {
-  NoticiasIdRoute: NoticiasIdRoute,
-}
-
-const NoticiasRouteWithChildren = NoticiasRoute._addFileChildren(
-  NoticiasRouteChildren,
-)
-
 interface GuiaCategoriaRouteChildren {
   GuiaCategoriaSubcategoriaRoute: typeof GuiaCategoriaSubcategoriaRoute
 }
@@ -989,7 +978,6 @@ const rootRouteChildren: RootRouteChildren = {
   AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
   ImoveisRoute: ImoveisRouteWithChildren,
-  NoticiasRoute: NoticiasRouteWithChildren,
   OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
   PlanosRoute: PlanosRoute,
@@ -1000,7 +988,9 @@ const rootRouteChildren: RootRouteChildren = {
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
+  NoticiasIdRoute: NoticiasIdRoute,
   GuiaIndexRoute: GuiaIndexRoute,
+  NoticiasIndexRoute: NoticiasIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
