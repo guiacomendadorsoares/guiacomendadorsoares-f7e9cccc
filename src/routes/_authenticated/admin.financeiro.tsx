@@ -20,9 +20,19 @@ function brl(n: number | string | null | undefined) {
 
 function FinanceiroPage() {
   const fetchFinancials = useServerFn(listAsaasFinancials);
+  const cancelFn = useServerFn(cancelAsaasSubscription);
+  const qc = useQueryClient();
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["asaas-financials"],
     queryFn: () => fetchFinancials(),
+  });
+  const cancelMut = useMutation({
+    mutationFn: (subscriptionId: string) => cancelFn({ data: { subscriptionId } }),
+    onSuccess: () => {
+      toast.success("Assinatura cancelada");
+      qc.invalidateQueries({ queryKey: ["asaas-financials"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   return (
