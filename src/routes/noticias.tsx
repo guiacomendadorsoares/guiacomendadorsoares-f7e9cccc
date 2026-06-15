@@ -24,10 +24,14 @@ export const Route = createFileRoute("/noticias")({
 function NoticiasPage() {
   const [filter, setFilter] = useState<NewsCategory | "todos">("todos");
 
+  const { data: allNews = [], isLoading } = useQuery({
+    queryKey: ["news", "public"],
+    queryFn: fetchNews,
+  });
+
   const items = useMemo(
-    () =>
-      filter === "todos" ? sampleNews : sampleNews.filter((n) => n.category === filter),
-    [filter],
+    () => (filter === "todos" ? allNews : allNews.filter((n) => n.category === filter)),
+    [filter, allNews],
   );
 
   const [featured, ...rest] = items;
