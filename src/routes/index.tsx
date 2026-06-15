@@ -6,6 +6,7 @@ import { InstallPrompt } from "@/components/install-prompt";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
+import { getDisplayImageUrl } from "@/lib/storage";
 import { Bell, MapPin, Search, Sparkles } from "lucide-react";
 import logoUrl from "@/assets/logo.png";
 import phEmpresa from "@/assets/placeholders/empresa.jpg.asset.json";
@@ -107,8 +108,10 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
   return useQuery({
     queryKey: ["home-items", table],
     queryFn: async () => {
-      const cols = table === "businesses" || table === "properties"
-        ? "id,name,cover_url,featured"
+      const cols = table === "businesses"
+        ? "id,name,logo_url,banner_url,featured"
+        : table === "properties"
+        ? "id,title,cover_url,featured"
         : "id,title,cover_url,featured";
       const { data } = await supabase
         .from(table)
@@ -116,7 +119,13 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
         .eq("status", "approved")
         .order("featured", { ascending: false })
         .limit(3);
-      return (data ?? []) as unknown as ApprovedItem[];
+      return Promise.all(
+        ((data ?? []) as unknown as ApprovedItem[]).map(async (item) => ({
+          ...item,
+          cover_url: await getDisplayImageUrl(item.cover_url ?? item.banner_url ?? null),
+          banner_url: await getDisplayImageUrl(item.banner_url ?? null),
+        })),
+      );
     },
   });
 }
