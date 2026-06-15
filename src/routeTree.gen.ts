@@ -34,6 +34,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as GuiaCategoriaSubcategoriaRouteImport } from './routes/guia.$categoria.$subcategoria'
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
+import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes/_authenticated/admin.utilidade-publica'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
@@ -177,6 +178,12 @@ const AuthenticatedAdminVagasRoute = AuthenticatedAdminVagasRouteImport.update({
   path: '/vagas',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminUtilidadePublicaRoute =
+  AuthenticatedAdminUtilidadePublicaRouteImport.update({
+    id: '/utilidade-publica',
+    path: '/utilidade-publica',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
@@ -298,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -337,6 +345,7 @@ export interface FileRoutesByTo {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -379,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -421,6 +431,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/admin/'
@@ -460,6 +471,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/admin'
@@ -501,6 +513,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/utilidade-publica'
     | '/_authenticated/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/_authenticated/admin/'
@@ -702,6 +715,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVagasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/utilidade-publica': {
+      id: '/_authenticated/admin/utilidade-publica'
+      path: '/utilidade-publica'
+      fullPath: '/admin/utilidade-publica'
+      preLoaderRoute: typeof AuthenticatedAdminUtilidadePublicaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
@@ -818,6 +838,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminUtilidadePublicaRoute: typeof AuthenticatedAdminUtilidadePublicaRoute
   AuthenticatedAdminVagasRoute: typeof AuthenticatedAdminVagasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -838,6 +859,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminUtilidadePublicaRoute:
+    AuthenticatedAdminUtilidadePublicaRoute,
   AuthenticatedAdminVagasRoute: AuthenticatedAdminVagasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }

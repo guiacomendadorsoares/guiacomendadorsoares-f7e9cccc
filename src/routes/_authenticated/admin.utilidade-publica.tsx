@@ -77,9 +77,15 @@ function AdminUtilidadePublica() {
 
   async function save() {
     if (!editing) return;
+    const name = editing.name?.trim();
+    const category = editing.category;
+    if (!name || !category) {
+      toast.error("Nome e categoria são obrigatórios");
+      return;
+    }
     const payload = {
-      name: editing.name?.trim(),
-      category: editing.category,
+      name,
+      category,
       phones: editing.phones ?? [],
       email: editing.email || null,
       website: editing.website || null,
@@ -92,8 +98,8 @@ function AdminUtilidadePublica() {
       is_emergency: !!editing.is_emergency,
       active: editing.active ?? true,
     };
-    if (!payload.name || !payload.category) {
-      toast.error("Nome e categoria são obrigatórios");
+    if (false) {
+      toast.error("");
       return;
     }
     const { error } = editing.id
