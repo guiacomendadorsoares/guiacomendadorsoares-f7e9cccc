@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
+import { Route as UtilidadePublicaRouteImport } from './routes/utilidade-publica'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -33,6 +34,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as GuiaCategoriaSubcategoriaRouteImport } from './routes/guia.$categoria.$subcategoria'
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
+import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes/_authenticated/admin.utilidade-publica'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
@@ -51,6 +53,11 @@ import { Route as AuthenticatedAdminAprovacoesRouteImport } from './routes/_auth
 const VagasRoute = VagasRouteImport.update({
   id: '/vagas',
   path: '/vagas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UtilidadePublicaRoute = UtilidadePublicaRouteImport.update({
+  id: '/utilidade-publica',
+  path: '/utilidade-publica',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -171,6 +178,12 @@ const AuthenticatedAdminVagasRoute = AuthenticatedAdminVagasRouteImport.update({
   path: '/vagas',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminUtilidadePublicaRoute =
+  AuthenticatedAdminUtilidadePublicaRouteImport.update({
+    id: '/utilidade-publica',
+    path: '/utilidade-publica',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminUsuariosRoute =
   AuthenticatedAdminUsuariosRouteImport.update({
     id: '/usuarios',
@@ -267,6 +280,7 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -291,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
@@ -306,6 +321,7 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
@@ -329,6 +345,7 @@ export interface FileRoutesByTo {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -346,6 +363,7 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -370,6 +388,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
@@ -387,6 +406,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/admin'
     | '/minha-conta'
@@ -411,6 +431,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/admin/'
@@ -426,6 +447,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/minha-conta'
     | '/painel-empresa'
@@ -449,6 +471,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/relatorios'
     | '/admin/usuarios'
+    | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/admin'
@@ -465,6 +488,7 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
+    | '/utilidade-publica'
     | '/vagas'
     | '/_authenticated/admin'
     | '/_authenticated/minha-conta'
@@ -489,6 +513,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/utilidade-publica'
     | '/_authenticated/admin/vagas'
     | '/guia/$categoria/$subcategoria'
     | '/_authenticated/admin/'
@@ -506,6 +531,7 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
@@ -519,6 +545,13 @@ declare module '@tanstack/react-router' {
       path: '/vagas'
       fullPath: '/vagas'
       preLoaderRoute: typeof VagasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/utilidade-publica': {
+      id: '/utilidade-publica'
+      path: '/utilidade-publica'
+      fullPath: '/utilidade-publica'
+      preLoaderRoute: typeof UtilidadePublicaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -682,6 +715,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVagasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/utilidade-publica': {
+      id: '/_authenticated/admin/utilidade-publica'
+      path: '/utilidade-publica'
+      fullPath: '/admin/utilidade-publica'
+      preLoaderRoute: typeof AuthenticatedAdminUtilidadePublicaRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/usuarios': {
       id: '/_authenticated/admin/usuarios'
       path: '/usuarios'
@@ -798,6 +838,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminUtilidadePublicaRoute: typeof AuthenticatedAdminUtilidadePublicaRoute
   AuthenticatedAdminVagasRoute: typeof AuthenticatedAdminVagasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -818,6 +859,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminUtilidadePublicaRoute:
+    AuthenticatedAdminUtilidadePublicaRoute,
   AuthenticatedAdminVagasRoute: AuthenticatedAdminVagasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -879,6 +922,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
