@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
-import { useQuery } from "@tanstack/react-query";
-import { listAsaasFinancials } from "@/lib/asaas.functions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { listAsaasFinancials, cancelAsaasSubscription } from "@/lib/asaas.functions";
+import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -19,9 +20,19 @@ function brl(n: number | string | null | undefined) {
 
 function FinanceiroPage() {
   const fetchFinancials = useServerFn(listAsaasFinancials);
+  const cancelFn = useServerFn(cancelAsaasSubscription);
+  const qc = useQueryClient();
   const { data, isLoading, error, refetch, isFetching } = useQuery({
     queryKey: ["asaas-financials"],
     queryFn: () => fetchFinancials(),
+  });
+  const cancelMut = useMutation({
+    mutationFn: (subscriptionId: string) => cancelFn({ data: { subscriptionId } }),
+    onSuccess: () => {
+      toast.success("Assinatura cancelada");
+      qc.invalidateQueries({ queryKey: ["asaas-financials"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
   });
 
   return (
@@ -68,10 +79,13 @@ function FinanceiroPage() {
                     <TableHead>Ciclo</TableHead>
                     <TableHead>Próx. cobrança</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.subscriptions.map((s: any) => (
+                  {data.subscriptions.map((s: any) => {
+                    const canceled = String(s.status).toUpperCase() === "INACTIVE" || String(s.status).toUpperCase() === "CANCELED";
+                    return (
                     <TableRow key={s.id}>
                       <TableCell className="font-mono text-xs">{s.id}</TableCell>
                       <TableCell className="font-mono text-xs">{s.customer}</TableCell>
@@ -79,10 +93,22 @@ function FinanceiroPage() {
                       <TableCell>{s.cycle}</TableCell>
                       <TableCell>{s.nextDueDate}</TableCell>
                       <TableCell><Badge variant="secondary">{s.status}</Badge></TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={canceled || cancelMut.isPending}
+                          onClick={() => {
+                            if (confirm(`Cancelar assinatura ${s.id}?`)) cancelMut.mutate(s.id);
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </TableCell>
                     </TableRow>
-                  ))}
+                  );})}
                   {data.subscriptions.length === 0 && (
-                    <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Nenhuma assinatura.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={7} className="text-center text-muted-foreground">Nenhuma assinatura.</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>

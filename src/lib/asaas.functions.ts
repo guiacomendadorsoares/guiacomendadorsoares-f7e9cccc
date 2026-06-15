@@ -98,3 +98,27 @@ export const listAsaasFinancials = createServerFn({ method: "POST" })
       payTotal: pays.totalCount,
     };
   });
+
+export const cancelAsaasSubscription = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) =>
+    z.object({ subscriptionId: z.string().min(3).max(80) }).parse(data),
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    const { data: isAdmin } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+    if (!isAdmin) throw new Error("Forbidden");
+    const { cancelSubscription } = await import("./asaas.server");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await cancelSubscription(data.subscriptionId);
+    const { data: sub } = await supabaseAdmin
+      .from("subscriptions")
+      .update({ status: "canceled", updated_at: new Date().toISOString() })
+      .eq("asaas_subscription_id", data.subscriptionId)
+      .select("user_id")
+      .maybeSingle();
+    if (sub?.user_id) {
+      await supabaseAdmin.from("profiles").update({ current_plan: "free" }).eq("user_id", sub.user_id);
+    }
+    return { ok: true };
+  });
