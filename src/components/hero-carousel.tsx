@@ -139,7 +139,7 @@ export function HeroCarousel() {
     },
   });
 
-  const activeSlides = dbSlides && dbSlides.length > 0 ? dbSlides : slides;
+  const activeSlides: Slide[] = dbSlides && dbSlides.length > 0 ? dbSlides : slides;
 
   useEffect(() => {
     setI(0);
