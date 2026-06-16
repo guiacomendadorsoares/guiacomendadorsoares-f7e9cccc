@@ -182,12 +182,27 @@ function BannerRow({ banner }: { banner: Banner }) {
             <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
           </div>
           <div className="md:col-span-2">
-            <Label className="text-xs">Link ao clicar (interno: /guia · externo: https://…)</Label>
-            <Input
-              value={form.href ?? ""}
-              onChange={(e) => setForm({ ...form, href: e.target.value })}
-              placeholder="/guia ou https://exemplo.com"
-            />
+            <Label className="text-xs">Link ao clicar</Label>
+            <div className="grid gap-2 sm:grid-cols-[200px_1fr]">
+              <select
+                className="rounded-md border border-input bg-background px-2 py-2 text-sm"
+                value={INTERNAL_PAGES.some((p) => p.value === (form.href ?? "")) ? (form.href ?? "") : ""}
+                onChange={(e) => setForm({ ...form, href: e.target.value || null })}
+              >
+                <option value="">— Página interna —</option>
+                {INTERNAL_PAGES.map((p) => (
+                  <option key={p.value} value={p.value}>{p.label}</option>
+                ))}
+              </select>
+              <Input
+                value={form.href ?? ""}
+                onChange={(e) => setForm({ ...form, href: e.target.value })}
+                placeholder="/guia ou https://exemplo.com"
+              />
+            </div>
+            <p className="mt-1 text-[11px] text-muted-foreground">
+              Escolha uma página interna no menu ou digite uma URL personalizada (interna iniciando com “/” ou externa com “https://”).
+            </p>
           </div>
           <div>
             <Label className="text-xs">Ordem</Label>
