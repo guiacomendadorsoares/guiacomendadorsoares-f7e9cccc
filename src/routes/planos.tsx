@@ -9,6 +9,8 @@ import logoUrl from "@/assets/logo.png";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { createPlanCheckout } from "@/lib/asaas.functions";
+import { redeemCoupon } from "@/lib/coupons.functions";
+import { Ticket } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +36,7 @@ function PlanosPage() {
       <Header />
       <Hero />
       <PlansGrid />
+      <CouponRedeem />
       <Compare />
       <FinalCta />
       <SiteFooter />

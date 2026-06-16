@@ -51,6 +51,7 @@ import { Route as AuthenticatedAdminFinanceiroRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin.empresas'
 import { Route as AuthenticatedAdminCuriosidadesRouteImport } from './routes/_authenticated/admin.curiosidades'
+import { Route as AuthenticatedAdminCuponsRouteImport } from './routes/_authenticated/admin.cupons'
 import { Route as AuthenticatedAdminCorretoresRouteImport } from './routes/_authenticated/admin.corretores'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
 import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
@@ -282,6 +283,12 @@ const AuthenticatedAdminCuriosidadesRoute =
     path: '/curiosidades',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCuponsRoute =
+  AuthenticatedAdminCuponsRouteImport.update({
+    id: '/cupons',
+    path: '/cupons',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCorretoresRoute =
   AuthenticatedAdminCorretoresRouteImport.update({
     id: '/corretores',
@@ -336,6 +343,7 @@ export interface FileRoutesByFullPath {
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
   '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -382,6 +390,7 @@ export interface FileRoutesByTo {
   '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
   '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -431,6 +440,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
+  '/_authenticated/admin/cupons': typeof AuthenticatedAdminCuponsRoute
   '/_authenticated/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
   '/_authenticated/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/configuracoes'
     | '/admin/corretores'
+    | '/admin/cupons'
     | '/admin/curiosidades'
     | '/admin/empresas'
     | '/admin/eventos'
@@ -526,6 +537,7 @@ export interface FileRouteTypes {
     | '/admin/banners'
     | '/admin/configuracoes'
     | '/admin/corretores'
+    | '/admin/cupons'
     | '/admin/curiosidades'
     | '/admin/empresas'
     | '/admin/eventos'
@@ -574,6 +586,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/banners'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/corretores'
+    | '/_authenticated/admin/cupons'
     | '/_authenticated/admin/curiosidades'
     | '/_authenticated/admin/empresas'
     | '/_authenticated/admin/eventos'
@@ -912,6 +925,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCuriosidadesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/cupons': {
+      id: '/_authenticated/admin/cupons'
+      path: '/cupons'
+      fullPath: '/admin/cupons'
+      preLoaderRoute: typeof AuthenticatedAdminCuponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/corretores': {
       id: '/_authenticated/admin/corretores'
       path: '/corretores'
@@ -948,6 +968,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminBannersRoute: typeof AuthenticatedAdminBannersRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminCorretoresRoute: typeof AuthenticatedAdminCorretoresRoute
+  AuthenticatedAdminCuponsRoute: typeof AuthenticatedAdminCuponsRoute
   AuthenticatedAdminCuriosidadesRoute: typeof AuthenticatedAdminCuriosidadesRoute
   AuthenticatedAdminEmpresasRoute: typeof AuthenticatedAdminEmpresasRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
@@ -970,6 +991,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminBannersRoute: AuthenticatedAdminBannersRoute,
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminCorretoresRoute: AuthenticatedAdminCorretoresRoute,
+  AuthenticatedAdminCuponsRoute: AuthenticatedAdminCuponsRoute,
   AuthenticatedAdminCuriosidadesRoute: AuthenticatedAdminCuriosidadesRoute,
   AuthenticatedAdminEmpresasRoute: AuthenticatedAdminEmpresasRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
