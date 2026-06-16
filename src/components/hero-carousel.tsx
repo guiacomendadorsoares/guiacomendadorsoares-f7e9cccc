@@ -163,7 +163,7 @@ export function HeroCarousel() {
         A área visível usa proporções diferentes por dispositivo (a mídia é recortada
         com object-cover): 4:5 no mobile, 16:9 no tablet e 21:9 no desktop.
       */}
-      <div className="relative w-full aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] sm:max-h-[560px]">
+      <div className="relative w-full aspect-[16/9] sm:max-h-[560px]">
 
         {activeSlides.map((s, idx) => (
           <div
