@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon, Film } from "lucide-react";
 import { toast } from "sonner";
-import { uploadImage, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
+import { uploadImage, uploadMedia, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
 
 interface SingleProps {
   value: string | null | undefined;
