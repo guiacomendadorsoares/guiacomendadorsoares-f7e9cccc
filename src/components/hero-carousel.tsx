@@ -117,15 +117,44 @@ function SlideLink({
 export function HeroCarousel() {
   const [i, setI] = useState(0);
 
+  const { data: dbSlides } = useQuery({
+    queryKey: ["home-banners"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any)
+        .from("banners")
+        .select("eyebrow,title,cta,href,media_url,media_type,poster_url")
+        .eq("active", true)
+        .order("sort_order")
+        .order("created_at");
+      if (error) throw error;
+      return (data ?? []).map((b: any): Slide => ({
+        eyebrow: b.eyebrow,
+        title: b.title,
+        cta: b.cta,
+        href: b.href ?? undefined,
+        src: b.media_url,
+        mediaType: b.media_type,
+        poster: b.poster_url ?? undefined,
+      }));
+    },
+  });
+
+  const activeSlides = dbSlides && dbSlides.length > 0 ? dbSlides : slides;
+
   useEffect(() => {
-    const id = setInterval(() => setI((v) => (v + 1) % slides.length), 5000);
+    setI(0);
+  }, [activeSlides.length]);
+
+  useEffect(() => {
+    if (activeSlides.length <= 1) return;
+    const id = setInterval(() => setI((v) => (v + 1) % activeSlides.length), 5000);
     return () => clearInterval(id);
-  }, []);
+  }, [activeSlides.length]);
 
   return (
     <section className="relative -mx-5 -mt-4 mb-6 overflow-hidden">
       <div className="relative h-[260px] w-full">
-        {slides.map((s, idx) => (
+        {activeSlides.map((s, idx) => (
           <div
             key={idx}
             className={`absolute inset-0 transition-opacity duration-700 ${
@@ -152,7 +181,7 @@ export function HeroCarousel() {
         ))}
       </div>
       <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
-        {slides.map((_, idx) => (
+        {activeSlides.map((_, idx) => (
           <button
             key={idx}
             aria-label={`Slide ${idx + 1}`}
