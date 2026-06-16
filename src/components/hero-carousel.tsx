@@ -155,7 +155,16 @@ export function HeroCarousel() {
 
   return (
     <section className="relative -mx-5 -mt-4 mb-6 overflow-hidden">
-      <div className="relative h-[260px] w-full sm:h-[340px] md:h-[420px] lg:h-[480px]">
+      {/*
+        Tamanho ideal da mídia enviada (para não perder qualidade em nenhuma tela):
+          • Recomendado: 2400 x 1350 px (proporção 16:9), até 2 MB para imagem/GIF.
+          • Mínimo aceitável: 1600 x 900 px.
+          • Vídeo: 1920 x 1080 px (Full HD), MP4/WebM, até 50 MB.
+        A área visível usa proporções diferentes por dispositivo (a mídia é recortada
+        com object-cover): 4:5 no mobile, 16:9 no tablet e 21:9 no desktop.
+      */}
+      <div className="relative w-full aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] sm:max-h-[560px]">
+
         {activeSlides.map((s, idx) => (
           <div
             key={idx}
