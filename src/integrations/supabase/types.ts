@@ -684,6 +684,57 @@ export type Database = {
         }
         Relationships: []
       }
+      popups: {
+        Row: {
+          active: boolean
+          content: string | null
+          created_at: string
+          created_by: string | null
+          ends_at: string | null
+          frequency: string
+          id: string
+          image_url: string | null
+          link_label: string | null
+          link_url: string | null
+          priority: number
+          starts_at: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          frequency?: string
+          id?: string
+          image_url?: string | null
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number
+          starts_at?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          ends_at?: string | null
+          frequency?: string
+          id?: string
+          image_url?: string | null
+          link_label?: string | null
+          link_url?: string | null
+          priority?: number
+          starts_at?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           asaas_customer_id: string | null
