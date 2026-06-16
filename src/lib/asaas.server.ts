@@ -103,6 +103,43 @@ export async function getFirstSubscriptionPayment(subscriptionId: string) {
   return r.data?.[0] ?? null;
 }
 
+export interface AsaasPayment {
+  id: string;
+  invoiceUrl?: string;
+  status: string;
+  billingType: string;
+  value: number;
+  dueDate: string;
+}
+
+export async function createPayment(input: {
+  customer: string;
+  billingType: "PIX" | "CREDIT_CARD";
+  value: number; // total amount (for installments: total value across installments)
+  dueDate: string; // YYYY-MM-DD
+  description?: string;
+  externalReference?: string;
+  installmentCount?: number; // only for CREDIT_CARD installments
+}): Promise<AsaasPayment> {
+  const payload: Record<string, unknown> = {
+    customer: input.customer,
+    billingType: input.billingType,
+    dueDate: input.dueDate,
+    description: input.description,
+    externalReference: input.externalReference,
+  };
+  if (input.billingType === "CREDIT_CARD" && input.installmentCount && input.installmentCount > 1) {
+    payload.installmentCount = input.installmentCount;
+    payload.totalValue = input.value;
+  } else {
+    payload.value = input.value;
+  }
+  return asaasFetch<AsaasPayment>("/payments", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function cancelSubscription(subscriptionId: string) {
   return asaasFetch(`/subscriptions/${subscriptionId}`, { method: "DELETE" });
 }
