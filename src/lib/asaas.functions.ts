@@ -90,7 +90,7 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
 
     return {
       subscriptionId: payment.id,
-      invoiceUrl: firstPayment?.invoiceUrl ?? null,
+      invoiceUrl: payment.invoiceUrl ?? null,
     };
   });
 
