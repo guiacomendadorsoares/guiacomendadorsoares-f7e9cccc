@@ -3,6 +3,7 @@ import {
   LayoutDashboard, CheckCircle2, Building2, Briefcase, Home, Newspaper,
   Calendar, Sparkles, Handshake, Users, BarChart3, Settings, Wallet,
   User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound, Crown, LifeBuoy,
+  Image as ImageIcon,
 } from "lucide-react";
 import type { AppRole } from "@/hooks/use-auth";
 
@@ -27,6 +28,7 @@ export const adminNav: NavSection[] = [
       { to: "/admin/eventos", label: "Eventos", icon: Calendar },
       { to: "/admin/curiosidades", label: "Curiosidades", icon: Sparkles },
       { to: "/admin/utilidade-publica", label: "Utilidade Pública", icon: LifeBuoy },
+      { to: "/admin/banners", label: "Banners", icon: ImageIcon },
     ],
   },
   {
