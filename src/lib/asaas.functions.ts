@@ -50,21 +50,23 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
       externalReference: userId,
     });
 
-    // Subscription (starts tomorrow)
-    const nextDue = new Date();
-    nextDue.setDate(nextDue.getDate() + 1);
-    const nextDueDate = nextDue.toISOString().slice(0, 10);
+    // One-time annual payment: PIX (single) or CREDIT_CARD (parcelado em 12x)
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 1);
+    const dueDateStr = dueDate.toISOString().slice(0, 10);
 
-    const subscription = await createSubscription({
+    const monthly = Number(plan.price);
+    const annualTotal = Math.round(monthly * 12 * 100) / 100;
+
+    const payment = await createPayment({
       customer: customer.id,
-      value: Number(plan.price),
-      nextDueDate,
       billingType: data.billingType,
-      description: `Plano ${plan.name} — Guia Comendador Soares`,
+      value: annualTotal,
+      dueDate: dueDateStr,
+      description: `Plano ${plan.name} (12 meses) — Guia Comendador Soares`,
       externalReference: userId,
+      installmentCount: data.billingType === "CREDIT_CARD" ? 12 : undefined,
     });
-
-    const firstPayment = await getFirstSubscriptionPayment(subscription.id).catch(() => null);
 
     // Persist (admin client — bypass RLS to store cross-table refs safely)
     await supabaseAdmin
@@ -77,17 +79,17 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
       plan_id: plan.id,
       status: "pending",
       asaas_customer_id: customer.id,
-      asaas_subscription_id: subscription.id,
-      asaas_payment_id: firstPayment?.id ?? null,
-      billing_type: subscription.billingType,
-      value: subscription.value,
-      next_due_date: subscription.nextDueDate,
-      invoice_url: firstPayment?.invoiceUrl ?? null,
+      asaas_subscription_id: null,
+      asaas_payment_id: payment.id,
+      billing_type: data.billingType,
+      value: annualTotal,
+      next_due_date: dueDateStr,
+      invoice_url: payment.invoiceUrl ?? null,
       starts_at: new Date().toISOString(),
     });
 
     return {
-      subscriptionId: subscription.id,
+      subscriptionId: payment.id,
       invoiceUrl: firstPayment?.invoiceUrl ?? null,
     };
   });
