@@ -276,6 +276,87 @@ export type Database = {
           },
         ]
       }
+      coupon_redemptions: {
+        Row: {
+          coupon_id: string
+          id: string
+          redeemed_at: string
+          subscription_id: string | null
+          user_id: string
+        }
+        Insert: {
+          coupon_id: string
+          id?: string
+          redeemed_at?: string
+          subscription_id?: string | null
+          user_id: string
+        }
+        Update: {
+          coupon_id?: string
+          id?: string
+          redeemed_at?: string
+          subscription_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_redemptions_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_redemptions_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          created_by: string | null
+          days: number
+          expires_at: string | null
+          id: string
+          max_uses: number
+          plan_slug: string
+          updated_at: string
+          used_count: number
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          created_by?: string | null
+          days: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          plan_slug: string
+          updated_at?: string
+          used_count?: number
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          created_by?: string | null
+          days?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          plan_slug?: string
+          updated_at?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
       curiosities: {
         Row: {
           approved_at: string | null

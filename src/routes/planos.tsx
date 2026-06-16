@@ -9,6 +9,8 @@ import logoUrl from "@/assets/logo.png";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { createPlanCheckout } from "@/lib/asaas.functions";
+import { redeemCoupon } from "@/lib/coupons.functions";
+import { Ticket } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +36,7 @@ function PlanosPage() {
       <Header />
       <Hero />
       <PlansGrid />
+      <CouponRedeem />
       <Compare />
       <FinalCta />
       <SiteFooter />
@@ -166,6 +169,54 @@ function PlansGrid() {
         )}
       </div>
       <CheckoutDialog plan={selected} onClose={() => setSelected(null)} />
+    </section>
+  );
+}
+
+function CouponRedeem() {
+  const { user } = useCurrentUser();
+  const redeem = useServerFn(redeemCoupon);
+  const [code, setCode] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function submit() {
+    if (!user) { window.location.href = "/auth"; return; }
+    if (code.trim().length < 3) { toast.error("Informe um código válido"); return; }
+    setLoading(true);
+    try {
+      const r = await redeem({ data: { code: code.trim().toUpperCase() } });
+      toast.success(`Plano ${r.planName} liberado por ${r.days} dias!`);
+      setCode("");
+      setTimeout(() => window.location.reload(), 800);
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <section className="border-b border-border bg-background py-10">
+      <div className="mx-auto max-w-xl px-4">
+        <div className="rounded-2xl border-2 border-dashed border-primary/40 bg-primary/5 p-6 text-center">
+          <Ticket className="mx-auto h-8 w-8 text-primary" />
+          <h3 className="mt-2 font-display text-xl font-bold">Tem um cupom de teste grátis?</h3>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Resgate seu código e libere o plano pelo período do cupom — sem cartão.
+          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <Input
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder="DIGITE O CÓDIGO"
+              className="text-center font-mono uppercase tracking-wider"
+            />
+            <Button onClick={submit} disabled={loading} variant="premium">
+              {loading && <Loader2 className="h-4 w-4 animate-spin" />} Resgatar
+            </Button>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
