@@ -38,6 +38,51 @@ export type Database = {
         }
         Relationships: []
       }
+      banners: {
+        Row: {
+          active: boolean
+          created_at: string
+          cta: string
+          eyebrow: string
+          href: string | null
+          id: string
+          media_type: string
+          media_url: string
+          poster_url: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          cta?: string
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          media_type?: string
+          media_url: string
+          poster_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          cta?: string
+          eyebrow?: string
+          href?: string | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          poster_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       broadcasts: {
         Row: {
           active: boolean
