@@ -8,7 +8,7 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
   const uid = u.user?.id;
   if (!uid) throw new Error("Faça login para enviar imagens.");
   if (!file.type.startsWith("image/")) throw new Error("Selecione um arquivo de imagem.");
-  if (file.size > 5 * 1024 * 1024) throw new Error("Imagem acima de 5MB.");
+  if (file.size > 10 * 1024 * 1024) throw new Error("Imagem acima de 10MB.");
 
   const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
   const path = `${uid}/${folder}/${crypto.randomUUID()}.${ext}`;
@@ -22,6 +22,31 @@ export async function uploadImage(file: File, folder: string): Promise<string> {
 
   const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
   return data.publicUrl;
+}
+
+/** Upload de mídia (imagem, GIF ou vídeo). Limite 50MB. */
+export async function uploadMedia(file: File, folder: string): Promise<{ url: string; type: "image" | "gif" | "video" }> {
+  const { data: u } = await supabase.auth.getUser();
+  const uid = u.user?.id;
+  if (!uid) throw new Error("Faça login para enviar mídia.");
+  const isImage = file.type.startsWith("image/");
+  const isVideo = file.type.startsWith("video/");
+  if (!isImage && !isVideo) throw new Error("Envie uma imagem, GIF ou vídeo.");
+  const limit = isVideo ? 50 * 1024 * 1024 : 15 * 1024 * 1024;
+  if (file.size > limit) throw new Error(`Arquivo acima de ${isVideo ? "50MB" : "15MB"}.`);
+
+  const ext = file.name.split(".").pop()?.toLowerCase() || (isVideo ? "mp4" : "jpg");
+  const path = `${uid}/${folder}/${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    cacheControl: "31536000",
+    upsert: false,
+    contentType: file.type,
+  });
+  if (error) throw error;
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  const type: "image" | "gif" | "video" = isVideo ? "video" : file.type === "image/gif" ? "gif" : "image";
+  return { url: data.publicUrl, type };
 }
 
 export function storagePathFromPublicUrl(url: string): string | null {
