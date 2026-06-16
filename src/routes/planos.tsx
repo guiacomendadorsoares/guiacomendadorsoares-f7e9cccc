@@ -176,7 +176,9 @@ function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => v
   const [loading, setLoading] = useState(false);
   const [fullName, setFullName] = useState(user?.user_metadata?.full_name ?? "");
   const [cpfCnpj, setCpfCnpj] = useState("");
-  const [billingType, setBillingType] = useState<"UNDEFINED" | "PIX" | "BOLETO" | "CREDIT_CARD">("UNDEFINED");
+  const [billingType, setBillingType] = useState<"PIX" | "CREDIT_CARD">("PIX");
+  const monthly = Number(plan?.price ?? 0);
+  const annual = monthly * 12;
 
   async function submit() {
     if (!plan) return;
