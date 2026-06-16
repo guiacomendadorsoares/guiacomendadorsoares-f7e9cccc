@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ImageUploader } from "@/components/image-uploader";
+import { SingleImageUploader } from "@/components/image-uploader";
 import { Loader2, Plus, Trash2, MessageSquare } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/popups")({
@@ -129,7 +129,7 @@ function AdminPopupsPage() {
           </div>
           <div className="space-y-1.5 md:col-span-2">
             <Label>Imagem (opcional)</Label>
-            <ImageUploader value={form.image_url} onChange={(url) => setForm({ ...form, image_url: url ?? "" })} />
+            <SingleImageUploader value={form.image_url} onChange={(url: string | null) => setForm({ ...form, image_url: url ?? "" })} folder="popups" />
           </div>
           <div className="space-y-1.5">
             <Label>Link (opcional)</Label>
