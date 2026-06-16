@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { SingleImageUploader } from "@/components/image-uploader";
+import { SingleMediaUploader } from "@/components/image-uploader";
 import { Image as ImageIcon, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -125,28 +125,29 @@ function BannerRow({ banner }: { banner: Banner }) {
     <div className="rounded-xl border border-border bg-card p-4 shadow-card">
       <div className="grid gap-4 md:grid-cols-[220px_1fr]">
         <div className="space-y-2">
-          {isVideo ? (
-            <div className="space-y-2">
-              <Label className="text-xs">URL do vídeo (mp4/webm)</Label>
+          <Label className="text-xs">Mídia (imagem, GIF ou vídeo)</Label>
+          <SingleMediaUploader
+            value={form.media_url || null}
+            mediaType={form.media_type}
+            folder="banners"
+            aspect="wide"
+            onChange={({ url, type }) =>
+              setForm({
+                ...form,
+                media_url: url ?? "",
+                media_type: type ?? form.media_type,
+              })
+            }
+          />
+          {isVideo && (
+            <div className="space-y-1">
+              <Label className="text-xs text-muted-foreground">…ou cole uma URL de vídeo</Label>
               <Input
                 value={form.media_url}
                 onChange={(e) => setForm({ ...form, media_url: e.target.value })}
                 placeholder="https://…/video.mp4"
               />
-              {form.media_url && (
-                <video src={form.media_url} className="aspect-[16/7] w-full rounded-lg object-cover" muted />
-              )}
             </div>
-          ) : (
-            <>
-              <Label className="text-xs">Imagem / GIF</Label>
-              <SingleImageUploader
-                value={form.media_url}
-                onChange={(url) => setForm({ ...form, media_url: url ?? "" })}
-                folder="banners"
-                aspect="wide"
-              />
-            </>
           )}
           <div>
             <Label className="text-xs">Tipo de mídia</Label>

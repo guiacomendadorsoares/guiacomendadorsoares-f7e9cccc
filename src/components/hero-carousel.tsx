@@ -77,7 +77,9 @@ function SlideMedia({ slide, eager }: { slide: Slide; eager: boolean }) {
       src={slide.src}
       alt=""
       loading={eager ? "eager" : "lazy"}
-      className="h-full w-full object-cover"
+      decoding="async"
+      {...(eager ? { fetchPriority: "high" as any } : {})}
+      className="h-full w-full object-cover [image-rendering:auto]"
     />
   );
 }
@@ -153,7 +155,7 @@ export function HeroCarousel() {
 
   return (
     <section className="relative -mx-5 -mt-4 mb-6 overflow-hidden">
-      <div className="relative h-[260px] w-full">
+      <div className="relative h-[260px] w-full sm:h-[340px] md:h-[420px] lg:h-[480px]">
         {activeSlides.map((s, idx) => (
           <div
             key={idx}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon } from "lucide-react";
+import { Loader2, Upload, X, ArrowLeft, ArrowRight, Image as ImageIcon, Film } from "lucide-react";
 import { toast } from "sonner";
-import { uploadImage, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
+import { uploadImage, uploadMedia, deleteImageByUrl, getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
 
 interface SingleProps {
   value: string | null | undefined;
@@ -80,6 +80,90 @@ export function SingleImageUploader({ value, onChange, folder, aspect = "square"
         ref={inputRef}
         type="file"
         accept="image/*"
+        className="hidden"
+        onChange={(e) => {
+          const f = e.target.files?.[0];
+          e.target.value = "";
+          if (f) handleFile(f);
+        }}
+      />
+    </div>
+  );
+}
+
+interface MediaProps {
+  value: string | null | undefined;
+  mediaType?: "image" | "gif" | "video";
+  onChange: (next: { url: string | null; type?: "image" | "gif" | "video" }) => void;
+  folder: string;
+  aspect?: "square" | "wide";
+}
+
+/** Uploader que aceita imagem, GIF e vídeo (mp4/webm). */
+export function SingleMediaUploader({ value, mediaType, onChange, folder, aspect = "wide" }: MediaProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+
+  async function handleFile(file: File) {
+    setUploading(true);
+    try {
+      const { url, type } = await uploadMedia(file, folder);
+      onChange({ url, type });
+    } catch (e: any) {
+      toast.error(e.message ?? "Erro ao enviar mídia");
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleRemove() {
+    if (value) { try { await deleteImageByUrl(value); } catch {} }
+    onChange({ url: null });
+  }
+
+  const ratio = aspect === "wide" ? "aspect-[16/7]" : "aspect-square";
+  const isVideo = mediaType === "video" || (value ?? "").match(/\.(mp4|webm|mov)(\?|$)/i);
+
+  return (
+    <div className="space-y-2">
+      <div className={`relative ${ratio} w-full overflow-hidden rounded-lg border border-dashed border-border bg-muted/30`}>
+        {value ? (
+          <>
+            {isVideo ? (
+              <video src={value} className="h-full w-full object-cover" muted loop playsInline autoPlay />
+            ) : (
+              <img src={value} alt="preview" className="h-full w-full object-cover" />
+            )}
+            <button
+              type="button"
+              onClick={handleRemove}
+              className="absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-background/90 text-destructive shadow-card"
+              aria-label="Remover"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="absolute inset-0 grid place-items-center gap-2 text-xs text-muted-foreground"
+          >
+            {uploading ? (
+              <Loader2 className="h-5 w-5 animate-spin" />
+            ) : (
+              <>
+                <Film className="h-5 w-5" />
+                <span>Imagem, GIF ou vídeo</span>
+              </>
+            )}
+          </button>
+        )}
+      </div>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,video/mp4,video/webm,video/quicktime"
         className="hidden"
         onChange={(e) => {
           const f = e.target.files?.[0];
