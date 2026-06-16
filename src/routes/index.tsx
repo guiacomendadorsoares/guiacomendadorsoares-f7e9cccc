@@ -259,7 +259,7 @@ function UpcomingEvents() {
   return (
     <section className="mb-7">
       <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/"} fallbackImage={phEvento.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/eventos/${id}`} fallbackImage={phEvento.url} />}
     </section>
   );
 }

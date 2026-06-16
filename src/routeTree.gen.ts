@@ -27,6 +27,7 @@ import { Route as GuiaIndexRouteImport } from './routes/guia.index'
 import { Route as NoticiasIdRouteImport } from './routes/noticias.$id'
 import { Route as ImoveisIdRouteImport } from './routes/imoveis.$id'
 import { Route as GuiaCategoriaRouteImport } from './routes/guia.$categoria'
+import { Route as EventosIdRouteImport } from './routes/eventos.$id'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
 import { Route as AuthenticatedPortalImprensaRouteImport } from './routes/_authenticated/portal-imprensa'
 import { Route as AuthenticatedPainelImoveisRouteImport } from './routes/_authenticated/painel-imoveis'
@@ -142,6 +143,11 @@ const ImoveisIdRoute = ImoveisIdRouteImport.update({
 const GuiaCategoriaRoute = GuiaCategoriaRouteImport.update({
   id: '/guia/$categoria',
   path: '/guia/$categoria',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventosIdRoute = EventosIdRouteImport.update({
+  id: '/eventos/$id',
+  path: '/eventos/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const EmpresaIdRoute = EmpresaIdRouteImport.update({
@@ -320,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
@@ -365,6 +372,7 @@ export interface FileRoutesByTo {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
@@ -413,6 +421,7 @@ export interface FileRoutesById {
   '/_authenticated/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/_authenticated/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/empresa/$id': typeof EmpresaIdRoute
+  '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
@@ -461,6 +470,7 @@ export interface FileRouteTypes {
     | '/painel-imoveis'
     | '/portal-imprensa'
     | '/empresa/$id'
+    | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
@@ -506,6 +516,7 @@ export interface FileRouteTypes {
     | '/painel-imoveis'
     | '/portal-imprensa'
     | '/empresa/$id'
+    | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
@@ -553,6 +564,7 @@ export interface FileRouteTypes {
     | '/_authenticated/painel-imoveis'
     | '/_authenticated/portal-imprensa'
     | '/empresa/$id'
+    | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
@@ -596,6 +608,7 @@ export interface RootRouteChildren {
   UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
+  EventosIdRoute: typeof EventosIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
   NoticiasIdRoute: typeof NoticiasIdRoute
   GuiaIndexRoute: typeof GuiaIndexRoute
@@ -729,6 +742,13 @@ declare module '@tanstack/react-router' {
       path: '/guia/$categoria'
       fullPath: '/guia/$categoria'
       preLoaderRoute: typeof GuiaCategoriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/eventos/$id': {
+      id: '/eventos/$id'
+      path: '/eventos/$id'
+      fullPath: '/eventos/$id'
+      preLoaderRoute: typeof EventosIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/empresa/$id': {
@@ -1029,6 +1049,7 @@ const rootRouteChildren: RootRouteChildren = {
   UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRoute,
   EmpresaIdRoute: EmpresaIdRoute,
+  EventosIdRoute: EventosIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
   NoticiasIdRoute: NoticiasIdRoute,
   GuiaIndexRoute: GuiaIndexRoute,
