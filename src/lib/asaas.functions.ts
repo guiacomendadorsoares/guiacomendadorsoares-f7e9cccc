@@ -16,8 +16,7 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
     const {
       findOrCreateCustomer,
-      createSubscription,
-      getFirstSubscriptionPayment,
+      createPayment,
     } = await import("./asaas.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
