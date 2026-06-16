@@ -135,7 +135,7 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
         ? "id,title,cover_url,featured"
         : "id,title,cover_url";
       let q = supabase.from(table).select(cols).eq("status", "approved");
-      if (table === "businesses" && mainCategory) q = q.eq("main_category", mainCategory);
+      if (table === "businesses" && mainCategory) q = (q as any).eq("main_category", mainCategory);
       if (hasFeatured) q = q.order("featured", { ascending: false });
       else q = q.order("created_at", { ascending: false });
       const { data, error } = await q.limit(3);
@@ -301,6 +301,7 @@ function NeighborhoodNews() {
 }
 
 function WhereToEat() {
+  const { data: items = [] } = useApprovedItems("businesses", "alimentacao");
   const placeholders: PHCard[] = [
     { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
     { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer2.url },
@@ -309,7 +310,7 @@ function WhereToEat() {
   return (
     <section className="mb-7">
       <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/onde-comer" />
-      <PlaceholderRow cards={placeholders} />
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phComer.url} />}
     </section>
   );
 }
@@ -324,7 +325,7 @@ function Curiosities() {
   return (
     <section className="mb-2">
       <SectionHeader title="Curiosidades" subtitle="Você sabia?" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/"} fallbackImage={phCuriosidade.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/curiosidades/$id", params: { id } })} fallbackImage={phCuriosidade.url} />}
     </section>
   );
 }
