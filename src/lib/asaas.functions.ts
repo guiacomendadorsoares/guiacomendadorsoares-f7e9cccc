@@ -28,14 +28,18 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
     ]);
     if (planErr || !plan) throw new Error("Plano não encontrado");
 
-    // Fallback: get email from auth.users if profile.email is missing
-    let email = profile?.email ?? null;
+    // Fallback: get email from JWT claims or auth.users if profile.email is missing
+    let email = profile?.email ?? (context.claims as any)?.email ?? null;
     if (!email) {
-      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
-      email = authUser?.user?.email ?? null;
-      if (email) {
-        await supabaseAdmin.from("profiles").update({ email }).eq("user_id", userId);
+      try {
+        const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+        email = authUser?.user?.email ?? null;
+      } catch (e) {
+        console.error("getUserById failed", e);
       }
+    }
+    if (email && !profile?.email) {
+      await supabaseAdmin.from("profiles").update({ email }).eq("user_id", userId);
     }
     if (!email) throw new Error("E-mail do usuário não encontrado. Atualize seu perfil.");
 
