@@ -6,7 +6,7 @@ const checkoutInput = z.object({
   planSlug: z.enum(["destaque", "ouro"]),
   cpfCnpj: z.string().min(11).max(20).regex(/^[0-9./-]+$/),
   fullName: z.string().min(2).max(120),
-  billingType: z.enum(["UNDEFINED", "PIX", "BOLETO", "CREDIT_CARD"]).default("UNDEFINED"),
+  billingType: z.enum(["PIX", "CREDIT_CARD"]),
 });
 
 export const createPlanCheckout = createServerFn({ method: "POST" })
