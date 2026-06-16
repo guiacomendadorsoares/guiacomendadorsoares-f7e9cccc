@@ -77,7 +77,9 @@ function SlideMedia({ slide, eager }: { slide: Slide; eager: boolean }) {
       src={slide.src}
       alt=""
       loading={eager ? "eager" : "lazy"}
-      className="h-full w-full object-cover"
+      decoding="async"
+      {...(eager ? { fetchPriority: "high" as any } : {})}
+      className="h-full w-full object-cover [image-rendering:auto]"
     />
   );
 }
