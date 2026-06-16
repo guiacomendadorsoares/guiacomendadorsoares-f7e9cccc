@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -56,21 +56,38 @@ function isExternal(href: string) {
   return /^https?:\/\//i.test(href) || href.startsWith("mailto:") || href.startsWith("tel:");
 }
 
+function InlineBannerVideo({ slide, eager }: { slide: Slide; eager: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.playsInline = true;
+    video.play().catch(() => undefined);
+  }, [slide.src]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={slide.src}
+      poster={slide.poster}
+      autoPlay
+      muted
+      loop
+      playsInline
+      controls={false}
+      preload={eager ? "auto" : "metadata"}
+      onCanPlay={() => videoRef.current?.play().catch(() => undefined)}
+      className="pointer-events-none h-full w-full object-cover bg-background"
+    />
+  );
+}
+
 function SlideMedia({ slide, eager }: { slide: Slide; eager: boolean }) {
   const type = detectMediaType(slide.src, slide.mediaType);
   if (type === "video") {
-    return (
-      <video
-        src={slide.src}
-        poster={slide.poster}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload={eager ? "auto" : "metadata"}
-        className="h-full w-full object-cover"
-      />
-    );
+    return <InlineBannerVideo slide={slide} eager={eager} />;
   }
   return (
     <img
