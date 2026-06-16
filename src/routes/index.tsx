@@ -110,23 +110,32 @@ type ApprovedItem = {
   id: string;
   name?: string;
   title?: string;
+  subtitle?: string | null;
+  company?: string | null;
+  summary?: string | null;
+  address?: string | null;
   cover_url?: string | null;
   logo_url?: string | null;
   banner_url?: string | null;
   featured?: boolean;
 };
 
-function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities") {
+function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities", mainCategory?: string) {
   return useQuery({
-    queryKey: ["home-items", table],
+    queryKey: ["home-items", table, mainCategory ?? "all"],
     queryFn: async () => {
       const hasFeatured = table === "businesses" || table === "properties";
       const cols = table === "businesses"
-        ? "id,name,logo_url,banner_url,featured"
+        ? "id,name,address,logo_url,banner_url,featured"
+        : table === "jobs"
+        ? "id,title,company,urgent"
+        : table === "news"
+        ? "id,title,summary,cover_url"
         : hasFeatured
         ? "id,title,cover_url,featured"
         : "id,title,cover_url";
       let q = supabase.from(table).select(cols).eq("status", "approved");
+      if (table === "businesses" && mainCategory) q = (q as any).eq("main_category", mainCategory);
       if (hasFeatured) q = q.order("featured", { ascending: false });
       else q = q.order("created_at", { ascending: false });
       const { data, error } = await q.limit(3);
@@ -137,6 +146,7 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
       return Promise.all(
         ((data ?? []) as unknown as ApprovedItem[]).map(async (item) => ({
           ...item,
+          subtitle: item.company ?? item.summary ?? item.address ?? null,
           cover_url: await getDisplayImageUrl(item.cover_url ?? item.banner_url ?? item.logo_url ?? null),
           banner_url: await getDisplayImageUrl(item.banner_url ?? null),
           logo_url: await getDisplayImageUrl(item.logo_url ?? null),
@@ -172,16 +182,26 @@ function PlaceholderRow({ cards }: { cards: PHCard[] }) {
   );
 }
 
-function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => string; fallbackImage: string }) {
+type HomeCardTarget =
+  | { to: "/empresa/$id"; params: { id: string } }
+  | { to: "/vagas/$id"; params: { id: string } }
+  | { to: "/imoveis/$id"; params: { id: string } }
+  | { to: "/eventos/$id"; params: { id: string } }
+  | { to: "/noticias/$id"; params: { id: string } }
+  | { to: "/curiosidades/$id"; params: { id: string } };
+
+function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => HomeCardTarget; fallbackImage: string }) {
   return (
     <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {items.map((it) => {
         const cover = it.cover_url || it.banner_url || fallbackImage;
         const title = it.name || it.title || "Sem título";
+        const target = to(it.id);
         return (
           <Link
             key={it.id}
-            to={to(it.id)}
+            to={target.to}
+            params={target.params}
             className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
           >
             <div className="relative h-32 w-full overflow-hidden">
@@ -194,6 +214,7 @@ function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id:
             </div>
             <div className="p-3">
               <p className="text-sm font-semibold leading-tight line-clamp-2">{title}</p>
+              {it.subtitle ? <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{it.subtitle}</p> : null}
             </div>
           </Link>
         );
@@ -214,7 +235,7 @@ function FeaturedCompanies() {
   return (
     <section className="mb-7">
       <SectionHeader title="Empresas em destaque" subtitle="Os queridinhos do bairro" to="/guia" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/empresa/${id}`} fallbackImage={phEmpresa.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phEmpresa.url} />}
     </section>
   );
 }
@@ -229,7 +250,7 @@ function LatestJobs() {
   return (
     <section className="mb-7">
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/vagas"} fallbackImage={phVaga.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/vagas/$id", params: { id } })} fallbackImage={phVaga.url} />}
     </section>
   );
 }
@@ -244,7 +265,7 @@ function RecentProperties() {
   return (
     <section className="mb-7">
       <SectionHeader title="Imóveis recentes" subtitle="Alugar e comprar" to="/imoveis" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/imoveis/${id}`} fallbackImage={phImovel.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/imoveis/$id", params: { id } })} fallbackImage={phImovel.url} />}
     </section>
   );
 }
@@ -259,7 +280,7 @@ function UpcomingEvents() {
   return (
     <section className="mb-7">
       <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => `/eventos/${id}`} fallbackImage={phEvento.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/eventos/$id", params: { id } })} fallbackImage={phEvento.url} />}
     </section>
   );
 }
@@ -274,12 +295,13 @@ function NeighborhoodNews() {
   return (
     <section className="mb-7">
       <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" to="/noticias" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/noticias"} fallbackImage={phNoticia.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/noticias/$id", params: { id } })} fallbackImage={phNoticia.url} />}
     </section>
   );
 }
 
 function WhereToEat() {
+  const { data: items = [] } = useApprovedItems("businesses", "alimentacao");
   const placeholders: PHCard[] = [
     { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
     { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer2.url },
@@ -288,7 +310,7 @@ function WhereToEat() {
   return (
     <section className="mb-7">
       <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/onde-comer" />
-      <PlaceholderRow cards={placeholders} />
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phComer.url} />}
     </section>
   );
 }
@@ -303,7 +325,7 @@ function Curiosities() {
   return (
     <section className="mb-2">
       <SectionHeader title="Curiosidades" subtitle="Você sabia?" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={() => "/"} fallbackImage={phCuriosidade.url} />}
+      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/curiosidades/$id", params: { id } })} fallbackImage={phCuriosidade.url} />}
     </section>
   );
 }

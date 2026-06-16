@@ -24,11 +24,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as NoticiasIndexRouteImport } from './routes/noticias.index'
 import { Route as GuiaIndexRouteImport } from './routes/guia.index'
+import { Route as VagasIdRouteImport } from './routes/vagas.$id'
 import { Route as NoticiasIdRouteImport } from './routes/noticias.$id'
 import { Route as ImoveisIdRouteImport } from './routes/imoveis.$id'
 import { Route as GuiaCategoriaRouteImport } from './routes/guia.$categoria'
 import { Route as EventosIdRouteImport } from './routes/eventos.$id'
 import { Route as EmpresaIdRouteImport } from './routes/empresa.$id'
+import { Route as CuriosidadesIdRouteImport } from './routes/curiosidades.$id'
 import { Route as AuthenticatedPortalImprensaRouteImport } from './routes/_authenticated/portal-imprensa'
 import { Route as AuthenticatedPainelImoveisRouteImport } from './routes/_authenticated/painel-imoveis'
 import { Route as AuthenticatedPainelEmpresaRouteImport } from './routes/_authenticated/painel-empresa'
@@ -131,6 +133,11 @@ const GuiaIndexRoute = GuiaIndexRouteImport.update({
   path: '/guia/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VagasIdRoute = VagasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => VagasRoute,
+} as any)
 const NoticiasIdRoute = NoticiasIdRouteImport.update({
   id: '/noticias/$id',
   path: '/noticias/$id',
@@ -154,6 +161,11 @@ const EventosIdRoute = EventosIdRouteImport.update({
 const EmpresaIdRoute = EmpresaIdRouteImport.update({
   id: '/empresa/$id',
   path: '/empresa/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CuriosidadesIdRoute = CuriosidadesIdRouteImport.update({
+  id: '/curiosidades/$id',
+  path: '/curiosidades/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPortalImprensaRoute =
@@ -326,17 +338,19 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
-  '/vagas': typeof VagasRoute
+  '/vagas': typeof VagasRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
+  '/curiosidades/$id': typeof CuriosidadesIdRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
+  '/vagas/$id': typeof VagasIdRoute
   '/guia/': typeof GuiaIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
@@ -374,16 +388,18 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
-  '/vagas': typeof VagasRoute
+  '/vagas': typeof VagasRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
+  '/curiosidades/$id': typeof CuriosidadesIdRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
+  '/vagas/$id': typeof VagasIdRoute
   '/guia': typeof GuiaIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
@@ -423,17 +439,19 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
-  '/vagas': typeof VagasRoute
+  '/vagas': typeof VagasRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/minha-conta': typeof AuthenticatedMinhaContaRoute
   '/_authenticated/painel-empresa': typeof AuthenticatedPainelEmpresaRoute
   '/_authenticated/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/_authenticated/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
+  '/curiosidades/$id': typeof CuriosidadesIdRoute
   '/empresa/$id': typeof EmpresaIdRoute
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
   '/noticias/$id': typeof NoticiasIdRoute
+  '/vagas/$id': typeof VagasIdRoute
   '/guia/': typeof GuiaIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
@@ -479,11 +497,13 @@ export interface FileRouteTypes {
     | '/painel-empresa'
     | '/painel-imoveis'
     | '/portal-imprensa'
+    | '/curiosidades/$id'
     | '/empresa/$id'
     | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
+    | '/vagas/$id'
     | '/guia/'
     | '/noticias/'
     | '/admin/aprovacoes'
@@ -526,11 +546,13 @@ export interface FileRouteTypes {
     | '/painel-empresa'
     | '/painel-imoveis'
     | '/portal-imprensa'
+    | '/curiosidades/$id'
     | '/empresa/$id'
     | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
+    | '/vagas/$id'
     | '/guia'
     | '/noticias'
     | '/admin/aprovacoes'
@@ -575,11 +597,13 @@ export interface FileRouteTypes {
     | '/_authenticated/painel-empresa'
     | '/_authenticated/painel-imoveis'
     | '/_authenticated/portal-imprensa'
+    | '/curiosidades/$id'
     | '/empresa/$id'
     | '/eventos/$id'
     | '/guia/$categoria'
     | '/imoveis/$id'
     | '/noticias/$id'
+    | '/vagas/$id'
     | '/guia/'
     | '/noticias/'
     | '/_authenticated/admin/aprovacoes'
@@ -619,7 +643,8 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TestarNotificacoesRoute: typeof TestarNotificacoesRoute
   UtilidadePublicaRoute: typeof UtilidadePublicaRoute
-  VagasRoute: typeof VagasRoute
+  VagasRoute: typeof VagasRouteWithChildren
+  CuriosidadesIdRoute: typeof CuriosidadesIdRoute
   EmpresaIdRoute: typeof EmpresaIdRoute
   EventosIdRoute: typeof EventosIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
@@ -736,6 +761,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GuiaIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vagas/$id': {
+      id: '/vagas/$id'
+      path: '/$id'
+      fullPath: '/vagas/$id'
+      preLoaderRoute: typeof VagasIdRouteImport
+      parentRoute: typeof VagasRoute
+    }
     '/noticias/$id': {
       id: '/noticias/$id'
       path: '/noticias/$id'
@@ -769,6 +801,13 @@ declare module '@tanstack/react-router' {
       path: '/empresa/$id'
       fullPath: '/empresa/$id'
       preLoaderRoute: typeof EmpresaIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/curiosidades/$id': {
+      id: '/curiosidades/$id'
+      path: '/curiosidades/$id'
+      fullPath: '/curiosidades/$id'
+      preLoaderRoute: typeof CuriosidadesIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/portal-imprensa': {
@@ -1044,6 +1083,16 @@ const ImoveisRouteChildren: ImoveisRouteChildren = {
 const ImoveisRouteWithChildren =
   ImoveisRoute._addFileChildren(ImoveisRouteChildren)
 
+interface VagasRouteChildren {
+  VagasIdRoute: typeof VagasIdRoute
+}
+
+const VagasRouteChildren: VagasRouteChildren = {
+  VagasIdRoute: VagasIdRoute,
+}
+
+const VagasRouteWithChildren = VagasRoute._addFileChildren(VagasRouteChildren)
+
 interface GuiaCategoriaRouteChildren {
   GuiaCategoriaSubcategoriaRoute: typeof GuiaCategoriaSubcategoriaRoute
 }
@@ -1069,7 +1118,8 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TestarNotificacoesRoute: TestarNotificacoesRoute,
   UtilidadePublicaRoute: UtilidadePublicaRoute,
-  VagasRoute: VagasRoute,
+  VagasRoute: VagasRouteWithChildren,
+  CuriosidadesIdRoute: CuriosidadesIdRoute,
   EmpresaIdRoute: EmpresaIdRoute,
   EventosIdRoute: EventosIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
