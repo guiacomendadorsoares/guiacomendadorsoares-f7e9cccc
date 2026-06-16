@@ -10,6 +10,19 @@ import { Image as ImageIcon, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
+const INTERNAL_PAGES: { value: string; label: string }[] = [
+  { value: "/", label: "Início" },
+  { value: "/guia", label: "Guia de empresas" },
+  { value: "/onde-comer", label: "Onde comer" },
+  { value: "/vagas", label: "Vagas" },
+  { value: "/imoveis", label: "Imóveis" },
+  { value: "/noticias", label: "Notícias" },
+  { value: "/utilidade-publica", label: "Utilidade pública" },
+  { value: "/planos", label: "Planos" },
+  { value: "/anuncie", label: "Anuncie" },
+  { value: "/perfil", label: "Perfil" },
+];
+
 export const Route = createFileRoute("/_authenticated/admin/banners")({
   component: AdminBannersPage,
 });
