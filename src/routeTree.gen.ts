@@ -52,6 +52,7 @@ import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminCuriosidadesRouteImport } from './routes/_authenticated/admin.curiosidades'
 import { Route as AuthenticatedAdminCorretoresRouteImport } from './routes/_authenticated/admin.corretores'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated/admin.configuracoes'
+import { Route as AuthenticatedAdminBannersRouteImport } from './routes/_authenticated/admin.banners'
 import { Route as AuthenticatedAdminAprovacoesRouteImport } from './routes/_authenticated/admin.aprovacoes'
 
 const VagasRoute = VagasRouteImport.update({
@@ -287,6 +288,12 @@ const AuthenticatedAdminConfiguracoesRoute =
     path: '/configuracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBannersRoute =
+  AuthenticatedAdminBannersRouteImport.update({
+    id: '/banners',
+    path: '/banners',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminAprovacoesRoute =
   AuthenticatedAdminAprovacoesRouteImport.update({
     id: '/aprovacoes',
@@ -319,6 +326,7 @@ export interface FileRoutesByFullPath {
   '/guia/': typeof GuiaIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
   '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
@@ -363,6 +371,7 @@ export interface FileRoutesByTo {
   '/guia': typeof GuiaIndexRoute
   '/noticias': typeof NoticiasIndexRoute
   '/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
   '/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
@@ -410,6 +419,7 @@ export interface FileRoutesById {
   '/guia/': typeof GuiaIndexRoute
   '/noticias/': typeof NoticiasIndexRoute
   '/_authenticated/admin/aprovacoes': typeof AuthenticatedAdminAprovacoesRoute
+  '/_authenticated/admin/banners': typeof AuthenticatedAdminBannersRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/corretores': typeof AuthenticatedAdminCorretoresRoute
   '/_authenticated/admin/curiosidades': typeof AuthenticatedAdminCuriosidadesRoute
@@ -457,6 +467,7 @@ export interface FileRouteTypes {
     | '/guia/'
     | '/noticias/'
     | '/admin/aprovacoes'
+    | '/admin/banners'
     | '/admin/configuracoes'
     | '/admin/corretores'
     | '/admin/curiosidades'
@@ -501,6 +512,7 @@ export interface FileRouteTypes {
     | '/guia'
     | '/noticias'
     | '/admin/aprovacoes'
+    | '/admin/banners'
     | '/admin/configuracoes'
     | '/admin/corretores'
     | '/admin/curiosidades'
@@ -547,6 +559,7 @@ export interface FileRouteTypes {
     | '/guia/'
     | '/noticias/'
     | '/_authenticated/admin/aprovacoes'
+    | '/_authenticated/admin/banners'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/corretores'
     | '/_authenticated/admin/curiosidades'
@@ -893,6 +906,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/banners': {
+      id: '/_authenticated/admin/banners'
+      path: '/banners'
+      fullPath: '/admin/banners'
+      preLoaderRoute: typeof AuthenticatedAdminBannersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/aprovacoes': {
       id: '/_authenticated/admin/aprovacoes'
       path: '/aprovacoes'
@@ -905,6 +925,7 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAprovacoesRoute: typeof AuthenticatedAdminAprovacoesRoute
+  AuthenticatedAdminBannersRoute: typeof AuthenticatedAdminBannersRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminCorretoresRoute: typeof AuthenticatedAdminCorretoresRoute
   AuthenticatedAdminCuriosidadesRoute: typeof AuthenticatedAdminCuriosidadesRoute
@@ -926,6 +947,7 @@ interface AuthenticatedAdminRouteChildren {
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAprovacoesRoute: AuthenticatedAdminAprovacoesRoute,
+  AuthenticatedAdminBannersRoute: AuthenticatedAdminBannersRoute,
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminCorretoresRoute: AuthenticatedAdminCorretoresRoute,
   AuthenticatedAdminCuriosidadesRoute: AuthenticatedAdminCuriosidadesRoute,
