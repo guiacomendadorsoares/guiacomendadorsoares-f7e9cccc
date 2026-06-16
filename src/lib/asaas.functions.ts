@@ -27,12 +27,22 @@ export const createPlanCheckout = createServerFn({ method: "POST" })
       supabase.from("profiles").select("*").eq("user_id", userId).maybeSingle(),
     ]);
     if (planErr || !plan) throw new Error("Plano não encontrado");
-    if (!profile?.email) throw new Error("Perfil sem e-mail");
+
+    // Fallback: get email from auth.users if profile.email is missing
+    let email = profile?.email ?? null;
+    if (!email) {
+      const { data: authUser } = await supabaseAdmin.auth.admin.getUserById(userId);
+      email = authUser?.user?.email ?? null;
+      if (email) {
+        await supabaseAdmin.from("profiles").update({ email }).eq("user_id", userId);
+      }
+    }
+    if (!email) throw new Error("E-mail do usuário não encontrado. Atualize seu perfil.");
 
     // Customer
     const customer = await findOrCreateCustomer({
-      name: data.fullName || profile.full_name || profile.email,
-      email: profile.email,
+      name: data.fullName || profile?.full_name || email,
+      email,
       cpfCnpj: data.cpfCnpj.replace(/\D/g, ""),
       externalReference: userId,
     });
