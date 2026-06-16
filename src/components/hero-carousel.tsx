@@ -149,9 +149,10 @@ export function HeroCarousel() {
 
   useEffect(() => {
     if (activeSlides.length <= 1) return;
-    const id = setInterval(() => setI((v) => (v + 1) % activeSlides.length), 5000);
+    // Avança para o próximo banner a cada 15 segundos.
+    const id = setInterval(() => setI((v) => (v + 1) % activeSlides.length), 15000);
     return () => clearInterval(id);
-  }, [activeSlides.length]);
+  }, [activeSlides.length, i]);
 
   return (
     <section className="relative -mx-5 -mt-4 mb-6 overflow-hidden">
