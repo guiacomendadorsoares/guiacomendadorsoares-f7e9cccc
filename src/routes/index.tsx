@@ -110,6 +110,10 @@ type ApprovedItem = {
   id: string;
   name?: string;
   title?: string;
+  subtitle?: string;
+  company?: string | null;
+  summary?: string | null;
+  address?: string | null;
   cover_url?: string | null;
   logo_url?: string | null;
   banner_url?: string | null;
@@ -122,7 +126,11 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
     queryFn: async () => {
       const hasFeatured = table === "businesses" || table === "properties";
       const cols = table === "businesses"
-        ? "id,name,logo_url,banner_url,featured"
+        ? "id,name,address,logo_url,banner_url,featured"
+        : table === "jobs"
+        ? "id,title,company,urgent"
+        : table === "news"
+        ? "id,title,summary,cover_url"
         : hasFeatured
         ? "id,title,cover_url,featured"
         : "id,title,cover_url";
@@ -137,6 +145,7 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
       return Promise.all(
         ((data ?? []) as unknown as ApprovedItem[]).map(async (item) => ({
           ...item,
+          subtitle: item.company ?? item.summary ?? item.address ?? null,
           cover_url: await getDisplayImageUrl(item.cover_url ?? item.banner_url ?? item.logo_url ?? null),
           banner_url: await getDisplayImageUrl(item.banner_url ?? null),
           logo_url: await getDisplayImageUrl(item.logo_url ?? null),
@@ -172,16 +181,26 @@ function PlaceholderRow({ cards }: { cards: PHCard[] }) {
   );
 }
 
-function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => string; fallbackImage: string }) {
+type HomeCardTarget =
+  | { to: "/empresa/$id"; params: { id: string } }
+  | { to: "/vagas/$id"; params: { id: string } }
+  | { to: "/imoveis/$id"; params: { id: string } }
+  | { to: "/eventos/$id"; params: { id: string } }
+  | { to: "/noticias/$id"; params: { id: string } }
+  | { to: "/curiosidades/$id"; params: { id: string } };
+
+function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => HomeCardTarget; fallbackImage: string }) {
   return (
     <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {items.map((it) => {
         const cover = it.cover_url || it.banner_url || fallbackImage;
         const title = it.name || it.title || "Sem título";
+        const target = to(it.id);
         return (
           <Link
             key={it.id}
-            to={to(it.id)}
+            to={target.to}
+            params={target.params}
             className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
           >
             <div className="relative h-32 w-full overflow-hidden">
@@ -194,6 +213,7 @@ function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id:
             </div>
             <div className="p-3">
               <p className="text-sm font-semibold leading-tight line-clamp-2">{title}</p>
+              {it.subtitle ? <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{it.subtitle}</p> : null}
             </div>
           </Link>
         );
