@@ -22,6 +22,7 @@ async function asaasFetch<T = any>(
     headers: {
       "Content-Type": "application/json",
       access_token: key,
+      "User-Agent": "GuiaComendadorSoares/1.0",
       ...(init.headers ?? {}),
     },
   });
