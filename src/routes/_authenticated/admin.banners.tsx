@@ -126,6 +126,11 @@ function BannerRow({ banner }: { banner: Banner }) {
       <div className="grid gap-4 md:grid-cols-[220px_1fr]">
         <div className="space-y-2">
           <Label className="text-xs">Mídia (imagem, GIF ou vídeo)</Label>
+          <p className="text-[11px] leading-snug text-muted-foreground">
+            Tamanho ideal: <strong>2400 × 1350 px</strong> (16:9), até 2 MB.<br />
+            Mínimo: 1600 × 900 px. Vídeo: <strong>1920 × 1080 px</strong> (MP4/WebM, até 50 MB).<br />
+            A área exibida é recortada em 4:5 (mobile), 16:9 (tablet) e 21:9 (desktop) — mantenha o foco no centro.
+          </p>
           <SingleMediaUploader
             value={form.media_url || null}
             mediaType={form.media_type}
@@ -139,6 +144,7 @@ function BannerRow({ banner }: { banner: Banner }) {
               })
             }
           />
+
           {isVideo && (
             <div className="space-y-1">
               <Label className="text-xs text-muted-foreground">…ou cole uma URL de vídeo</Label>
