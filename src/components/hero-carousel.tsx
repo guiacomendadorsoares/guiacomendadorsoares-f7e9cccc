@@ -155,7 +155,7 @@ export function HeroCarousel() {
 
   return (
     <section className="relative -mx-5 -mt-4 mb-6 overflow-hidden">
-      <div className="relative h-[260px] w-full">
+      <div className="relative h-[260px] w-full sm:h-[340px] md:h-[420px] lg:h-[480px]">
         {activeSlides.map((s, idx) => (
           <div
             key={idx}
