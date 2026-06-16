@@ -176,7 +176,9 @@ function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => v
   const [loading, setLoading] = useState(false);
   const [fullName, setFullName] = useState(user?.user_metadata?.full_name ?? "");
   const [cpfCnpj, setCpfCnpj] = useState("");
-  const [billingType, setBillingType] = useState<"UNDEFINED" | "PIX" | "BOLETO" | "CREDIT_CARD">("UNDEFINED");
+  const [billingType, setBillingType] = useState<"PIX" | "CREDIT_CARD">("PIX");
+  const monthly = Number(plan?.price ?? 0);
+  const annual = monthly * 12;
 
   async function submit() {
     if (!plan) return;
@@ -201,7 +203,7 @@ function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => v
         <DialogHeader>
           <DialogTitle>Assinar plano {plan?.name}</DialogTitle>
           <DialogDescription>
-            R$ {Number(plan?.price ?? 0).toFixed(2).replace(".", ",")} / mês — cobrança mensal via Asaas.
+            Plano anual — R$ {annual.toFixed(2).replace(".", ",")} no total (equivale a R$ {monthly.toFixed(2).replace(".", ",")}/mês).
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -215,11 +217,13 @@ function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => v
           </div>
           <div className="space-y-1.5">
             <Label>Forma de pagamento</Label>
-            <RadioGroup value={billingType} onValueChange={(v) => setBillingType(v as any)} className="grid grid-cols-2 gap-2">
-              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="UNDEFINED" /> Escolher na fatura</label>
-              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="PIX" /> Pix</label>
-              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="BOLETO" /> Boleto</label>
-              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm"><RadioGroupItem value="CREDIT_CARD" /> Cartão</label>
+            <RadioGroup value={billingType} onValueChange={(v) => setBillingType(v as any)} className="grid grid-cols-1 gap-2">
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm">
+                <RadioGroupItem value="PIX" /> Pix — R$ {annual.toFixed(2).replace(".", ",")} à vista (12 meses)
+              </label>
+              <label className="flex items-center gap-2 rounded-md border border-border p-2 text-sm">
+                <RadioGroupItem value="CREDIT_CARD" /> Cartão — 12x de R$ {monthly.toFixed(2).replace(".", ",")}
+              </label>
             </RadioGroup>
           </div>
         </div>
