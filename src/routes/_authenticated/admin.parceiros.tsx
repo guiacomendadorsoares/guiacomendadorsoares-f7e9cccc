@@ -1,3 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ComingSoon } from "@/components/admin-content-table";
-export const Route = createFileRoute("/_authenticated/admin/parceiros")({ component: () => <ComingSoon title="Parceiros" /> });
+import { RoleUsersList } from "@/components/role-users-list";
+
+export const Route = createFileRoute("/_authenticated/admin/parceiros")({
+  component: () => <RoleUsersList role="partner" title="Parceiros" />,
+});
