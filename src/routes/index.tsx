@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
 import { InstallPrompt } from "@/components/install-prompt";
+import { HomePopup } from "@/components/home-popup";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
@@ -57,6 +58,7 @@ function HomePage() {
       <TopBar />
       <HeroCarousel />
       <InstallPrompt />
+      <HomePopup />
 
       <section className="mb-7">
         <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" />

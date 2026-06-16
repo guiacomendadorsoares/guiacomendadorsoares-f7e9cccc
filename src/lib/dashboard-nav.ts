@@ -41,13 +41,19 @@ export const adminNav: NavSection[] = [
     ],
   },
   {
-    title: "Sistema",
+    title: "Ferramentas",
     items: [
       { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
+      { to: "/admin/popups", label: "Popups", icon: MessageSquare },
+      { to: "/admin/cupons", label: "Cupons", icon: Sparkles },
       { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
+    ],
+  },
+  {
+    title: "Sistema",
+    items: [
       { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
       { to: "/admin/planos", label: "Planos", icon: Crown },
-      { to: "/admin/cupons", label: "Cupons", icon: Sparkles },
       { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
     ],
   },
