@@ -89,8 +89,7 @@ function InlineBannerVideo({ slide, active }: { slide: Slide; active: boolean })
       muted
       loop
       playsInline
-      // @ts-expect-error legacy iOS attribute
-      webkit-playsinline="true"
+      {...({ "webkit-playsinline": "true" } as any)}
       controls={false}
       disableRemotePlayback
       preload="auto"
