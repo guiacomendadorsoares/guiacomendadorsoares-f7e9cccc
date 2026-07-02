@@ -1,0 +1,1 @@
+ALTER TABLE public.public_services ADD COLUMN IF NOT EXISTS image_url TEXT;
