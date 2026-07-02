@@ -14,6 +14,30 @@ import imgDefesa from "@/assets/util/defesa-civil.jpg";
 import imgEmergencia from "@/assets/util/emergencia.jpg";
 import imgSecretarias from "@/assets/util/secretarias.jpg";
 import imgOrgaos from "@/assets/util/orgaos.jpg";
+import imgSamu from "@/assets/services/samu.jpg";
+import imgBombeiros from "@/assets/services/bombeiros.jpg";
+import imgPoliciaCivil from "@/assets/services/policia-civil.jpg";
+import imgPoliciaMilitar from "@/assets/services/policia-militar.jpg";
+import imgMulher from "@/assets/services/mulher.jpg";
+import imgDireitosHumanos from "@/assets/services/direitos-humanos.jpg";
+import imgSaude from "@/assets/services/saude.jpg";
+import imgEducacao from "@/assets/services/educacao.jpg";
+import imgCultura from "@/assets/services/cultura.jpg";
+import imgEsporte from "@/assets/services/esporte.jpg";
+import imgMeioAmbiente from "@/assets/services/meio-ambiente.jpg";
+import imgAnimais from "@/assets/services/animais.jpg";
+import imgAssistenciaSocial from "@/assets/services/assistencia-social.jpg";
+import imgTrabalhoTurismo from "@/assets/services/trabalho-turismo.jpg";
+import imgDesenvolvimentoUrbano from "@/assets/services/desenvolvimento-urbano.jpg";
+import imgFazenda from "@/assets/services/fazenda.jpg";
+import imgInfraestrutura from "@/assets/services/infraestrutura.jpg";
+import imgTransporte from "@/assets/services/transporte.jpg";
+import imgOrdemPublica from "@/assets/services/ordem-publica.jpg";
+import imgServicosPublicos from "@/assets/services/servicos-publicos.jpg";
+import imgAdministracao from "@/assets/services/administracao.jpg";
+import imgAtendimento from "@/assets/services/atendimento.jpg";
+import imgAgricultura from "@/assets/services/agricultura.jpg";
+import imgPrevidencia from "@/assets/services/previdencia.jpg";
 
 const CATEGORY_IMAGES: Record<string, string> = {
   "Prefeitura": imgPrefeitura,
@@ -23,6 +47,44 @@ const CATEGORY_IMAGES: Record<string, string> = {
   "Secretarias Municipais": imgSecretarias,
   "Órgãos Municipais": imgOrgaos,
 };
+
+// Mapeamento por palavra-chave no nome do serviço (ordem importa: mais específico primeiro)
+const KEYWORD_IMAGES: Array<[RegExp, string]> = [
+  [/samu/i, imgSamu],
+  [/bombeir/i, imgBombeiros],
+  [/pol[ií]cia civil/i, imgPoliciaCivil],
+  [/pol[ií]cia militar/i, imgPoliciaMilitar],
+  [/mulher/i, imgMulher],
+  [/direitos humanos/i, imgDireitosHumanos],
+  [/sa[úu]de/i, imgSaude],
+  [/educa/i, imgEducacao],
+  [/cultura/i, imgCultura],
+  [/esporte|lazer/i, imgEsporte],
+  [/animais|animal/i, imgAnimais],
+  [/agricultura/i, imgAgricultura],
+  [/meio ambiente|ambiental/i, imgMeioAmbiente],
+  [/assist[êe]ncia social|social/i, imgAssistenciaSocial],
+  [/turismo|trabalho|econ[ôo]mico/i, imgTrabalhoTurismo],
+  [/urbano|urban/i, imgDesenvolvimentoUrbano],
+  [/fazenda|tribut/i, imgFazenda],
+  [/infraestrutura/i, imgInfraestrutura],
+  [/transporte|tr[âa]nsito|mobilidade/i, imgTransporte],
+  [/ordem p[úu]blica|guarda/i, imgOrdemPublica],
+  [/servi[çc]os p[úu]blicos|servi[çc]os delegados/i, imgServicosPublicos],
+  [/administra/i, imgAdministracao],
+  [/atendimento|ouvidoria/i, imgAtendimento],
+  [/previni|previd/i, imgPrevidencia],
+  [/planejamento|governo|procuradoria|codeni|fenig/i, imgAdministracao],
+];
+
+function pickImage(s: { name: string; category: string; is_emergency: boolean; image_url: string | null }): string {
+  if (s.image_url) return s.image_url;
+  for (const [rx, img] of KEYWORD_IMAGES) {
+    if (rx.test(s.name) || rx.test(s.category)) return img;
+  }
+  if (s.is_emergency) return CATEGORY_IMAGES["Emergência"];
+  return CATEGORY_IMAGES[s.category] ?? imgOrgaos;
+}
 
 type PublicService = {
   id: string;
@@ -87,7 +149,7 @@ function ServiceCard({ s }: { s: PublicService }) {
   const phones = (s.phones ?? []).filter(Boolean);
   if (s.phone) phones.unshift(s.phone);
   const primary = phones[0];
-  const img = s.image_url || (s.is_emergency ? CATEGORY_IMAGES["Emergência"] : CATEGORY_IMAGES[s.category]);
+  const img = pickImage(s);
   return (
     <article
       className={`overflow-hidden rounded-2xl border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${
