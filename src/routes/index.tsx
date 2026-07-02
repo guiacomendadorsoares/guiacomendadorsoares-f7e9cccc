@@ -247,23 +247,26 @@ function useApprovedItems(
 
 type PHCard = { title: string; subtitle: string; image: string };
 
-function PlaceholderRow({ cards }: { cards: PHCard[] }) {
+function PlaceholderRow({ cards, compact = false }: { cards: PHCard[]; compact?: boolean }) {
+  const size = compact
+    ? { card: "min-w-[150px] max-w-[150px]", img: "h-20", pad: "p-2", title: "text-[12.5px]", sub: "text-[11px]" }
+    : { card: "min-w-[230px] max-w-[230px]", img: "h-32", pad: "p-3", title: "text-sm", sub: "text-xs" };
   return (
-    <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {cards.map((c, i) => (
         <article
           key={i}
-          className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card"
+          className={`relative overflow-hidden rounded-2xl border border-border bg-card shadow-card ${size.card}`}
         >
-          <div className="relative h-32 w-full overflow-hidden">
+          <div className={`relative w-full overflow-hidden ${size.img}`}>
             <img src={c.image} alt={c.title} loading="lazy" className="h-full w-full object-cover" />
-            <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-background/85 px-2 py-0.5 text-[10px] font-semibold text-muted-foreground backdrop-blur">
-              <Sparkles className="h-3 w-3" /> Em breve
+            <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-background/85 px-1.5 py-0.5 text-[9px] font-semibold text-muted-foreground backdrop-blur">
+              <Sparkles className="h-2.5 w-2.5" /> Em breve
             </span>
           </div>
-          <div className="p-3">
-            <p className="text-sm font-semibold leading-tight">{c.title}</p>
-            <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2">{c.subtitle}</p>
+          <div className={size.pad}>
+            <p className={`font-semibold leading-tight line-clamp-1 ${size.title}`}>{c.title}</p>
+            {!compact && <p className={`mt-0.5 line-clamp-2 text-muted-foreground ${size.sub}`}>{c.subtitle}</p>}
           </div>
         </article>
       ))}
@@ -279,9 +282,22 @@ type HomeCardTarget =
   | { to: "/noticias/$id"; params: { id: string } }
   | { to: "/curiosidades/$id"; params: { id: string } };
 
-function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id: string) => HomeCardTarget; fallbackImage: string }) {
+function RealRow({
+  items,
+  to,
+  fallbackImage,
+  compact = false,
+}: {
+  items: ApprovedItem[];
+  to: (id: string) => HomeCardTarget;
+  fallbackImage: string;
+  compact?: boolean;
+}) {
+  const size = compact
+    ? { card: "min-w-[150px] max-w-[150px]", img: "h-20", pad: "p-2", title: "text-[12.5px]", sub: "text-[11px]" }
+    : { card: "min-w-[230px] max-w-[230px]", img: "h-32", pad: "p-3", title: "text-sm", sub: "text-xs" };
   return (
-    <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
       {items.map((it) => {
         const cover = it.cover_url || it.banner_url || fallbackImage;
         const title = it.name || it.title || "Sem título";
@@ -291,19 +307,21 @@ function RealRow({ items, to, fallbackImage }: { items: ApprovedItem[]; to: (id:
             key={it.id}
             to={target.to}
             params={target.params}
-            className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
+            className={`relative overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${size.card}`}
           >
-            <div className="relative h-32 w-full overflow-hidden">
+            <div className={`relative w-full overflow-hidden ${size.img}`}>
               <img src={cover} alt={title} loading="lazy" className="h-full w-full object-cover" />
               {it.featured ? (
-                <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-gold px-2 py-0.5 text-[10px] font-semibold text-gold-foreground">
-                  <Sparkles className="h-3 w-3" /> Ouro
+                <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-gold-foreground">
+                  <Sparkles className="h-2.5 w-2.5" /> Ouro
                 </span>
               ) : null}
             </div>
-            <div className="p-3">
-              <p className="text-sm font-semibold leading-tight line-clamp-2">{title}</p>
-              {it.subtitle ? <p className="mt-1 text-xs text-muted-foreground line-clamp-2">{it.subtitle}</p> : null}
+            <div className={size.pad}>
+              <p className={`font-semibold leading-tight line-clamp-2 ${size.title}`}>{title}</p>
+              {!compact && it.subtitle ? (
+                <p className={`mt-1 line-clamp-2 text-muted-foreground ${size.sub}`}>{it.subtitle}</p>
+              ) : null}
             </div>
           </Link>
         );
