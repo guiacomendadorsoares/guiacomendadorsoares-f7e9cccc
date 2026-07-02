@@ -466,3 +466,94 @@ function UtilidadePublicaHighlight() {
     </section>
   );
 }
+
+/* ---------- New Fase 1 sections ---------- */
+
+function OpenNowSection() {
+  const { data: items = [] } = useQuery({
+    queryKey: ["home", "open-now"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("businesses")
+        .select("id,name,address,logo_url,banner_url,hours,verified,whatsapp,latitude,longitude,category_label,subcategory")
+        .eq("status", "approved")
+        .limit(60);
+      if (error) return [];
+      const open = (data ?? []).filter((b: any) => isOpenNow(b.hours));
+      return Promise.all(
+        open.slice(0, 10).map(async (b: any) => ({
+          ...b,
+          cover_url: await getDisplayImageUrl(b.banner_url ?? b.logo_url ?? null),
+        })),
+      );
+    },
+  });
+
+  if (items.length === 0) return null;
+
+  return (
+    <section className="mb-7">
+      <SectionHeader title="Abertas agora" subtitle="Funcionando neste momento" to="/buscar" />
+      <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        {items.map((b: any) => (
+          <Link
+            key={b.id}
+            to="/empresa/$id"
+            params={{ id: b.id }}
+            className="relative min-w-[230px] max-w-[230px] overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant"
+          >
+            <div className="relative h-28 w-full overflow-hidden">
+              {b.cover_url ? (
+                <img src={b.cover_url} alt={b.name} loading="lazy" className="h-full w-full object-cover" />
+              ) : (
+                <div className="h-full w-full bg-gradient-to-br from-primary/25 to-gold/20" />
+              )}
+              <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white shadow">
+                <Clock className="h-2.5 w-2.5" /> Aberto agora
+              </span>
+              {b.verified && (
+                <span className="absolute right-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-background/85 px-1.5 py-0.5 text-[10px] font-semibold text-primary backdrop-blur">
+                  <BadgeCheck className="h-3 w-3" /> Verificada
+                </span>
+              )}
+            </div>
+            <div className="p-3">
+              <p className="line-clamp-1 text-sm font-bold">{b.name}</p>
+              <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">
+                {b.category_label ?? b.subcategory ?? "Empresa local"}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5 text-[11px] text-primary-vibrant">
+                <Navigation className="h-3 w-3" /> Como chegar
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function NearbyPlaceholder() {
+  return (
+    <section className="mb-7">
+      <SectionHeader title="Empresas próximas" subtitle="Em breve, ordenadas por distância" />
+      <div className="rounded-2xl border border-dashed border-border bg-card/60 p-4 text-center text-xs text-muted-foreground">
+        <MapPin className="mx-auto mb-1.5 h-4 w-4 text-primary" />
+        Ative sua localização para ver os negócios mais perto de você.
+      </div>
+    </section>
+  );
+}
+
+function PromotionsPlaceholder() {
+  return (
+    <section className="mb-7">
+      <SectionHeader title="Promoções do bairro" subtitle="Ofertas dos comércios locais" />
+      <div className="rounded-2xl border border-dashed border-border bg-gradient-to-br from-gold/10 to-primary/10 p-4 text-center text-xs text-muted-foreground">
+        <Tag className="mx-auto mb-1.5 h-4 w-4 text-gold" />
+        Em breve as melhores ofertas do comércio de Comendador Soares.
+      </div>
+    </section>
+  );
+}
+
