@@ -58,6 +58,7 @@ const EMPTY: Partial<Row> = {
   source: "https://novaiguacu.rj.gov.br",
   is_emergency: false,
   active: true,
+  image_url: null,
 };
 
 function AdminUtilidadePublica() {
