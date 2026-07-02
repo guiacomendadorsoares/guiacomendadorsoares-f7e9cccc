@@ -206,7 +206,7 @@ export function HeroCarousel() {
             aria-hidden={idx !== i}
           >
             <SlideLink href={s.href} className="block h-full w-full" ariaLabel={s.title}>
-              <SlideMedia slide={s} eager={idx === 0} />
+              <SlideMedia slide={s} eager={idx === 0} active={idx === i} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10" />
               <div className="absolute inset-x-0 bottom-0 p-5 pb-8 text-white">
                 <span className="inline-block rounded-full bg-gold/95 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-foreground">
