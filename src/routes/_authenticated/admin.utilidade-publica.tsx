@@ -202,6 +202,15 @@ function AdminUtilidadePublica() {
                 onChange={(e) => setEditing({ ...editing, description: e.target.value })}
               />
             </div>
+            <div className="md:col-span-2">
+              <Label>Imagem do card</Label>
+              <SingleImageUploader
+                folder="public-services"
+                aspect="wide"
+                value={editing.image_url ?? null}
+                onChange={(url) => setEditing({ ...editing, image_url: url })}
+              />
+            </div>
             <div className="flex items-center gap-2">
               <Switch
                 checked={!!editing.is_emergency}
