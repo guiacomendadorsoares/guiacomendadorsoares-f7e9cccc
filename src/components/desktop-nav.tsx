@@ -1,15 +1,15 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Map, Briefcase, Building2, User } from "lucide-react";
+import { Home, Search, LayoutGrid, Heart, User } from "lucide-react";
 import type { ComponentType } from "react";
 import logoUrl from "@/assets/logo.png";
 
-type Item = { to: string; label: string; icon: ComponentType<{ className?: string }> };
+type Item = { to: string; label: string; icon: ComponentType<{ className?: string }>; exact?: boolean };
 
 const items: Item[] = [
-  { to: "/", label: "Início", icon: Home },
-  { to: "/guia", label: "Guia", icon: Map },
-  { to: "/vagas", label: "Vagas", icon: Briefcase },
-  { to: "/imoveis", label: "Imóveis", icon: Building2 },
+  { to: "/", label: "Início", icon: Home, exact: true },
+  { to: "/buscar", label: "Buscar", icon: Search },
+  { to: "/guia", label: "Categorias", icon: LayoutGrid },
+  { to: "/favoritos", label: "Favoritos", icon: Heart },
   { to: "/perfil", label: "Perfil", icon: User },
 ];
 
@@ -28,8 +28,8 @@ export function DesktopNav() {
             Guia CS
           </Link>
         </li>
-        {items.map(({ to, label, icon: Icon }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+        {items.map(({ to, label, icon: Icon, exact }) => {
+          const active = exact ? pathname === to : pathname.startsWith(to);
           return (
             <li key={to}>
               <Link

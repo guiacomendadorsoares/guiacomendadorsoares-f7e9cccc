@@ -1,14 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Map, Briefcase, Building2, User } from "lucide-react";
+import { Home, Search, LayoutGrid, Heart, User } from "lucide-react";
 import type { ComponentType } from "react";
 
-type Item = { to: string; label: string; icon: ComponentType<{ className?: string }> };
+type Item = { to: string; label: string; icon: ComponentType<{ className?: string }>; exact?: boolean };
 
 const items: Item[] = [
-  { to: "/", label: "Início", icon: Home },
-  { to: "/guia", label: "Guia", icon: Map },
-  { to: "/vagas", label: "Vagas", icon: Briefcase },
-  { to: "/imoveis", label: "Imóveis", icon: Building2 },
+  { to: "/", label: "Início", icon: Home, exact: true },
+  { to: "/buscar", label: "Buscar", icon: Search },
+  { to: "/guia", label: "Categorias", icon: LayoutGrid },
+  { to: "/favoritos", label: "Favoritos", icon: Heart },
   { to: "/perfil", label: "Perfil", icon: User },
 ];
 
@@ -21,8 +21,8 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-background/85 backdrop-blur-lg safe-bottom md:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-5">
-        {items.map(({ to, label, icon: Icon }) => {
-          const active = to === "/" ? pathname === "/" : pathname.startsWith(to);
+        {items.map(({ to, label, icon: Icon, exact }) => {
+          const active = exact ? pathname === to : pathname.startsWith(to);
           return (
             <li key={to}>
               <Link
