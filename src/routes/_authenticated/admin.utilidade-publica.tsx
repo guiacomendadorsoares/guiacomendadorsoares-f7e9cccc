@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { SingleImageUploader } from "@/components/image-uploader";
 
 export const Route = createFileRoute("/_authenticated/admin/utilidade-publica")({
   component: AdminUtilidadePublica,
@@ -29,6 +30,7 @@ type Row = {
   source: string | null;
   is_emergency: boolean;
   active: boolean;
+  image_url: string | null;
 };
 
 const CATEGORIES = [
@@ -56,6 +58,7 @@ const EMPTY: Partial<Row> = {
   source: "https://novaiguacu.rj.gov.br",
   is_emergency: false,
   active: true,
+  image_url: null,
 };
 
 function AdminUtilidadePublica() {
@@ -97,6 +100,7 @@ function AdminUtilidadePublica() {
       source: editing.source || null,
       is_emergency: !!editing.is_emergency,
       active: editing.active ?? true,
+      image_url: editing.image_url || null,
     };
     const { error } = editing.id
       ? await supabase.from("public_services").update(payload).eq("id", editing.id)
@@ -196,6 +200,15 @@ function AdminUtilidadePublica() {
               <Textarea
                 value={editing.description ?? ""}
                 onChange={(e) => setEditing({ ...editing, description: e.target.value })}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label>Imagem do card</Label>
+              <SingleImageUploader
+                folder="public-services"
+                aspect="wide"
+                value={editing.image_url ?? null}
+                onChange={(url) => setEditing({ ...editing, image_url: url })}
               />
             </div>
             <div className="flex items-center gap-2">
