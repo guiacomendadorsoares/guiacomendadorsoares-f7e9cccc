@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/app-shell";
@@ -8,7 +9,7 @@ import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
 import { getDisplayImageUrl } from "@/lib/storage";
-import { MapPin, Search, Sparkles } from "lucide-react";
+import { MapPin, Search, Sparkles, ChevronRight, LifeBuoy, Phone, Landmark } from "lucide-react";
 import { NotificationsBell } from "@/components/notifications-bell";
 import logoUrl from "@/assets/logo.png";
 import phEmpresa from "@/assets/placeholders/empresa.jpg.asset.json";
@@ -29,9 +30,6 @@ import phNoticia3 from "@/assets/placeholders/noticia-3.jpg.asset.json";
 import phComer from "@/assets/placeholders/comer.jpg.asset.json";
 import phComer2 from "@/assets/placeholders/comer-2.jpg.asset.json";
 import phComer3 from "@/assets/placeholders/comer-3.jpg.asset.json";
-import phCuriosidade from "@/assets/placeholders/curiosidade.jpg.asset.json";
-import phCuriosidade2 from "@/assets/placeholders/curiosidade-2.jpg.asset.json";
-import phCuriosidade3 from "@/assets/placeholders/curiosidade-3.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -40,7 +38,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Descubra empresas, vagas, imóveis, eventos e notícias do bairro Comendador Soares.",
+          "Tudo o que você procura em Comendador Soares: empresas, serviços, vagas, imóveis, eventos e notícias.",
       },
       { property: "og:title", content: "Guia Comendador Soares" },
       {
@@ -52,35 +50,48 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+const PLACEHOLDER_HINTS = [
+  "Academia",
+  "Advogado",
+  "Restaurante",
+  "Farmácia",
+  "Dentista",
+  "Eletricista",
+  "Pizzaria",
+  "Mercado",
+  "Pet Shop",
+];
+
 function HomePage() {
   return (
     <AppShell>
       <TopBar />
+      <SearchHero />
       <HeroCarousel />
       <InstallPrompt />
       <HomePopup />
 
       <section className="mb-7">
-        <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" />
+        <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" to="/guia" />
         <CategoriesGrid />
       </section>
 
       <FeaturedCompanies />
+      <WhereToEat />
       <LatestJobs />
       <RecentProperties />
-      <UpcomingEvents />
       <NeighborhoodNews />
-      <WhereToEat />
-      <Curiosities />
+      <UpcomingEvents />
+      <UtilidadePublicaHighlight />
     </AppShell>
   );
 }
 
-/* ---------- Top bar ---------- */
+/* ---------- Top bar + Search hero ---------- */
 
 function TopBar() {
   return (
-    <div className="-mx-5 -mt-4 mb-4 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-3">
+    <div className="-mx-5 -mt-4 mb-3 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-2">
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center gap-2">
           <img src={logoUrl} alt="Guia Comendador Soares" className="h-10 w-10 object-contain" />
@@ -95,14 +106,86 @@ function TopBar() {
           <NotificationsBell variant="card" />
         </div>
       </div>
-      <Link
-        to="/guia"
-        className="mt-3 flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 text-sm text-muted-foreground shadow-card"
-      >
-        <Search className="h-4 w-4 text-primary" />
-        <span>O que você procura hoje?</span>
-      </Link>
     </div>
+  );
+}
+
+function SearchHero() {
+  const navigate = useNavigate();
+  const [term, setTerm] = useState("");
+  const [hintIndex, setHintIndex] = useState(0);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setHintIndex((i) => (i + 1) % PLACEHOLDER_HINTS.length);
+    }, 2200);
+    return () => clearInterval(id);
+  }, []);
+
+  function submit(e?: React.FormEvent) {
+    e?.preventDefault();
+    navigate({ to: "/buscar", search: { q: term.trim() } });
+  }
+
+  return (
+    <section className="relative -mx-5 mb-5 overflow-hidden px-5 pb-6 pt-2">
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-90"
+        style={{
+          background:
+            "radial-gradient(120% 80% at 20% 0%, color-mix(in oklab, var(--primary) 22%, transparent) 0%, transparent 55%), radial-gradient(90% 70% at 100% 10%, color-mix(in oklab, var(--gold) 28%, transparent) 0%, transparent 60%)",
+        }}
+      />
+      <h1 className="font-display text-[26px] font-black leading-[1.1] tracking-tight text-foreground sm:text-[30px]">
+        Tudo o que você procura em <span className="text-primary">Comendador Soares</span>, em um só lugar.
+      </h1>
+      <p className="mt-2 text-sm text-muted-foreground">
+        Empresas, profissionais e serviços do bairro na palma da mão.
+      </p>
+
+      <form
+        onSubmit={submit}
+        className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 shadow-elegant"
+      >
+        <Search className="h-5 w-5 shrink-0 text-primary" />
+        <div className="relative min-w-0 flex-1">
+          <input
+            value={term}
+            onChange={(e) => setTerm(e.target.value)}
+            placeholder="O que você está procurando hoje?"
+            className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+            aria-label="Buscar"
+          />
+          {term.length === 0 && (
+            <span
+              key={hintIndex}
+              className="pointer-events-none absolute inset-y-0 right-0 hidden items-center pr-1 text-xs text-muted-foreground animate-fade-in sm:flex"
+            >
+              ex.: {PLACEHOLDER_HINTS[hintIndex]}
+            </span>
+          )}
+        </div>
+        <button
+          type="submit"
+          className="shrink-0 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-card transition-transform active:scale-95"
+        >
+          Buscar
+        </button>
+      </form>
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        {PLACEHOLDER_HINTS.slice(0, 6).map((h) => (
+          <Link
+            key={h}
+            to="/buscar"
+            search={{ q: h }}
+            className="rounded-full border border-border bg-card px-3 py-1 text-[11.5px] font-semibold text-foreground shadow-card hover:bg-secondary"
+          >
+            {h}
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -122,9 +205,13 @@ type ApprovedItem = {
   featured?: boolean;
 };
 
-function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities", mainCategory?: string) {
+function useApprovedItems(
+  table: "businesses" | "jobs" | "properties" | "events" | "news" | "curiosities",
+  opts: { mainCategory?: string; limit?: number } = {},
+) {
+  const { mainCategory, limit = 3 } = opts;
   return useQuery({
-    queryKey: ["home-items", table, mainCategory ?? "all"],
+    queryKey: ["home-items", table, mainCategory ?? "all", limit],
     queryFn: async () => {
       const hasFeatured = table === "businesses" || table === "properties";
       const cols = table === "businesses"
@@ -140,7 +227,7 @@ function useApprovedItems(table: "businesses" | "jobs" | "properties" | "events"
       if (table === "businesses" && mainCategory) q = (q as any).eq("main_category", mainCategory);
       if (hasFeatured) q = q.order("featured", { ascending: false });
       else q = q.order("created_at", { ascending: false });
-      const { data, error } = await q.limit(3);
+      const { data, error } = await q.limit(limit);
       if (error) {
         console.error(`[home] ${table} fetch error:`, error.message);
         return [];
@@ -236,7 +323,7 @@ function FeaturedCompanies() {
   ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Empresas em destaque" subtitle="Os queridinhos do bairro" to="/guia" />
+      <SectionHeader title="Empresas em destaque" subtitle="Selecionadas com plano Ouro" to="/guia" />
       {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phEmpresa.url} />}
     </section>
   );
@@ -266,7 +353,7 @@ function RecentProperties() {
   ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Imóveis recentes" subtitle="Alugar e comprar" to="/imoveis" />
+      <SectionHeader title="Imóveis em destaque" subtitle="Alugar e comprar" to="/imoveis" />
       {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/imoveis/$id", params: { id } })} fallbackImage={phImovel.url} />}
     </section>
   );
@@ -281,14 +368,14 @@ function UpcomingEvents() {
   ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Eventos próximos" subtitle="Acontece pertinho de você" />
+      <SectionHeader title="Próximos eventos" subtitle="Acontece pertinho de você" />
       {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/eventos/$id", params: { id } })} fallbackImage={phEvento.url} />}
     </section>
   );
 }
 
 function NeighborhoodNews() {
-  const { data: items = [] } = useApprovedItems("news");
+  const { data: items = [] } = useApprovedItems("news", { limit: 5 });
   const placeholders: PHCard[] = [
     { title: "Notícias do bairro", subtitle: "A redação está preparando os conteúdos.", image: phNoticia.url },
     { title: "Comunidade", subtitle: "Histórias dos moradores.", image: phNoticia2.url },
@@ -296,14 +383,14 @@ function NeighborhoodNews() {
   ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Notícias do bairro" subtitle="Fique por dentro" to="/noticias" />
+      <SectionHeader title="Notícias do bairro" subtitle="As 5 mais recentes" to="/noticias" />
       {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/noticias/$id", params: { id } })} fallbackImage={phNoticia.url} />}
     </section>
   );
 }
 
 function WhereToEat() {
-  const { data: items = [] } = useApprovedItems("businesses", "alimentacao");
+  const { data: items = [] } = useApprovedItems("businesses", { mainCategory: "alimentacao" });
   const placeholders: PHCard[] = [
     { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
     { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer2.url },
@@ -311,23 +398,49 @@ function WhereToEat() {
   ];
   return (
     <section className="mb-7">
-      <SectionHeader title="Onde comer" subtitle="Os favoritos da vizinhança" to="/onde-comer" />
+      <SectionHeader title="Onde comer" subtitle="Restaurantes, pizzarias, açaí e mais" to="/onde-comer" />
       {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phComer.url} />}
     </section>
   );
 }
 
-function Curiosities() {
-  const { data: items = [] } = useApprovedItems("curiosities");
-  const placeholders: PHCard[] = [
-    { title: "Você sabia?", subtitle: "Histórias e fatos do bairro em breve.", image: phCuriosidade.url },
-    { title: "Memórias de CS", subtitle: "O passado contado pelos moradores.", image: phCuriosidade2.url },
-    { title: "Cantinhos do bairro", subtitle: "Lugares que poucos conhecem.", image: phCuriosidade3.url },
-  ];
+function UtilidadePublicaHighlight() {
   return (
     <section className="mb-2">
-      <SectionHeader title="Curiosidades" subtitle="Você sabia?" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/curiosidades/$id", params: { id } })} fallbackImage={phCuriosidade.url} />}
+      <Link
+        to="/utilidade-publica"
+        className="group relative block overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-gold/15 p-5 shadow-card transition-transform hover:-translate-y-0.5 hover:shadow-elegant"
+      >
+        <div className="flex items-start gap-4">
+          <span
+            className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl text-white"
+            style={{
+              background: "linear-gradient(135deg, #7a1f1f 0%, #d64545 100%)",
+              boxShadow: "0 12px 24px -10px #7a1f1fcc, inset 0 1px 0 rgba(255,255,255,0.28)",
+            }}
+          >
+            <LifeBuoy className="h-7 w-7 drop-shadow" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="font-display text-lg font-black text-foreground">Utilidade Pública</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              Emergências, telefones úteis e Prefeitura em um só lugar.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              <span className="inline-flex items-center gap-1 rounded-full bg-background/70 px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                <Phone className="h-3 w-3 text-primary" /> Emergência
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-background/70 px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                <Phone className="h-3 w-3 text-primary" /> Telefones úteis
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-background/70 px-2.5 py-1 text-[11px] font-semibold text-foreground">
+                <Landmark className="h-3 w-3 text-primary" /> Prefeitura
+              </span>
+            </div>
+          </div>
+          <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+        </div>
+      </Link>
     </section>
   );
 }
