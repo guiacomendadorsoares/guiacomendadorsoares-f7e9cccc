@@ -87,7 +87,7 @@ function ServiceCard({ s }: { s: PublicService }) {
   const phones = (s.phones ?? []).filter(Boolean);
   if (s.phone) phones.unshift(s.phone);
   const primary = phones[0];
-  const img = s.is_emergency ? CATEGORY_IMAGES["Emergência"] : CATEGORY_IMAGES[s.category];
+  const img = s.image_url || (s.is_emergency ? CATEGORY_IMAGES["Emergência"] : CATEGORY_IMAGES[s.category]);
   return (
     <article
       className={`overflow-hidden rounded-2xl border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${
