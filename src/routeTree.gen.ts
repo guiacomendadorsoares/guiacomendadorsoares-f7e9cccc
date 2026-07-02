@@ -18,6 +18,8 @@ import { Route as PlanosRouteImport } from './routes/planos'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
+import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as BuscarRouteImport } from './routes/buscar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnuncieRouteImport } from './routes/anuncie'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -103,6 +105,16 @@ const OndeComerRoute = OndeComerRouteImport.update({
 const ImoveisRoute = ImoveisRouteImport.update({
   id: '/imoveis',
   path: '/imoveis',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FavoritosRoute = FavoritosRouteImport.update({
+  id: '/favoritos',
+  path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuscarRoute = BuscarRouteImport.update({
+  id: '/buscar',
+  path: '/buscar',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -337,6 +349,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
+  '/buscar': typeof BuscarRoute
+  '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
@@ -388,6 +402,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
+  '/buscar': typeof BuscarRoute
+  '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
@@ -440,6 +456,8 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
+  '/buscar': typeof BuscarRoute
+  '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
   '/perfil': typeof PerfilRoute
@@ -493,6 +511,8 @@ export interface FileRouteTypes {
     | '/'
     | '/anuncie'
     | '/auth'
+    | '/buscar'
+    | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
     | '/perfil'
@@ -544,6 +564,8 @@ export interface FileRouteTypes {
     | '/'
     | '/anuncie'
     | '/auth'
+    | '/buscar'
+    | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
     | '/perfil'
@@ -595,6 +617,8 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/anuncie'
     | '/auth'
+    | '/buscar'
+    | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
     | '/perfil'
@@ -648,6 +672,8 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
+  BuscarRoute: typeof BuscarRoute
+  FavoritosRoute: typeof FavoritosRoute
   ImoveisRoute: typeof ImoveisRouteWithChildren
   OndeComerRoute: typeof OndeComerRoute
   PerfilRoute: typeof PerfilRoute
@@ -730,6 +756,20 @@ declare module '@tanstack/react-router' {
       path: '/imoveis'
       fullPath: '/imoveis'
       preLoaderRoute: typeof ImoveisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/favoritos': {
+      id: '/favoritos'
+      path: '/favoritos'
+      fullPath: '/favoritos'
+      preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/buscar': {
+      id: '/buscar'
+      path: '/buscar'
+      fullPath: '/buscar'
+      preLoaderRoute: typeof BuscarRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1132,6 +1172,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
+  BuscarRoute: BuscarRoute,
+  FavoritosRoute: FavoritosRoute,
   ImoveisRoute: ImoveisRouteWithChildren,
   OndeComerRoute: OndeComerRoute,
   PerfilRoute: PerfilRoute,
@@ -1153,3 +1195,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
