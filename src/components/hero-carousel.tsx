@@ -56,16 +56,29 @@ function isExternal(href: string) {
   return /^https?:\/\//i.test(href) || href.startsWith("mailto:") || href.startsWith("tel:");
 }
 
-function InlineBannerVideo({ slide, eager }: { slide: Slide; eager: boolean }) {
+function InlineBannerVideo({ slide, active }: { slide: Slide; active: boolean }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
     video.muted = true;
-    video.playsInline = true;
-    video.play().catch(() => undefined);
-  }, [slide.src]);
+    video.defaultMuted = true;
+    video.setAttribute("muted", "");
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "");
+    if (active) {
+      const tryPlay = () => video.play().catch(() => undefined);
+      tryPlay();
+      video.addEventListener("loadedmetadata", tryPlay, { once: true });
+      video.addEventListener("canplay", tryPlay, { once: true });
+      const onVis = () => { if (document.visibilityState === "visible") tryPlay(); };
+      document.addEventListener("visibilitychange", onVis);
+      return () => document.removeEventListener("visibilitychange", onVis);
+    } else {
+      try { video.pause(); } catch {}
+    }
+  }, [slide.src, active]);
 
   return (
     <video
@@ -76,18 +89,19 @@ function InlineBannerVideo({ slide, eager }: { slide: Slide; eager: boolean }) {
       muted
       loop
       playsInline
+      {...({ "webkit-playsinline": "true" } as any)}
       controls={false}
-      preload={eager ? "auto" : "metadata"}
-      onCanPlay={() => videoRef.current?.play().catch(() => undefined)}
+      disableRemotePlayback
+      preload="auto"
       className="pointer-events-none h-full w-full object-cover bg-background"
     />
   );
 }
 
-function SlideMedia({ slide, eager }: { slide: Slide; eager: boolean }) {
+function SlideMedia({ slide, eager, active }: { slide: Slide; eager: boolean; active: boolean }) {
   const type = detectMediaType(slide.src, slide.mediaType);
   if (type === "video") {
-    return <InlineBannerVideo slide={slide} eager={eager} />;
+    return <InlineBannerVideo slide={slide} active={active} />;
   }
   return (
     <img
@@ -192,7 +206,7 @@ export function HeroCarousel() {
             aria-hidden={idx !== i}
           >
             <SlideLink href={s.href} className="block h-full w-full" ariaLabel={s.title}>
-              <SlideMedia slide={s} eager={idx === 0} />
+              <SlideMedia slide={s} eager={idx === 0} active={idx === i} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-black/10" />
               <div className="absolute inset-x-0 bottom-0 p-5 pb-8 text-white">
                 <span className="inline-block rounded-full bg-gold/95 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold-foreground">
