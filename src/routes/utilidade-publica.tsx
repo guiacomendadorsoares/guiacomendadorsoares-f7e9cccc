@@ -40,6 +40,7 @@ type PublicService = {
   source: string | null;
   is_emergency: boolean;
   active: boolean;
+  image_url: string | null;
 };
 
 const FILTERS = [
