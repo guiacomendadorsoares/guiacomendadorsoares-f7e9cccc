@@ -357,7 +357,7 @@ function LatestJobs() {
   return (
     <section className="mb-7">
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> compact : <RealRow compact items={items} to={(id) => ({ to: "/vagas/$id", params: { id } })} fallbackImage={phVaga.url} />}
+      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/vagas/$id", params: { id } })} fallbackImage={phVaga.url} />}
     </section>
   );
 }
