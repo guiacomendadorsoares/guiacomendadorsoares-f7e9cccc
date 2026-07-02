@@ -100,6 +100,7 @@ function AdminUtilidadePublica() {
       source: editing.source || null,
       is_emergency: !!editing.is_emergency,
       active: editing.active ?? true,
+      image_url: editing.image_url || null,
     };
     const { error } = editing.id
       ? await supabase.from("public_services").update(payload).eq("id", editing.id)
