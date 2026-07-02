@@ -77,6 +77,9 @@ function HomePage() {
       </section>
 
       <FeaturedCompanies />
+      <OpenNowSection />
+      <NearbyPlaceholder />
+      <PromotionsPlaceholder />
       <WhereToEat />
       <LatestJobs />
       <RecentProperties />
