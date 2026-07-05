@@ -8,6 +8,7 @@ import { HomePopup } from "@/components/home-popup";
 import { HeroCarousel } from "@/components/hero-carousel";
 import { CategoriesGrid } from "@/components/categories-grid";
 import { SectionHeader } from "@/components/cards";
+import { Reveal } from "@/components/reveal";
 import { getDisplayImageUrl } from "@/lib/storage";
 import { MapPin, Search, Sparkles, ChevronRight, LifeBuoy, Phone, Landmark, Clock, Navigation, Tag, BadgeCheck } from "lucide-react";
 import { isOpenNow } from "@/lib/hours";
