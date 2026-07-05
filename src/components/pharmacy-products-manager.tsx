@@ -79,9 +79,11 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
 
   const save = useMutation({
     mutationFn: async (p: Partial<Product>) => {
+      if (!p.name?.trim()) throw new Error("Nome obrigatório");
+      if (!p.business_id) throw new Error("Selecione uma farmácia");
       const payload = {
         business_id: p.business_id,
-        name: p.name?.trim(),
+        name: p.name.trim(),
         category: p.category || null,
         brand: p.brand || null,
         active_ingredient: p.active_ingredient || null,
@@ -93,7 +95,6 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
         delivery: !!p.delivery,
         pickup: !!p.pickup,
       };
-      if (!payload.name) throw new Error("Nome obrigatório");
       if (p.id) {
         const { error } = await supabase.from("pharmacy_products").update(payload).eq("id", p.id);
         if (error) throw error;
@@ -102,6 +103,7 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
         if (error) throw error;
       }
     },
+
     onSuccess: () => {
       toast.success("Produto salvo");
       setEditing(null);
