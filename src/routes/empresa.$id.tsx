@@ -132,7 +132,7 @@ function EmpresaPage() {
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-background">
       <div className="relative h-56 w-full overflow-hidden">
         {cover ? (
-          <img src={cover} alt={`Capa de ${b.name}`} className="h-full w-full object-cover" />
+          <img src={cover} alt={`Fachada de ${b.name} em Comendador Soares`} className="h-full w-full object-cover" />
         ) : (
           <div className="h-full w-full" style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }} />
         )}
@@ -155,7 +155,7 @@ function EmpresaPage() {
               style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
             >
               {b.logo_url ? (
-                <img src={b.logo_url} alt={b.name} className="h-full w-full object-cover" />
+                <img src={b.logo_url} alt={`Logotipo de ${b.name} em Comendador Soares`} className="h-full w-full object-cover" />
               ) : (
                 initials
               )}
@@ -230,7 +230,7 @@ function EmpresaPage() {
                   <img
                     key={i}
                     src={src}
-                    alt={`Foto ${i + 1} de ${b.name}`}
+                    alt={`${b.name} — foto ${i + 1} em Comendador Soares`}
                     loading="lazy"
                     className="h-40 w-40 shrink-0 rounded-2xl object-cover shadow-card"
                   />
