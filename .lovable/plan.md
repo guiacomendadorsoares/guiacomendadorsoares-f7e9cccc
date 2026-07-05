@@ -1,104 +1,76 @@
-# Módulo Farmácias — comparador de preços
+# Gerenciamento Manual de Planos — Dashboard Master
 
-Escopo grande. Entrego em 4 fases, cada uma utilizável em produção. Sem carrinho/checkout — só conecta morador à farmácia via WhatsApp/telefone.
+Feature paralela ao Asaas: o Admin define plano, status, validade e origem manualmente para qualquer parceiro (empresa, farmácia, corretor, imobiliária). Permissões refletem imediatamente em todo o app.
 
----
+## 1. Banco de dados (migração única)
 
-## Fase 1 — Banco de dados e arquitetura
+Estender `profiles` (fonte da verdade do plano do parceiro):
 
-Novas tabelas (com RLS + GRANTs):
+- `plan_status` enum: `active | suspended | canceled | trial` (default `active`)
+- `plan_source` enum: `manual_admin | asaas | promotion | courtesy | migration` (default `manual_admin`)
+- `plan_started_at timestamptz`
+- `plan_expires_at timestamptz null` (null = sem vencimento)
+- `plan_notes text null`
 
-- **`pharmacy_products`** — catálogo de produtos por farmácia
-  - `business_id` (FK → businesses), `name`, `category`, `brand`, `active_ingredient`, `description`, `image_url`, `price`, `promo_price`, `available bool`, `delivery bool`, `pickup bool`, `updated_at`
-- **`pharmacy_product_categories`** — categorias (Medicamentos, Higiene, Beleza, Bebês, Suplementos…)
-- **`pharmacy_search_events`** — para ranking de "mais pesquisados"
+Nova tabela `plan_audit_log`:
+- `id, profile_user_id, changed_by (admin uuid), previous_plan, new_plan, previous_status, new_status, previous_expires_at, new_expires_at, reason text, created_at`
+- RLS: apenas admin lê/insere. GRANT para authenticated + service_role.
 
-Arquitetura genérica o suficiente para reaproveitar em outras categorias no futuro (tabela `pharmacy_*` isolada agora, mas com campos que se aplicam a qualquer produto de comparador).
+Trigger `log_plan_change` em `profiles`: quando `current_plan/plan_status/plan_expires_at` mudam, insere linha em `plan_audit_log` com `auth.uid()` como `changed_by`.
 
-Políticas RLS:
-- SELECT público (anon + authenticated) em `pharmacy_products` (com `available=true`) e categorias.
-- INSERT/UPDATE/DELETE apenas para o dono da empresa (`businesses.owner_user_id = auth.uid()`) ou admin/editor.
+Função `public.effective_plan(_user_id uuid)` retorna slug do plano considerando status e validade:
+- Se `plan_status in ('suspended','canceled')` → `free`
+- Se `plan_expires_at is not null and plan_expires_at < now()` → `free`
+- Senão → `current_plan`
 
----
+## 2. Server functions (`src/lib/admin.functions.ts`)
 
-## Fase 2 — Rota pública `/farmacias` + busca
+Substituir/expandir `setUserPlan` por `updateUserPlan` (admin-only):
+- Input: `{ userId, plan, status?, source?, expiresAt? | null, reason? }`
+- Atualiza `profiles`; trigger cuida da auditoria.
 
-Nova rota **`/farmacias`** com:
+Ações rápidas (wrappers finos que chamam `updateUserPlan`):
+- `promoteUserPlan({ userId, plan: 'destaque' | 'ouro' })`
+- `demoteUserPlan({ userId })` → free
+- `suspendUserPlan({ userId, reason })`
+- `reactivateUserPlan({ userId })`
+- `grantTrial({ userId, plan, days })` → status `trial`, expira em N dias
+- `renewUserPlan({ userId, days })` → soma dias ao vencimento
 
-- Campo de busca (nome, marca, princípio ativo) com sugestões conforme o usuário digita.
-- Chips de categorias de produtos.
-- Farmácias em destaque (empresas categoria "Farmácia" com `featured=true`).
-- Produtos em promoção (`promo_price is not null`).
-- Melhores preços (menor `price` por produto/marca).
-- Farmácias abertas agora (reusa `isOpenNow` de `src/lib/hours.ts`).
+Adicionar `fetchPlanAudit({ userId })` para exibir histórico.
 
-Rota **`/farmacias/buscar`** com resultados ordenados. Cada resultado mostra imagem, preço, farmácia, distância (se lat/lng disponível), disponibilidade, promoção, data da atualização. Botões: WhatsApp, Ligar, Como Chegar, Ver Farmácia.
+## 3. Cliente — leitura efetiva
 
-Filtros (URL sincronizada via Zod + `validateSearch`):
-Menor preço · Maior desconto · Mais próxima · Aberta agora · Entrega · Retirada · Empresa Verificada.
+`src/lib/plans.ts` e `src/lib/plan-limits.ts`:
+- `useCurrentPlan` e `useOwnerPlan` passam a chamar RPC `effective_plan` (fallback: computar no cliente com os novos campos).
+- Adicionar `usePlanMeta(userId)` retornando `{ slug, status, source, startedAt, expiresAt }` para exibir no dashboard do parceiro e página pública.
 
-Registro em `pharmacy_search_events` a cada busca (fire-and-forget) para alimentar rankings.
+## 4. UI — Dashboard Master
 
----
+Novo módulo em `/admin/gerenciar-planos` (rota `admin.gerenciar-planos.tsx`) + item no menu `dashboard-nav.ts`:
 
-## Fase 3 — Home + página da farmácia
+- Lista de parceiros (busca por email/nome, filtro por role, plano, status).
+- Cada linha: avatar, nome, roles, plano atual (badge), status, vencimento.
+- Ações rápidas em dropdown: Promover Destaque / Promover Ouro / Rebaixar Free / Suspender / Reativar / Conceder Teste (7/15/30 dias) / Renovar (+30/+90/+365).
+- Modal "Editar plano": plano, status, origem, data início, data vencimento (com checkbox "Sem vencimento"), motivo. Salvar chama `updateUserPlan`.
+- Aba/dialog "Histórico" mostrando `plan_audit_log`.
 
-**Home (`src/routes/index.tsx`)**:
-Novo card premium logo abaixo das Categorias:
+Integrar seletor de plano nos formulários existentes de cadastro admin (empresas, farmácias via businesses, corretores, imobiliárias). Como plano vive em `profiles` (owner), o seletor no cadastro de conteúdo apenas aparece quando o admin também está definindo/alterando o dono; caso contrário, o fluxo canônico é editar o parceiro em Gerenciar Planos. Adicionar link rápido "Editar plano do dono" nos CRUDs.
 
-```text
-┌────────────────────────────────────┐
-│ 💊  Farmácias                       │
-│ Compare preços das farmácias        │
-│ de Comendador Soares.               │
-│ [ Pesquisar Produtos → ]            │
-└────────────────────────────────────┘
-```
+## 5. Propagação imediata
 
-Nova seção "Ofertas das Farmácias" com carrossel horizontal de produtos em promoção.
-
-**Página da farmácia (`/empresa/$id`)**:
-Quando `main_category === 'farmacia'`, adiciona abas/seções:
-- Produtos (grid com preços)
-- Promoções (produtos com `promo_price`)
-- Produtos relacionados (mesma categoria em outras farmácias — cross-sell entre farmácias)
-
-Mantém tudo já existente (horário, contato, mapa, avaliações, comentários).
-
----
-
-## Fase 4 — Dashboard da farmácia + rankings
-
-**`/painel-empresa`** ganha um módulo "Farmácia" quando a empresa é dessa categoria:
-
-- **Produtos**: listagem com busca e filtros.
-- **Cadastrar/Editar Produto**: formulário com todos os campos (nome, categoria, marca, princípio ativo, descrição, imagem via `image-uploader`, preço, preço promocional, disponível, entrega, retirada).
-- **Promoções**: atalho para editar `promo_price`.
-- **Preços**: bulk edit de preços.
-- **Estatísticas**: acessos, produtos mais vistos (do `pharmacy_search_events`).
-
-**Admin** (`/admin/farmacias-produtos`): moderação global de produtos.
-
-**Rankings automáticos** (views ou queries agregadas em `pharmacy_search_events`):
-- Produtos mais pesquisados
-- Farmácias mais acessadas
-- Melhores preços por produto
-
----
+- Server functions invalidam consulta via retorno; cliente usa `queryClient.invalidateQueries({ queryKey: ['profile-plan'] })` e `['owner-plan']` após mutação.
+- Dashboards do parceiro já leem `useCurrentPlan`, então refletem no próximo refetch (sem novo login). Adicionar `refetchOnWindowFocus` já é padrão.
 
 ## Detalhes técnicos
 
-- **Sem vendas**: nenhum carrinho, checkout ou gateway. Todos os CTAs abrem WhatsApp / telefone / mapa.
-- **Storage**: imagens de produto no bucket `uploads` existente, pasta `pharmacy-products/`.
-- **Distância**: reusa `navigator.geolocation` + Haversine (já previsto na Fase 4 do plano geral).
-- **Performance**: lazy-load das seções da Home via Intersection Observer, paginação nos resultados de busca.
-- **Responsivo**: mobile-first, tap targets ≥ 44px, safe-area respeitada.
-- **Novas rotas**: `/farmacias`, `/farmacias/buscar`, `/farmacias/produto/$id`, `/admin/farmacias-produtos`.
+- Enums criados via `CREATE TYPE`; migração idempotente com `DO $$ ... IF NOT EXISTS`.
+- `updated_at` trigger já existe em `profiles`.
+- Audit trigger usa `SECURITY DEFINER` e `SET search_path = public`.
+- Novo item de menu apenas para role `admin` (não editor).
+- Sem alterações no fluxo Asaas atual: quando webhook Asaas rodar, ele passará `plan_source = 'asaas'` — coexistência garantida.
 
----
+## Fora de escopo
 
-## Ordem de execução
-
-Começo por **Fase 1 + Fase 2** (banco + rota pública com busca funcional) — assim você já vê o comparador rodando com dados reais. Depois Fase 3 (Home + página) e Fase 4 (dashboard + rankings).
-
-Se preferir priorizar o **dashboard da farmácia** antes da busca pública (para popular o catálogo primeiro), me diga que inverto Fase 2 ↔ Fase 4.
+- Integração real com Asaas (permanece como está).
+- Cobrança automática, emails de vencimento (pode entrar em fase seguinte).
