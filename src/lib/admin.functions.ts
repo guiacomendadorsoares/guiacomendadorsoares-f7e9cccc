@@ -120,3 +120,24 @@ export const requestSelfRole = createServerFn({ method: "POST" })
     }
     return { ok: true };
   });
+
+const PLAN_SLUGS = ["free", "destaque", "ouro"] as const;
+const setPlanSchema = z.object({
+  userId: z.string().uuid(),
+  plan: z.enum(PLAN_SLUGS),
+});
+
+export const setUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => setPlanSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false); // admin only
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({ current_plan: data.plan })
+      .eq("user_id", data.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
