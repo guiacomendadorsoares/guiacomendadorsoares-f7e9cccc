@@ -290,16 +290,23 @@ function CheckoutDialog({ plan, onClose }: { plan: Plan | null; onClose: () => v
 }
 
 const FEATURES: { label: string; free: boolean; destaque: boolean; ouro: boolean }[] = [
-  { label: "Perfil da empresa", free: true, destaque: true, ouro: true },
+  { label: "Nome, categoria, endereço e telefone", free: true, destaque: true, ouro: true },
   { label: "Logo + horário de funcionamento", free: true, destaque: true, ouro: true },
-  { label: "WhatsApp + redes sociais", free: false, destaque: true, ouro: true },
-  { label: "Banner + galeria de fotos", free: false, destaque: true, ouro: true },
+  { label: "Descrição até 500 caracteres", free: true, destaque: true, ouro: true },
+  { label: "1 foto da empresa", free: true, destaque: true, ouro: true },
+  { label: "1 vaga de emprego por mês", free: true, destaque: true, ouro: true },
+  { label: "WhatsApp com botão de contato", free: false, destaque: true, ouro: true },
+  { label: "Localização no mapa + Como Chegar", free: false, destaque: true, ouro: true },
+  { label: "Banner + galeria (até 20 fotos)", free: false, destaque: true, ouro: true },
+  { label: "Site, Instagram e Facebook", free: false, destaque: true, ouro: true },
+  { label: "Até 10 vagas + 10 promoções + 50 produtos", free: false, destaque: true, ouro: true },
   { label: "Selo Empresa Verificada", free: false, destaque: true, ouro: true },
-  { label: "Promoções e cupons", free: false, destaque: true, ouro: true },
-  { label: "Destaque na Home", free: false, destaque: false, ouro: true },
-  { label: "Prioridade nas buscas", free: false, destaque: false, ouro: true },
-  { label: "Estatísticas avançadas", free: false, destaque: false, ouro: true },
-  { label: "Vídeos e imóveis ilimitados", free: false, destaque: false, ouro: true },
+  { label: "Destaque na categoria + prioridade em buscas", free: false, destaque: true, ouro: true },
+  { label: "Estatísticas básicas", free: false, destaque: true, ouro: true },
+  { label: "Fotos, produtos, promoções e vagas ilimitados", free: false, destaque: false, ouro: true },
+  { label: "Destaque na Home + Empresa do Dia", free: false, destaque: false, ouro: true },
+  { label: "Vídeos + banner rotativo + posts patrocinados", free: false, destaque: false, ouro: true },
+  { label: "Estatísticas avançadas + relatórios mensais", free: false, destaque: false, ouro: true },
 ];
 
 function Compare() {
@@ -335,6 +342,7 @@ function Compare() {
   );
 }
 
+
 function Cell({ on }: { on: boolean }) {
   return on ? (
     <Check className="mx-auto h-4 w-4 text-primary" />
@@ -365,35 +373,38 @@ function FinalCta() {
 }
 
 
-function buildBullets(slug: PlanSlug, b: any, p: any): string[] {
+function buildBullets(slug: PlanSlug, _b: any, _p: any): string[] {
   const out: string[] = [];
   if (slug === "free") {
     out.push(
-      "Nome, categoria, endereço e telefone",
-      "Logo da empresa",
-      "Horário de funcionamento",
-      `Até ${p.max_listings ?? 3} imóveis · ${p.max_photos ?? 5} fotos cada`,
+      "Nome, categoria e subcategoria",
+      "Logo, endereço, telefone e horário",
+      "Descrição até 500 caracteres",
+      "1 foto da empresa",
+      "1 vaga de emprego por mês",
     );
   }
   if (slug === "destaque") {
     out.push(
       "Tudo do Free",
-      "Banner e galeria de fotos",
-      "Redes sociais + WhatsApp",
-      "Promoções e estatísticas básicas",
-      "Selo Empresa Verificada",
-      `Até ${p.max_listings ?? 10} imóveis · ${p.max_photos ?? 15} fotos`,
+      "Até 20 fotos + banner + galeria",
+      "WhatsApp, mapa e Como Chegar",
+      "Site, Instagram e Facebook",
+      "Até 10 vagas · 10 promoções · 50 produtos",
+      "Destaque na categoria + prioridade nas buscas",
+      "Selo Empresa Verificada + estatísticas básicas",
     );
   }
   if (slug === "ouro") {
     out.push(
       "Tudo do Destaque",
-      "Destaque na Home e na categoria",
-      "Banner rotativo + prioridade nas buscas",
-      "Estatísticas avançadas",
-      "Postagens patrocinadas",
-      "Imóveis ilimitados + vídeos",
+      "Fotos, produtos, promoções e vagas ilimitados",
+      "Destaque na Home + Empresa do Dia",
+      "Vídeos + banner rotativo + posts patrocinados",
+      "Prioridade máxima nas buscas",
+      "Estatísticas avançadas + relatórios mensais",
     );
   }
   return out;
 }
+
