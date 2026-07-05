@@ -24,7 +24,6 @@ export const Route = createFileRoute("/guia/")({
 
 function GuiaHome() {
   const [query, setQuery] = useState("");
-  const [showAll, setShowAll] = useState(false);
 
   const { data: counts = {} } = useQuery({
     queryKey: ["guia", "counts"],
@@ -37,10 +36,11 @@ function GuiaHome() {
     enabled: query.trim().length >= 2,
   });
 
-  const visibleCategories = useMemo(
-    () => (showAll ? CATEGORIES : CATEGORIES.filter((c) => c.showOnHome)),
-    [showAll],
+  const sortedCategories = useMemo(
+    () => [...CATEGORIES].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
+    [],
   );
+
 
   const searchResults = useMemo(() => {
     const q = query.trim().toLowerCase();
