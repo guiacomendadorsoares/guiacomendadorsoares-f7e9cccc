@@ -88,6 +88,13 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
     mutationFn: async (p: Partial<Product>) => {
       if (!p.name?.trim()) throw new Error("Nome obrigatório");
       if (!p.business_id) throw new Error("Selecione uma farmácia");
+      if (!p.id && maxProducts !== -1 && products.length >= maxProducts) {
+        throw new Error(`Você atingiu o limite do seu plano (${maxProducts} produtos). Faça upgrade para cadastrar mais.`);
+      }
+      if (p.promo_price != null && !allowPromotion) {
+        throw new Error("Promoções estão disponíveis a partir do plano Destaque. Faça upgrade para ativar.");
+      }
+
       const payload = {
         business_id: p.business_id,
         name: p.name.trim(),
