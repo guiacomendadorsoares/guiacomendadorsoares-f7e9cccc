@@ -16,46 +16,51 @@ export const adminNav: NavSection[] = [
     items: [
       { to: "/admin", label: "Dashboard", icon: LayoutDashboard },
       { to: "/admin/aprovacoes", label: "Aprovações", icon: CheckCircle2 },
+      { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
     ],
   },
   {
     title: "Conteúdo",
     items: [
       { to: "/admin/empresas", label: "Empresas", icon: Building2 },
-      { to: "/admin/vagas", label: "Vagas", icon: Briefcase },
       { to: "/admin/imoveis", label: "Imóveis", icon: Home },
+      { to: "/admin/vagas", label: "Vagas", icon: Briefcase },
       { to: "/admin/noticias", label: "Notícias", icon: Newspaper },
       { to: "/admin/eventos", label: "Eventos", icon: Calendar },
       { to: "/admin/curiosidades", label: "Curiosidades", icon: Sparkles },
       { to: "/admin/utilidade-publica", label: "Utilidade Pública", icon: LifeBuoy },
-      { to: "/admin/banners", label: "Banners", icon: ImageIcon },
     ],
   },
   {
     title: "Pessoas",
     items: [
+      { to: "/admin/usuarios", label: "Usuários", icon: Users },
       { to: "/admin/parceiros", label: "Parceiros", icon: Handshake },
       { to: "/admin/corretores", label: "Corretores", icon: KeyRound },
       { to: "/admin/influenciadores", label: "Imprensa", icon: Megaphone },
-      { to: "/admin/usuarios", label: "Usuários", icon: Users },
     ],
   },
   {
-    title: "Ferramentas",
+    title: "Marketing & Engajamento",
+    items: [
+      { to: "/admin/banners", label: "Banners", icon: ImageIcon },
+      { to: "/admin/popups", label: "Popups", icon: MessageSquare },
+      { to: "/admin/notificacoes", label: "Push / Notificações", icon: Bell },
+    ],
+  },
+  {
+    title: "Comercial",
     items: [
       { to: "/admin/crm", label: "CRM Comercial", icon: TrendingUp },
-      { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
-      { to: "/admin/popups", label: "Popups", icon: MessageSquare },
       { to: "/admin/cupons", label: "Cupons Trial (dias grátis)", icon: Sparkles },
-      { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
+      { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
     ],
   },
   {
     title: "Sistema",
     items: [
-      { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
-      { to: "/admin/planos", label: "Planos", icon: Crown },
-      { to: "/admin/gerenciar-planos", label: "Gerenciar Planos", icon: Crown },
+      { to: "/admin/planos", label: "Planos (preço & descrição)", icon: Crown },
+      { to: "/admin/gerenciar-planos", label: "Gerenciar Planos (usuários)", icon: Crown },
       { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
     ],
   },
