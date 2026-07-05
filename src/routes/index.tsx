@@ -120,12 +120,23 @@ function SmartHeader() {
             className={`shrink-0 object-contain transition-all duration-300 ${scrolled ? "h-8 w-8" : "h-10 w-10"}`}
           />
           <div className="min-w-0 leading-tight">
-            <p className={`font-display font-extrabold text-foreground transition-all duration-300 ${scrolled ? "text-[12px]" : "text-[13px]"}`}>
-              Guia CS
-            </p>
-            <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
-              <MapPin className="h-2.5 w-2.5 shrink-0" /> Comendador Soares
-            </p>
+            {!scrolled ? (
+              <>
+                <p className="font-display text-[13px] font-extrabold text-foreground animate-fade-in">
+                  {greeting()} <span aria-hidden>👋</span>
+                </p>
+                <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
+                  <MapPin className="h-2.5 w-2.5 shrink-0 text-primary" /> Você está em Comendador Soares
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-display text-[12px] font-extrabold text-foreground">Guia CS</p>
+                <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
+                  <MapPin className="h-2.5 w-2.5 shrink-0" /> Comendador Soares
+                </p>
+              </>
+            )}
           </div>
         </Link>
         <div className="ml-auto flex items-center gap-2">
@@ -153,6 +164,14 @@ function SmartHeader() {
     </div>
   );
 }
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 
 
 function SearchHero() {
