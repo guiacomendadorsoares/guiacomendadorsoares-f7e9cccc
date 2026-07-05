@@ -122,6 +122,9 @@ export const requestSelfRole = createServerFn({ method: "POST" })
   });
 
 const PLAN_SLUGS = ["free", "destaque", "ouro"] as const;
+const PLAN_STATUSES = ["active", "suspended", "canceled", "trial"] as const;
+const PLAN_SOURCES = ["manual_admin", "asaas", "promotion", "courtesy", "migration"] as const;
+
 const setPlanSchema = z.object({
   userId: z.string().uuid(),
   plan: z.enum(PLAN_SLUGS),
@@ -131,7 +134,7 @@ export const setUserPlan = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => setPlanSchema.parse(input))
   .handler(async ({ data, context }) => {
-    await assertAdminOrEditor(context, false); // admin only
+    await assertAdminOrEditor(context, false);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("profiles")
@@ -140,4 +143,141 @@ export const setUserPlan = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ---- Manual plan management ---------------------------------------------
+
+const updatePlanSchema = z.object({
+  userId: z.string().uuid(),
+  plan: z.enum(PLAN_SLUGS).optional(),
+  status: z.enum(PLAN_STATUSES).optional(),
+  source: z.enum(PLAN_SOURCES).optional(),
+  startedAt: z.string().datetime().nullable().optional(),
+  expiresAt: z.string().datetime().nullable().optional(),
+  reason: z.string().max(500).optional(),
+});
+
+async function applyPlanPatch(userId: string, patch: Record<string, any>) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { error } = await (supabaseAdmin as any).from("profiles").update(patch).eq("user_id", userId);
+  if (error) throw new Error(error.message);
+}
+
+export const updateUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => updatePlanSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    const patch: Record<string, any> = {};
+    if (data.plan !== undefined) patch.current_plan = data.plan;
+    if (data.status !== undefined) patch.plan_status = data.status;
+    if (data.source !== undefined) patch.plan_source = data.source;
+    if (data.startedAt !== undefined) patch.plan_started_at = data.startedAt;
+    if (data.expiresAt !== undefined) patch.plan_expires_at = data.expiresAt;
+    if (data.reason !== undefined) patch.plan_notes = data.reason;
+    if (Object.keys(patch).length === 0) return { ok: true };
+    await applyPlanPatch(data.userId, patch);
+    return { ok: true };
+  });
+
+const quickActionSchema = z.object({
+  userId: z.string().uuid(),
+  plan: z.enum(PLAN_SLUGS).optional(),
+  days: z.number().int().positive().max(3650).optional(),
+  reason: z.string().max(500).optional(),
+});
+
+export const promoteUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    await applyPlanPatch(data.userId, {
+      current_plan: data.plan ?? "destaque",
+      plan_status: "active",
+      plan_source: "manual_admin",
+      plan_started_at: new Date().toISOString(),
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
+export const demoteUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    await applyPlanPatch(data.userId, {
+      current_plan: "free",
+      plan_status: "active",
+      plan_expires_at: null,
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
+export const suspendUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    await applyPlanPatch(data.userId, {
+      plan_status: "suspended",
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
+export const reactivateUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    await applyPlanPatch(data.userId, {
+      plan_status: "active",
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
+export const grantTrial = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    const days = data.days ?? 15;
+    const expiresAt = new Date(Date.now() + days * 86400_000).toISOString();
+    await applyPlanPatch(data.userId, {
+      current_plan: data.plan ?? "destaque",
+      plan_status: "trial",
+      plan_source: "courtesy",
+      plan_started_at: new Date().toISOString(),
+      plan_expires_at: expiresAt,
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
+export const renewUserPlan = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: unknown) => quickActionSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertAdminOrEditor(context, false);
+    const days = data.days ?? 30;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: prof } = await supabaseAdmin
+      .from("profiles")
+      .select("plan_expires_at")
+      .eq("user_id", data.userId)
+      .maybeSingle();
+    const base = prof?.plan_expires_at ? new Date(prof.plan_expires_at as string) : new Date();
+    const from = base.getTime() < Date.now() ? new Date() : base;
+    const expiresAt = new Date(from.getTime() + days * 86400_000).toISOString();
+    await applyPlanPatch(data.userId, {
+      plan_status: "active",
+      plan_expires_at: expiresAt,
+      plan_notes: data.reason ?? null,
+    });
+    return { ok: true };
+  });
+
 

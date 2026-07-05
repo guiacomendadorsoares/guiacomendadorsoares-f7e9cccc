@@ -14,10 +14,13 @@ export function useOwnerPlan(userId: string | null | undefined) {
     queryFn: async () => {
       const { data } = await (supabase as any)
         .from("profiles")
-        .select("current_plan")
+        .select("current_plan, plan_status, plan_expires_at")
         .eq("user_id", userId!)
         .maybeSingle();
-      return (data?.current_plan ?? "free") as PlanSlug;
+      if (!data) return "free" as PlanSlug;
+      if (data.plan_status === "suspended" || data.plan_status === "canceled") return "free" as PlanSlug;
+      if (data.plan_expires_at && new Date(data.plan_expires_at) < new Date()) return "free" as PlanSlug;
+      return (data.current_plan ?? "free") as PlanSlug;
     },
   });
   const slug: PlanSlug = profile.data ?? "free";

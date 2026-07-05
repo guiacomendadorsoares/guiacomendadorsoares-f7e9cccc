@@ -53,6 +53,7 @@ import { Route as AuthenticatedAdminNotificacoesRouteImport } from './routes/_au
 import { Route as AuthenticatedAdminNoticiasRouteImport } from './routes/_authenticated/admin.noticias'
 import { Route as AuthenticatedAdminInfluenciadoresRouteImport } from './routes/_authenticated/admin.influenciadores'
 import { Route as AuthenticatedAdminImoveisRouteImport } from './routes/_authenticated/admin.imoveis'
+import { Route as AuthenticatedAdminGerenciarPlanosRouteImport } from './routes/_authenticated/admin.gerenciar-planos'
 import { Route as AuthenticatedAdminFinanceiroRouteImport } from './routes/_authenticated/admin.financeiro'
 import { Route as AuthenticatedAdminEventosRouteImport } from './routes/_authenticated/admin.eventos'
 import { Route as AuthenticatedAdminEmpresasRouteImport } from './routes/_authenticated/admin.empresas'
@@ -296,6 +297,12 @@ const AuthenticatedAdminImoveisRoute =
     path: '/imoveis',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminGerenciarPlanosRoute =
+  AuthenticatedAdminGerenciarPlanosRouteImport.update({
+    id: '/gerenciar-planos',
+    path: '/gerenciar-planos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminFinanceiroRoute =
   AuthenticatedAdminFinanceiroRouteImport.update({
     id: '/financeiro',
@@ -390,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/admin/gerenciar-planos': typeof AuthenticatedAdminGerenciarPlanosRoute
   '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
@@ -443,6 +451,7 @@ export interface FileRoutesByTo {
   '/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/admin/gerenciar-planos': typeof AuthenticatedAdminGerenciarPlanosRoute
   '/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
@@ -499,6 +508,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/empresas': typeof AuthenticatedAdminEmpresasRoute
   '/_authenticated/admin/eventos': typeof AuthenticatedAdminEventosRoute
   '/_authenticated/admin/financeiro': typeof AuthenticatedAdminFinanceiroRoute
+  '/_authenticated/admin/gerenciar-planos': typeof AuthenticatedAdminGerenciarPlanosRoute
   '/_authenticated/admin/imoveis': typeof AuthenticatedAdminImoveisRoute
   '/_authenticated/admin/influenciadores': typeof AuthenticatedAdminInfluenciadoresRoute
   '/_authenticated/admin/noticias': typeof AuthenticatedAdminNoticiasRoute
@@ -555,6 +565,7 @@ export interface FileRouteTypes {
     | '/admin/empresas'
     | '/admin/eventos'
     | '/admin/financeiro'
+    | '/admin/gerenciar-planos'
     | '/admin/imoveis'
     | '/admin/influenciadores'
     | '/admin/noticias'
@@ -608,6 +619,7 @@ export interface FileRouteTypes {
     | '/admin/empresas'
     | '/admin/eventos'
     | '/admin/financeiro'
+    | '/admin/gerenciar-planos'
     | '/admin/imoveis'
     | '/admin/influenciadores'
     | '/admin/noticias'
@@ -663,6 +675,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/empresas'
     | '/_authenticated/admin/eventos'
     | '/_authenticated/admin/financeiro'
+    | '/_authenticated/admin/gerenciar-planos'
     | '/_authenticated/admin/imoveis'
     | '/_authenticated/admin/influenciadores'
     | '/_authenticated/admin/noticias'
@@ -1016,6 +1029,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminImoveisRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/gerenciar-planos': {
+      id: '/_authenticated/admin/gerenciar-planos'
+      path: '/gerenciar-planos'
+      fullPath: '/admin/gerenciar-planos'
+      preLoaderRoute: typeof AuthenticatedAdminGerenciarPlanosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/financeiro': {
       id: '/_authenticated/admin/financeiro'
       path: '/financeiro'
@@ -1092,6 +1112,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminEmpresasRoute: typeof AuthenticatedAdminEmpresasRoute
   AuthenticatedAdminEventosRoute: typeof AuthenticatedAdminEventosRoute
   AuthenticatedAdminFinanceiroRoute: typeof AuthenticatedAdminFinanceiroRoute
+  AuthenticatedAdminGerenciarPlanosRoute: typeof AuthenticatedAdminGerenciarPlanosRoute
   AuthenticatedAdminImoveisRoute: typeof AuthenticatedAdminImoveisRoute
   AuthenticatedAdminInfluenciadoresRoute: typeof AuthenticatedAdminInfluenciadoresRoute
   AuthenticatedAdminNoticiasRoute: typeof AuthenticatedAdminNoticiasRoute
@@ -1116,6 +1137,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminEmpresasRoute: AuthenticatedAdminEmpresasRoute,
   AuthenticatedAdminEventosRoute: AuthenticatedAdminEventosRoute,
   AuthenticatedAdminFinanceiroRoute: AuthenticatedAdminFinanceiroRoute,
+  AuthenticatedAdminGerenciarPlanosRoute:
+    AuthenticatedAdminGerenciarPlanosRoute,
   AuthenticatedAdminImoveisRoute: AuthenticatedAdminImoveisRoute,
   AuthenticatedAdminInfluenciadoresRoute:
     AuthenticatedAdminInfluenciadoresRoute,
