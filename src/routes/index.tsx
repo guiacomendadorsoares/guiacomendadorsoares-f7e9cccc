@@ -81,7 +81,7 @@ function HomePage() {
       
 
       <OpenNowSection />
-      <NearbyPlaceholder />
+      
       <PromotionsPlaceholder />
       <WhereToEat />
       <LatestJobs />
