@@ -100,7 +100,7 @@ function TopBar() {
     <div className="-mx-5 -mt-4 mb-3 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-2">
       <div className="flex items-center gap-3">
         <Link to="/" className="flex items-center gap-2">
-          <img src={logoUrl} alt="Guia Comendador Soares" className="h-10 w-10 object-contain" />
+          <img src={logoUrl} alt="Logotipo do Guia Comendador Soares" className="h-10 w-10 object-contain" />
           <div className="leading-tight">
             <p className="font-display text-[13px] font-extrabold text-foreground">Guia CS</p>
             <p className="flex items-center gap-1 text-[10px] text-muted-foreground">

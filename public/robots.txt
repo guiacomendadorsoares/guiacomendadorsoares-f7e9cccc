@@ -6,4 +6,4 @@ Disallow: /painel-empresa
 Disallow: /painel-imoveis
 Disallow: /portal-imprensa
 
-Sitemap: https://guiacomendadorsoares.lovable.app/sitemap.xml
+Sitemap: https://comendadorsoares.com.br/sitemap.xml

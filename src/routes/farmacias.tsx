@@ -105,7 +105,7 @@ function PharmaciesPage() {
   const showSearch = query.trim().length >= 2 || category !== null;
 
   return (
-    <AppShell title="💊 Farmácias" subtitle="Compare preços em Comendador Soares">
+    <AppShell title="Farmácias em Comendador Soares" subtitle="Compare preços perto de você">
       {/* Search */}
       <div className="mb-4 flex items-center gap-2 rounded-full border border-border bg-card px-4 py-3 shadow-elegant">
         <Search className="h-5 w-5 text-primary-vibrant" />
