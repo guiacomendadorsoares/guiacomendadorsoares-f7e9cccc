@@ -100,6 +100,8 @@ export function NotificationsBell({ variant = "card" }: { variant?: "card" | "gh
                       <img
                         src={b.image_url}
                         alt=""
+                        role="presentation"
+                        aria-hidden="true"
                         className="h-12 w-12 shrink-0 rounded-md object-cover"
                       />
                     )}
