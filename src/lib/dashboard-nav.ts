@@ -46,7 +46,7 @@ export const adminNav: NavSection[] = [
       { to: "/admin/crm", label: "CRM Comercial", icon: TrendingUp },
       { to: "/admin/notificacoes", label: "Notificações", icon: Bell },
       { to: "/admin/popups", label: "Popups", icon: MessageSquare },
-      { to: "/admin/cupons", label: "Cupons", icon: Sparkles },
+      { to: "/admin/cupons", label: "Cupons Trial (dias grátis)", icon: Sparkles },
       { to: "/admin/relatorios", label: "Relatórios", icon: BarChart3 },
     ],
   },
