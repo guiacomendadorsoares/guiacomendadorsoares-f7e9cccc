@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Newspaper, Loader2 } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { EmptyState } from "@/components/ui-bits";
+import { EmptyState, ListSkeleton } from "@/components/ui-bits";
 import { NewsCard } from "@/components/news-card";
 import { NEWS_FILTERS, type NewsCategory } from "@/lib/news";
 import { fetchNews } from "@/services/news.service";
@@ -61,7 +61,8 @@ function NoticiasPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+        <ListSkeleton count={4} height="h-28" />
+
       ) : items.length === 0 ? (
         <EmptyState
           icon={<Newspaper className="h-5 w-5" />}
