@@ -91,35 +91,16 @@ function GuiaHome() {
         </section>
       ) : null}
 
-      {/* Grid de categorias */}
+      {/* Grid de categorias com imagem */}
       <section>
         <h2 className="mb-3 font-display text-base font-bold">Categorias</h2>
-        <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-          {visibleCategories.map((c) => (
-            <CategoryTile key={c.slug} c={c} count={counts[c.slug]} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {sortedCategories.map((c) => (
+            <CategoryImageCard key={c.slug} c={c} count={counts[c.slug]} />
           ))}
         </div>
-
-        {!showAll && CATEGORIES.length > visibleCategories.length && (
-          <button
-            type="button"
-            onClick={() => setShowAll(true)}
-            className="mt-6 inline-flex w-full items-center justify-center gap-1.5 rounded-full border border-border bg-card px-5 py-3 text-sm font-bold text-foreground shadow-card transition-all hover:bg-secondary"
-          >
-            Ver todas as categorias <ChevronDown className="h-4 w-4" />
-          </button>
-        )}
-
-        {showAll && (
-          <button
-            type="button"
-            onClick={() => setShowAll(false)}
-            className="mt-4 text-xs font-semibold text-muted-foreground hover:text-foreground"
-          >
-            Mostrar menos
-          </button>
-        )}
       </section>
+
 
       {/* Anuncie */}
       <div className="mt-8 rounded-3xl border border-border bg-gradient-to-br from-primary/10 to-gold/10 p-5 text-center shadow-card">
