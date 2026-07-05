@@ -4,6 +4,8 @@ import { ContentCrud } from "@/components/content-crud";
 import { MyPlanCard } from "@/components/my-plan-card";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { PharmacyProductsManager } from "@/components/pharmacy-products-manager";
+
 
 export const Route = createFileRoute("/_authenticated/painel-empresa")({
   component: PainelEmpresa,
