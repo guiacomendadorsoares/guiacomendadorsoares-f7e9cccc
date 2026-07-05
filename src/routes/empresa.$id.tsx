@@ -18,17 +18,63 @@ import { useOwnerPlan, can } from "@/lib/plan-limits";
 
 
 export const Route = createFileRoute("/empresa/$id")({
-  head: ({ params }) => ({
-    meta: [
-      { title: "Empresa — Guia Comendador Soares" },
-      { name: "description", content: "Perfil da empresa no Guia Comendador Soares: contato, endereço, horário e mais." },
-      { property: "og:title", content: "Empresa — Guia Comendador Soares" },
-      { property: "og:description", content: "Perfil da empresa no Guia Comendador Soares: contato, endereço, horário e mais." },
+  loader: async ({ params }) => {
+    const b = await fetchBusinessById(params.id);
+    return { business: b };
+  },
+  head: ({ params, loaderData }) => {
+    const b: any = loaderData?.business ?? null;
+    const name = b?.name ?? "Empresa";
+    const rawDesc = (b?.description ?? b?.address ?? "").trim();
+    const desc = rawDesc
+      ? rawDesc.slice(0, 155)
+      : `Perfil de ${name} em Comendador Soares, Nova Iguaçu: contato, endereço e horário.`;
+    const title = `${name} — Comendador Soares, Nova Iguaçu`.slice(0, 60);
+    const url = `https://comendadorsoares.com.br/empresa/${params.id}`;
+    const image = b?.cover_url || b?.banner_url || b?.logo_url || undefined;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
       { property: "og:type", content: "profile" },
-      { property: "og:url", content: `https://comendadorsoares.com.br/empresa/${params.id}` },
-    ],
-    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/empresa/${params.id}` }],
-  }),
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts: Array<any> = [];
+    if (b) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: b.name,
+          description: rawDesc || undefined,
+          telephone: b.whatsapp || b.phone || undefined,
+          address: b.address
+            ? {
+                "@type": "PostalAddress",
+                streetAddress: b.address,
+                addressLocality: "Nova Iguaçu",
+                addressRegion: "RJ",
+                addressCountry: "BR",
+              }
+            : undefined,
+          geo:
+            b.latitude != null && b.longitude != null
+              ? { "@type": "GeoCoordinates", latitude: b.latitude, longitude: b.longitude }
+              : undefined,
+          image: image || undefined,
+          url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: EmpresaPage,
 });
 
@@ -86,7 +132,7 @@ function EmpresaPage() {
     <div className="mx-auto flex min-h-dvh max-w-md flex-col bg-background">
       <div className="relative h-56 w-full overflow-hidden">
         {cover ? (
-          <img src={cover} alt={`Capa de ${b.name}`} className="h-full w-full object-cover" />
+          <img src={cover} alt={`Fachada de ${b.name} em Comendador Soares`} className="h-full w-full object-cover" />
         ) : (
           <div className="h-full w-full" style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }} />
         )}
@@ -109,7 +155,7 @@ function EmpresaPage() {
               style={{ backgroundImage: `linear-gradient(135deg, ${from}, ${to})` }}
             >
               {b.logo_url ? (
-                <img src={b.logo_url} alt={b.name} className="h-full w-full object-cover" />
+                <img src={b.logo_url} alt={`Logotipo de ${b.name} em Comendador Soares`} className="h-full w-full object-cover" />
               ) : (
                 initials
               )}
@@ -184,7 +230,7 @@ function EmpresaPage() {
                   <img
                     key={i}
                     src={src}
-                    alt={`Foto ${i + 1} de ${b.name}`}
+                    alt={`${b.name} — foto ${i + 1} em Comendador Soares`}
                     loading="lazy"
                     className="h-40 w-40 shrink-0 rounded-2xl object-cover shadow-card"
                   />

@@ -9,18 +9,62 @@ import fallback from "@/assets/news-1.jpg";
 
 const LABELS = Object.fromEntries(NEWS_FILTERS.map((f) => [f.value, f.label])) as Record<string, string>;
 
+async function fetchNewsById(id: string) {
+  const { data, error } = await supabase
+    .from("news")
+    .select("id,title,summary,content,cover_url,category,published_at")
+    .eq("id", id)
+    .eq("published", true)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  return {
+    ...data,
+    image: (await getDisplayImageUrl(data.cover_url)) || fallback,
+  };
+}
+
 export const Route = createFileRoute("/noticias/$id")({
-  head: ({ params }) => ({
-    meta: [
-      { title: "Notícia — Guia Comendador Soares" },
-      { name: "description", content: "Notícia local do bairro Comendador Soares, em Nova Iguaçu." },
-      { property: "og:title", content: "Notícia — Guia Comendador Soares" },
-      { property: "og:description", content: "Notícia local do bairro Comendador Soares, em Nova Iguaçu." },
+  loader: ({ params }) => fetchNewsById(params.id).then((news) => ({ news })),
+  head: ({ params, loaderData }) => {
+    const n = loaderData?.news ?? null;
+    const rawTitle = n?.title ?? "Notícia";
+    const title = `${rawTitle} — Guia Comendador Soares`.slice(0, 60);
+    const desc = (n?.summary ?? "Notícia local do bairro Comendador Soares, em Nova Iguaçu.").slice(0, 155);
+    const url = `https://comendadorsoares.com.br/noticias/${params.id}`;
+    const image = n?.image;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: rawTitle },
+      { property: "og:description", content: desc },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: `https://comendadorsoares.com.br/noticias/${params.id}` },
-    ],
-    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/noticias/${params.id}` }],
-  }),
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts: Array<any> = [];
+    if (n) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: n.title,
+          description: n.summary || undefined,
+          image: image || undefined,
+          datePublished: n.published_at || undefined,
+          articleSection: n.category || undefined,
+          mainEntityOfPage: url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: NoticiaDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Notícia"><p className="text-sm text-destructive">{error.message}</p></AppShell>

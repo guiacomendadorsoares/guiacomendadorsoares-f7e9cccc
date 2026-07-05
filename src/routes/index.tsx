@@ -36,18 +36,20 @@ import phComer3 from "@/assets/placeholders/comer-3.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Guia Comendador Soares — O guia do bairro" },
+      { title: "Guia Comendador Soares — Comércio, Vagas e Serviços em Nova Iguaçu" },
       {
         name: "description",
         content:
-          "Tudo o que você procura em Comendador Soares: empresas, serviços, vagas, imóveis, eventos e notícias.",
+          "Guia completo do bairro Comendador Soares, em Nova Iguaçu: empresas, farmácias, serviços, vagas de emprego, imóveis, eventos e notícias.",
       },
-      { property: "og:title", content: "Guia Comendador Soares" },
+      { property: "og:title", content: "Guia Comendador Soares — Comércio, Vagas e Serviços em Nova Iguaçu" },
       {
         property: "og:description",
-        content: "O guia oficial do bairro: comércio, vagas, imóveis e comunidade.",
+        content: "O guia oficial do bairro Comendador Soares em Nova Iguaçu: comércio, vagas, imóveis e comunidade.",
       },
+      { property: "og:url", content: "https://comendadorsoares.com.br/" },
     ],
+    links: [{ rel: "canonical", href: "https://comendadorsoares.com.br/" }],
   }),
   component: HomePage,
 });
@@ -118,7 +120,7 @@ function SmartHeader() {
         <Link to="/" className="flex min-w-0 items-center gap-2">
           <img
             src={logoUrl}
-            alt="Logotipo do Guia Comendador Soares"
+            alt="Guia Comendador Soares — Guia comercial de Nova Iguaçu"
             className={`shrink-0 object-contain transition-all duration-300 ${scrolled ? "h-8 w-8" : "h-10 w-10"}`}
           />
           <div className="min-w-0 leading-tight">
