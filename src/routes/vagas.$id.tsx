@@ -4,18 +4,70 @@ import { ArrowLeft, Banknote, Briefcase, Clock, Flame, Loader2, MapPin, MessageC
 import { AppShell } from "@/components/app-shell";
 import { supabase } from "@/integrations/supabase/client";
 
+async function fetchJobById(id: string) {
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("id,title,company,type,salary,location,description,apply_url,whatsapp,urgent,posted_at,expires_at,active,status")
+    .eq("id", id)
+    .eq("status", "approved")
+    .eq("active", true)
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export const Route = createFileRoute("/vagas/$id")({
-  head: ({ params }) => ({
-    meta: [
-      { title: "Vaga de emprego — Guia Comendador Soares" },
-      { name: "description", content: "Confira detalhes desta vaga em Comendador Soares e candidate-se." },
-      { property: "og:title", content: "Vaga de emprego — Guia Comendador Soares" },
-      { property: "og:description", content: "Confira detalhes desta vaga em Comendador Soares e candidate-se." },
+  loader: ({ params }) => fetchJobById(params.id).then((job) => ({ job })),
+  head: ({ params, loaderData }) => {
+    const j: any = loaderData?.job ?? null;
+    const jobTitle = j?.title ?? "Vaga de emprego";
+    const company = j?.company ?? "";
+    const title = (company ? `${jobTitle} — ${company}` : `${jobTitle} — Comendador Soares`).slice(0, 60);
+    const desc = (j
+      ? `${jobTitle}${company ? " na " + company : ""} em Comendador Soares, Nova Iguaçu.${j.salary ? " Salário: " + j.salary + "." : ""}`
+      : "Confira detalhes desta vaga em Comendador Soares e candidate-se."
+    ).slice(0, 155);
+    const url = `https://comendadorsoares.com.br/vagas/${params.id}`;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
       { property: "og:type", content: "article" },
-      { property: "og:url", content: `https://comendadorsoares.com.br/vagas/${params.id}` },
-    ],
-    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/vagas/${params.id}` }],
-  }),
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: "summary" },
+    ];
+    const scripts: Array<any> = [];
+    if (j) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          title: j.title,
+          description: j.description || jobTitle,
+          datePosted: j.posted_at || undefined,
+          validThrough: j.expires_at || undefined,
+          employmentType: j.type || undefined,
+          hiringOrganization: j.company
+            ? { "@type": "Organization", name: j.company }
+            : undefined,
+          jobLocation: {
+            "@type": "Place",
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: j.location || "Comendador Soares",
+              addressLocality: "Nova Iguaçu",
+              addressRegion: "RJ",
+              addressCountry: "BR",
+            },
+          },
+          baseSalary: j.salary ? { "@type": "MonetaryAmount", currency: "BRL", value: { "@type": "QuantitativeValue", value: j.salary, unitText: "MONTH" } } : undefined,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: VagaDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Vaga">
