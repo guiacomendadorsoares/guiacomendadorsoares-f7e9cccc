@@ -5,10 +5,17 @@ import { useCurrentUser } from "@/hooks/use-auth";
 export type PlanSlug = "free" | "destaque" | "ouro";
 
 export interface BusinessFeatures {
+  description_max?: number;
   logo: boolean; banner: boolean; gallery: boolean; gallery_max?: number;
-  videos: boolean; social: boolean; whatsapp: boolean; promotions: boolean;
+  videos: boolean; social: boolean; website?: boolean;
+  whatsapp: boolean; map?: boolean; directions?: boolean;
+  promotions: boolean; max_promotions?: number;
+  products?: boolean; max_products?: number;
+  max_jobs_per_month?: number;
+  photo_single?: boolean;
   stats: "none" | "basic" | "advanced";
   featured_home: boolean; featured_category: boolean; verified_badge: boolean;
+  empresa_do_dia?: boolean;
   rotating_banner?: boolean; priority_search?: boolean; sponsored_posts?: boolean;
 }
 export interface PropertyFeatures {
@@ -16,6 +23,7 @@ export interface PropertyFeatures {
   featured_home: boolean; featured_search: boolean;
   stats: "none" | "basic" | "advanced"; whatsapp: boolean; priority_search?: boolean;
 }
+
 export interface PlanFeatures {
   business: BusinessFeatures;
   properties: PropertyFeatures;
