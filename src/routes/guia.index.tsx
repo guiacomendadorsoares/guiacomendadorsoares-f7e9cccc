@@ -3,11 +3,12 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
-import { CategoryTile } from "@/components/category-tile";
+import { CategoryImageCard } from "@/components/category-image-card";
 import { GuiaBusinessCard } from "@/components/guia-business-card";
 import { CATEGORIES } from "@/lib/guia-taxonomy";
 import { fetchBusinesses, fetchCategoryCounts } from "@/services/businesses.service";
-import { Search, Store, ChevronDown, MapPin } from "lucide-react";
+import { Search, Store, MapPin } from "lucide-react";
+
 
 export const Route = createFileRoute("/guia/")({
   head: () => ({
