@@ -818,6 +818,54 @@ export type Database = {
           },
         ]
       }
+      plan_audit_log: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          new_expires_at: string | null
+          new_plan: string | null
+          new_source: Database["public"]["Enums"]["plan_source"] | null
+          new_status: Database["public"]["Enums"]["plan_status"] | null
+          previous_expires_at: string | null
+          previous_plan: string | null
+          previous_source: Database["public"]["Enums"]["plan_source"] | null
+          previous_status: Database["public"]["Enums"]["plan_status"] | null
+          profile_user_id: string
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_expires_at?: string | null
+          new_plan?: string | null
+          new_source?: Database["public"]["Enums"]["plan_source"] | null
+          new_status?: Database["public"]["Enums"]["plan_status"] | null
+          previous_expires_at?: string | null
+          previous_plan?: string | null
+          previous_source?: Database["public"]["Enums"]["plan_source"] | null
+          previous_status?: Database["public"]["Enums"]["plan_status"] | null
+          profile_user_id: string
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          new_expires_at?: string | null
+          new_plan?: string | null
+          new_source?: Database["public"]["Enums"]["plan_source"] | null
+          new_status?: Database["public"]["Enums"]["plan_status"] | null
+          previous_expires_at?: string | null
+          previous_plan?: string | null
+          previous_source?: Database["public"]["Enums"]["plan_source"] | null
+          previous_status?: Database["public"]["Enums"]["plan_status"] | null
+          profile_user_id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       popups: {
         Row: {
           active: boolean
@@ -881,6 +929,11 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          plan_expires_at: string | null
+          plan_notes: string | null
+          plan_source: Database["public"]["Enums"]["plan_source"]
+          plan_started_at: string
+          plan_status: Database["public"]["Enums"]["plan_status"]
           updated_at: string
           user_id: string | null
         }
@@ -895,6 +948,11 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          plan_expires_at?: string | null
+          plan_notes?: string | null
+          plan_source?: Database["public"]["Enums"]["plan_source"]
+          plan_started_at?: string
+          plan_status?: Database["public"]["Enums"]["plan_status"]
           updated_at?: string
           user_id?: string | null
         }
@@ -909,6 +967,11 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          plan_expires_at?: string | null
+          plan_notes?: string | null
+          plan_source?: Database["public"]["Enums"]["plan_source"]
+          plan_started_at?: string
+          plan_status?: Database["public"]["Enums"]["plan_status"]
           updated_at?: string
           user_id?: string | null
         }
@@ -1312,6 +1375,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      effective_plan: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1340,6 +1404,13 @@ export type Database = {
         | "obras"
         | "saude"
         | "educacao"
+      plan_source:
+        | "manual_admin"
+        | "asaas"
+        | "promotion"
+        | "courtesy"
+        | "migration"
+      plan_status: "active" | "suspended" | "canceled" | "trial"
       property_kind: "casa" | "apartamento" | "terreno" | "comercial"
       restaurant_category:
         | "restaurante"
@@ -1488,6 +1559,14 @@ export const Constants = {
         "saude",
         "educacao",
       ],
+      plan_source: [
+        "manual_admin",
+        "asaas",
+        "promotion",
+        "courtesy",
+        "migration",
+      ],
+      plan_status: ["active", "suspended", "canceled", "trial"],
       property_kind: ["casa", "apartamento", "terreno", "comercial"],
       restaurant_category: [
         "restaurante",
