@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Pill, Plus, Trash2, Edit2, X, Save } from "lucide-react";
-import { ImageUploader } from "@/components/image-uploader";
+import { SingleImageUploader } from "@/components/image-uploader";
 import { fetchPharmacyCategories } from "@/services/pharmacies.service";
 
 type Product = {
