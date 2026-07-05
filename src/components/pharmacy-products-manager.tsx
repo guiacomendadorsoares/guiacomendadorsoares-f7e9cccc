@@ -321,11 +321,12 @@ function ProductForm({
       </Field>
 
       <Field label="Imagem">
-        <ImageUploader
+        <SingleImageUploader
           value={value.image_url ?? ""}
-          onChange={(url) => upd({ image_url: url })}
+          onChange={(url: string) => upd({ image_url: url })}
           folder="pharmacy-products"
         />
+
       </Field>
 
       <div className="grid grid-cols-2 gap-2">
