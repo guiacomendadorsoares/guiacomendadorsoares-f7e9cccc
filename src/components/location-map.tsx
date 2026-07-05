@@ -1,15 +1,23 @@
-import { MapContainer, TileLayer, Marker } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, ZoomControl } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { Navigation } from "lucide-react";
+import { Navigation, MapPin } from "lucide-react";
 import { directionsUrl } from "@/lib/geocode";
 
-const icon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
+const markerHtml = `
+<div style="position:relative;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));">
+  <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:9999px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));box-shadow:0 0 0 4px hsl(var(--primary) / 0.25);">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+  </div>
+  <div style="margin-top:-4px;width:12px;height:12px;transform:rotate(45deg);background:hsl(var(--primary));"></div>
+</div>`;
+
+const icon = L.divIcon({
+  className: "location-map-marker",
+  html: markerHtml,
+  iconSize: [40, 52],
+  iconAnchor: [20, 50],
+  popupAnchor: [0, -46],
 });
 
 interface Props {
@@ -19,17 +27,36 @@ interface Props {
   height?: number;
 }
 
-export function LocationMap({ lat, lng, label, height = 220 }: Props) {
+export function LocationMap({ lat, lng, label, height = 260 }: Props) {
   if (lat == null || lng == null) return null;
   return (
     <div className="space-y-2">
-      <div className="overflow-hidden rounded-2xl border border-border shadow-card" style={{ height }}>
-        <MapContainer center={[lat, lng]} zoom={16} className="h-full w-full" scrollWheelZoom={false}>
+      <div
+        className="relative overflow-hidden rounded-2xl border border-border shadow-card"
+        style={{ height }}
+      >
+        <MapContainer
+          center={[lat, lng]}
+          zoom={17}
+          className="h-full w-full"
+          scrollWheelZoom={false}
+          zoomControl={false}
+        >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker position={[lat, lng]} icon={icon} />
+          <ZoomControl position="bottomright" />
+          <Marker position={[lat, lng]} icon={icon}>
+            {label ? (
+              <Popup>
+                <div className="flex items-start gap-2 text-sm">
+                  <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <span className="font-medium">{label}</span>
+                </div>
+              </Popup>
+            ) : null}
+          </Marker>
         </MapContainer>
       </div>
       <a

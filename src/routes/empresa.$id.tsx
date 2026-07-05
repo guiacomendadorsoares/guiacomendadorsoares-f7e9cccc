@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
+import { LocationMap } from "@/components/location-map";
 import { fetchBusinessById } from "@/services/businesses.service";
 import { useOwnerPlan, can } from "@/lib/plan-limits";
 
@@ -139,6 +140,13 @@ function EmpresaPage() {
             </a>
           )}
         </div>
+
+        {(b.latitude != null && b.longitude != null) && (
+          <section className="mt-6">
+            <SectionTitle>Localização</SectionTitle>
+            <LocationMap lat={b.latitude} lng={b.longitude} label={b.name} height={260} />
+          </section>
+        )}
 
         {hours.length > 0 && (
           <section className="mt-6">

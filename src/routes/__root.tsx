@@ -82,6 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
       { name: "apple-mobile-web-app-title", content: "Guia CS" },
+      { name: "google-site-verification", content: "YDfNyMe3FOJ2PhWM_4h3KCryo34EWJoKMf7cJiu1p8U" },
       { title: "Guia Comendador Soares" },
       { name: "description", content: "O guia oficial do bairro Comendador Soares: comércio, vagas, imóveis e comunidade." },
       { property: "og:title", content: "Guia Comendador Soares" },
