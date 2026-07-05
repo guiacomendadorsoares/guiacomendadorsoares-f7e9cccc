@@ -323,7 +323,7 @@ function ProductForm({
       <Field label="Imagem">
         <SingleImageUploader
           value={value.image_url ?? ""}
-          onChange={(url: string) => upd({ image_url: url })}
+          onChange={(url: string | null) => upd({ image_url: url ?? "" })}
           folder="pharmacy-products"
         />
 
