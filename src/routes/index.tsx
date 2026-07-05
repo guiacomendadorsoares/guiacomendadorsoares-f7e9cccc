@@ -66,7 +66,7 @@ const PLACEHOLDER_HINTS = [
 function HomePage() {
   return (
     <AppShell>
-      <TopBar />
+      <SmartHeader />
       <SearchHero />
       <HeroCarousel />
       <InstallPrompt />
@@ -93,28 +93,69 @@ function HomePage() {
   );
 }
 
-/* ---------- Top bar + Search hero ---------- */
+/* ---------- Smart sticky header ---------- */
 
-function TopBar() {
+function SmartHeader() {
+  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <div className="-mx-5 -mt-4 mb-3 px-5 pt-[max(env(safe-area-inset-top),0.75rem)] pb-2">
+    <div
+      className={`sticky top-0 z-40 -mx-5 mb-3 px-5 pt-[max(env(safe-area-inset-top),0.5rem)] transition-all duration-300 ease-out md:-mx-8 md:px-8 lg:-mx-12 lg:px-12 ${
+        scrolled
+          ? "border-b border-border/60 bg-background/75 pb-2 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.25)] backdrop-blur-xl"
+          : "border-b border-transparent bg-transparent pb-2"
+      }`}
+    >
       <div className="flex items-center gap-3">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logoUrl} alt="Logotipo do Guia Comendador Soares" className="h-10 w-10 object-contain" />
-          <div className="leading-tight">
-            <p className="font-display text-[13px] font-extrabold text-foreground">Guia CS</p>
-            <p className="flex items-center gap-1 text-[10px] text-muted-foreground">
-              <MapPin className="h-2.5 w-2.5" /> Comendador Soares
+        <Link to="/" className="flex min-w-0 items-center gap-2">
+          <img
+            src={logoUrl}
+            alt="Logotipo do Guia Comendador Soares"
+            className={`shrink-0 object-contain transition-all duration-300 ${scrolled ? "h-8 w-8" : "h-10 w-10"}`}
+          />
+          <div className="min-w-0 leading-tight">
+            <p className={`font-display font-extrabold text-foreground transition-all duration-300 ${scrolled ? "text-[12px]" : "text-[13px]"}`}>
+              Guia CS
+            </p>
+            <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
+              <MapPin className="h-2.5 w-2.5 shrink-0" /> Comendador Soares
             </p>
           </div>
         </Link>
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-2">
           <NotificationsBell variant="card" />
+        </div>
+      </div>
+
+      <div
+        className={`grid transition-all duration-300 ease-out ${
+          scrolled ? "mt-2 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <button
+            type="button"
+            onClick={() => navigate({ to: "/buscar", search: { q: "" } })}
+            className="flex w-full items-center gap-2 rounded-full border border-border bg-card px-4 py-2.5 text-left text-sm text-muted-foreground shadow-card transition-transform active:scale-[0.98]"
+            aria-label="Abrir busca"
+          >
+            <Search className="h-4 w-4 shrink-0 text-primary" />
+            <span className="truncate">O que você está procurando?</span>
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
 
 function SearchHero() {
   const navigate = useNavigate();
