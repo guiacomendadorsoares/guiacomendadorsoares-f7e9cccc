@@ -12,6 +12,8 @@ import {
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
 import { fetchBusinessById } from "@/services/businesses.service";
+import { useOwnerPlan, can } from "@/lib/plan-limits";
+
 
 
 export const Route = createFileRoute("/empresa/$id")({
