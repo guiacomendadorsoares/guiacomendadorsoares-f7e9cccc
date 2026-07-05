@@ -69,9 +69,11 @@ function HomePage() {
     <AppShell>
       <SmartHeader />
       <SearchHero />
+      <QuickShortcuts />
       <Reveal><HeroCarousel /></Reveal>
       <InstallPrompt />
       <HomePopup />
+
 
       <Reveal as="section" className="mb-7">
         <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" to="/guia" />
@@ -120,12 +122,23 @@ function SmartHeader() {
             className={`shrink-0 object-contain transition-all duration-300 ${scrolled ? "h-8 w-8" : "h-10 w-10"}`}
           />
           <div className="min-w-0 leading-tight">
-            <p className={`font-display font-extrabold text-foreground transition-all duration-300 ${scrolled ? "text-[12px]" : "text-[13px]"}`}>
-              Guia CS
-            </p>
-            <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
-              <MapPin className="h-2.5 w-2.5 shrink-0" /> Comendador Soares
-            </p>
+            {!scrolled ? (
+              <>
+                <p className="font-display text-[13px] font-extrabold text-foreground animate-fade-in">
+                  {greeting()} <span aria-hidden>👋</span>
+                </p>
+                <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
+                  <MapPin className="h-2.5 w-2.5 shrink-0 text-primary" /> Você está em Comendador Soares
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="font-display text-[12px] font-extrabold text-foreground">Guia CS</p>
+                <p className="flex items-center gap-1 truncate text-[10px] text-muted-foreground">
+                  <MapPin className="h-2.5 w-2.5 shrink-0" /> Comendador Soares
+                </p>
+              </>
+            )}
           </div>
         </Link>
         <div className="ml-auto flex items-center gap-2">
@@ -153,6 +166,14 @@ function SmartHeader() {
     </div>
   );
 }
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return "Bom dia";
+  if (h < 18) return "Boa tarde";
+  return "Boa noite";
+}
+
 
 
 function SearchHero() {
@@ -192,15 +213,16 @@ function SearchHero() {
         onSubmit={submit}
         className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 shadow-elegant"
       >
-        <Search className="h-5 w-5 shrink-0 text-primary" />
+        <Search className="h-5 w-5 shrink-0 text-primary transition-transform duration-300 focus-within:scale-110" />
         <div className="relative min-w-0 flex-1">
           <input
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            placeholder="O que você está procurando hoje?"
-            className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+            placeholder={`Procure ${PLACEHOLDER_HINTS[hintIndex].toLowerCase()}...`}
+            className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground transition-all"
             aria-label="Buscar"
           />
+
           {term.length === 0 && (
             <span
               key={hintIndex}
@@ -233,6 +255,60 @@ function SearchHero() {
     </section>
   );
 }
+
+/* ---------- Quick shortcuts row ---------- */
+
+type Shortcut = {
+  label: string;
+  icon: string;
+  to: string;
+  search?: Record<string, string>;
+  from: string;
+  to2: string;
+};
+
+const SHORTCUTS: Shortcut[] = [
+  { label: "Perto de Mim", icon: "📍", to: "/buscar", search: { q: "" }, from: "#1a4d3a", to2: "#34c781" },
+  { label: "Mais Procurados", icon: "🔥", to: "/guia", from: "#b8842b", to2: "#f0c068" },
+  { label: "Farmácias", icon: "💊", to: "/farmacias", from: "#0f3a5c", to2: "#3aa0d6" },
+  { label: "Onde Comer", icon: "🍔", to: "/onde-comer", from: "#8a3a1f", to2: "#e08a3a" },
+  { label: "Empregos", icon: "💼", to: "/vagas", from: "#1f3a2e", to2: "#4a8a6b" },
+  { label: "Imóveis", icon: "🏠", to: "/imoveis", from: "#2a3a5a", to2: "#6a8ac0" },
+  { label: "Eventos", icon: "🎉", to: "/", from: "#5a1f5a", to2: "#c060a8" },
+  { label: "Emergência", icon: "🚨", to: "/utilidade-publica", from: "#7a1f1f", to2: "#d64545" },
+];
+
+function QuickShortcuts() {
+  return (
+    <section className="-mx-5 mb-5 md:-mx-8 lg:-mx-12" aria-label="Atalhos rápidos">
+      <div className="flex gap-2.5 overflow-x-auto px-5 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:px-8 lg:px-12">
+        {SHORTCUTS.map((s) => (
+          <Link
+            key={s.label}
+            to={s.to}
+            search={s.search as never}
+            className="group flex min-w-[92px] shrink-0 flex-col items-center gap-1.5 rounded-2xl border border-border bg-card px-2 py-2.5 shadow-card transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-elegant active:scale-[0.96] motion-reduce:transition-none motion-reduce:hover:transform-none"
+          >
+            <span
+              className="grid h-10 w-10 place-items-center rounded-xl text-lg text-white shadow-card transition-transform duration-200 group-hover:scale-105 motion-reduce:transform-none"
+              style={{
+                background: `linear-gradient(135deg, ${s.from} 0%, ${s.to2} 100%)`,
+                boxShadow: `0 8px 18px -10px ${s.from}cc, inset 0 1px 0 rgba(255,255,255,0.25)`,
+              }}
+              aria-hidden
+            >
+              {s.icon}
+            </span>
+            <span className="text-center text-[10.5px] font-semibold leading-tight text-foreground">
+              {s.label}
+            </span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 
 /* ---------- Shared row helpers ---------- */
 
