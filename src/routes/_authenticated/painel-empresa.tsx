@@ -22,10 +22,12 @@ function PainelEmpresa() {
         <Tabs defaultValue="empresa">
         <TabsList>
           <TabsTrigger value="empresa">Empresa</TabsTrigger>
+          <TabsTrigger value="farmacia">💊 Farmácia</TabsTrigger>
           <TabsTrigger value="vagas">Vagas</TabsTrigger>
           <TabsTrigger value="eventos">Eventos</TabsTrigger>
         </TabsList>
         <TabsContent value="empresa" className="mt-4">
+
           <ContentCrud table="businesses" ownerOnly={user.id} forcePending />
         </TabsContent>
         <TabsContent value="vagas" className="mt-4">
