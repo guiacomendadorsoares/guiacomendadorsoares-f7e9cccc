@@ -143,7 +143,7 @@ function SearchHero() {
         }}
       />
       <h1 className="font-display text-[26px] font-black leading-[1.1] tracking-tight text-foreground sm:text-[30px]">
-        Tudo o que você procura em <span className="text-primary">Comendador Soares</span>, em um só lugar.
+        Encontre <span className="text-primary">empresas, profissionais e serviços</span> do bairro em segundos.
       </h1>
       <p className="mt-2 text-sm text-muted-foreground">
         Empresas, profissionais e serviços do bairro na palma da mão.
