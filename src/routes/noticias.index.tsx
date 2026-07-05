@@ -61,7 +61,8 @@ function NoticiasPage() {
       </div>
 
       {isLoading ? (
-        <div className="grid place-items-center py-12"><Loader2 className="h-5 w-5 animate-spin text-muted-foreground" /></div>
+        <ListSkeleton count={4} height="h-28" />
+
       ) : items.length === 0 ? (
         <EmptyState
           icon={<Newspaper className="h-5 w-5" />}
