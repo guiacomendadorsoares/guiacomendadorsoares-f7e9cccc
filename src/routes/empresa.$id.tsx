@@ -50,18 +50,26 @@ function EmpresaPage() {
   }
 
   const b: any = business;
-  const cover = b.cover_url || b.banner_url || b.logo_url || null;
-  const description = b.description || "";
-  const instagram = b.instagram || "";
-  const whatsapp = b.whatsapp || "";
+  const { plan: ownerPlan } = useOwnerPlan(b.submitted_by);
+  const showWhatsapp = can(ownerPlan, "business", "whatsapp");
+  const showSocial = can(ownerPlan, "business", "social");
+  const showGallery = can(ownerPlan, "business", "gallery");
+  const showBanner = can(ownerPlan, "business", "banner");
+  const showVerified = can(ownerPlan, "business", "verified_badge");
+  const cover = showBanner ? (b.cover_url || b.banner_url || b.logo_url || null) : (b.logo_url || null);
+  const description = (b.description || "").slice(0, ownerPlan?.slug === "free" ? 500 : 4000);
+  const instagram = showSocial ? (b.instagram || "") : "";
+  const whatsapp = showWhatsapp ? (b.whatsapp || "") : "";
   const waUrl = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : "#";
   const initials = b.name.split(/\s+/).filter(Boolean).slice(0, 2).map((s: string) => s[0]).join("").toUpperCase();
   const from = b.from || "#1f3a2e";
   const to = b.to || "#4a8a6b";
   const hours: Array<{ day: string; hours: string }> = Array.isArray(b.hours) ? b.hours : [];
-  const gallery: string[] = Array.isArray(b.gallery_urls) && b.gallery_urls.length
+  const rawGallery: string[] = Array.isArray(b.gallery_urls) && b.gallery_urls.length
     ? b.gallery_urls
     : Array.isArray(b.gallery) ? (b.gallery as string[]) : [];
+  const gallery = showGallery ? rawGallery : [];
+
 
 
   return (
