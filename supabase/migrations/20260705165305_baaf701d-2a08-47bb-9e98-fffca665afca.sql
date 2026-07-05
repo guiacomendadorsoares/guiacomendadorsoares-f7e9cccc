@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "authenticated can read minimal profile fields" ON public.profiles;
