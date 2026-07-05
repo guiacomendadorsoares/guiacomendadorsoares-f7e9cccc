@@ -5,7 +5,17 @@ import { AppShell } from "@/components/app-shell";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/vagas/$id")({
-  head: () => ({ meta: [{ title: "Vaga — Guia CS" }] }),
+  head: ({ params }) => ({
+    meta: [
+      { title: "Vaga de emprego — Guia Comendador Soares" },
+      { name: "description", content: "Confira detalhes desta vaga em Comendador Soares e candidate-se." },
+      { property: "og:title", content: "Vaga de emprego — Guia Comendador Soares" },
+      { property: "og:description", content: "Confira detalhes desta vaga em Comendador Soares e candidate-se." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: `https://comendadorsoares.com.br/vagas/${params.id}` },
+    ],
+    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/vagas/${params.id}` }],
+  }),
   component: VagaDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Vaga">
