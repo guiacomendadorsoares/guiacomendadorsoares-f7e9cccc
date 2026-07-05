@@ -31,7 +31,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
   DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
-import { useAuth } from "@/hooks/use-auth";
+import { useHasRole } from "@/hooks/use-auth";
 import {
   listCrmLeads, upsertCrmLead, deleteCrmLead, moveCrmLeadStage,
   addCrmActivity, listCrmActivities, addCrmReminder, toggleCrmReminder,
