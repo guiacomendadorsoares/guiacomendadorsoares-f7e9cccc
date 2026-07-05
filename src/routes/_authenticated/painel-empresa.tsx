@@ -30,8 +30,12 @@ function PainelEmpresa() {
 
           <ContentCrud table="businesses" ownerOnly={user.id} forcePending />
         </TabsContent>
+        <TabsContent value="farmacia" className="mt-4">
+          <PharmacyProductsManager userId={user.id} />
+        </TabsContent>
         <TabsContent value="vagas" className="mt-4">
           <ContentCrud table="jobs" ownerOnly={user.id} forcePending />
+
         </TabsContent>
         <TabsContent value="eventos" className="mt-4">
           <ContentCrud table="events" ownerOnly={user.id} forcePending />
