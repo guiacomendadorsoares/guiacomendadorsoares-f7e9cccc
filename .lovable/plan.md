@@ -1,76 +1,78 @@
-# Gerenciamento Manual de Planos — Dashboard Master
+# CRM Comercial — Dashboard Master
 
-Feature paralela ao Asaas: o Admin define plano, status, validade e origem manualmente para qualquer parceiro (empresa, farmácia, corretor, imobiliária). Permissões refletem imediatamente em todo o app.
+Módulo completo de gestão comercial integrado aos planos e cadastros existentes. Acessível **somente** pelo perfil `admin`.
 
-## 1. Banco de dados (migração única)
+## 1. Banco de Dados (1 migration)
 
-Estender `profiles` (fonte da verdade do plano do parceiro):
+Novas tabelas em `public` (todas com RLS + GRANT + policies via `has_role(auth.uid(),'admin')`):
 
-- `plan_status` enum: `active | suspended | canceled | trial` (default `active`)
-- `plan_source` enum: `manual_admin | asaas | promotion | courtesy | migration` (default `manual_admin`)
-- `plan_started_at timestamptz`
-- `plan_expires_at timestamptz null` (null = sem vencimento)
-- `plan_notes text null`
+- **`crm_leads`** — pipeline comercial
+  - `user_id` (nullable, FK profiles.user_id — vira cliente ao converter)
+  - `company_name`, `category`, `partner_type` (empresa/farmacia/corretor/imobiliaria/lead)
+  - `contact_name`, `phone`, `whatsapp`, `email`, `address`, `neighborhood`
+  - `stage` (enum: `lead`, `contato`, `visita`, `proposta`, `negociacao`, `teste`, `ativo`, `renovacao`, `cancelado`)
+  - `plan_slug`, `plan_source`, `monthly_value`, `next_action`, `next_action_at`, `renewal_at`
+  - `notes`, `created_by`
+- **`crm_activities`** — timeline (ligação, visita, whatsapp, email, proposta, reunião, observação) com `type`, `content`, `created_by`, `created_at`
+- **`crm_reminders`** — lembretes com `title`, `due_at`, `done`, `lead_id`
+- **`crm_audit_log`** — histórico (aproveita padrão do `plan_audit_log`) para mudanças de stage/plan/status
 
-Nova tabela `plan_audit_log`:
-- `id, profile_user_id, changed_by (admin uuid), previous_plan, new_plan, previous_status, new_status, previous_expires_at, new_expires_at, reason text, created_at`
-- RLS: apenas admin lê/insere. GRANT para authenticated + service_role.
+Trigger `set_updated_at` reutilizado. Trigger de auditoria em `crm_leads`.
 
-Trigger `log_plan_change` em `profiles`: quando `current_plan/plan_status/plan_expires_at` mudam, insere linha em `plan_audit_log` com `auth.uid()` como `changed_by`.
+## 2. Server Functions (`src/lib/crm.functions.ts`)
 
-Função `public.effective_plan(_user_id uuid)` retorna slug do plano considerando status e validade:
-- Se `plan_status in ('suspended','canceled')` → `free`
-- Se `plan_expires_at is not null and plan_expires_at < now()` → `free`
-- Senão → `current_plan`
+Todas com `.middleware([requireSupabaseAuth])` + verificação `has_role admin`:
 
-## 2. Server functions (`src/lib/admin.functions.ts`)
+- `listCrmLeads({ filters })`, `getCrmLead({ id })`, `upsertCrmLead(...)`, `deleteCrmLead({ id })`
+- `moveCrmLeadStage({ id, stage })` — usado pelo Kanban
+- `addCrmActivity({ leadId, type, content })`, `listCrmActivities({ leadId })`
+- `addCrmReminder(...)`, `toggleCrmReminder(...)`, `listCrmReminders(...)`
+- `crmDashboardStats()` — retorna contagens dos indicadores
+- `crmRenewalBuckets()` — vence hoje/7d/15d/30d/atrasado
 
-Substituir/expandir `setUserPlan` por `updateUserPlan` (admin-only):
-- Input: `{ userId, plan, status?, source?, expiresAt? | null, reason? }`
-- Atualiza `profiles`; trigger cuida da auditoria.
+Reutiliza `updateUserPlan` / `grantTrial` já existentes para operações de plano.
 
-Ações rápidas (wrappers finos que chamam `updateUserPlan`):
-- `promoteUserPlan({ userId, plan: 'destaque' | 'ouro' })`
-- `demoteUserPlan({ userId })` → free
-- `suspendUserPlan({ userId, reason })`
-- `reactivateUserPlan({ userId })`
-- `grantTrial({ userId, plan, days })` → status `trial`, expira em N dias
-- `renewUserPlan({ userId, days })` → soma dias ao vencimento
+## 3. UI — Nova Área `/admin/crm`
 
-Adicionar `fetchPlanAudit({ userId })` para exibir histórico.
+Layout com sub-abas dentro do Dashboard Master:
 
-## 3. Cliente — leitura efetiva
+- **`admin.crm.tsx`** — layout com tabs (Dashboard, Funil, Renovações, Relatórios) + `<Outlet />`
+- **`admin.crm.index.tsx`** — Dashboard com cards de indicadores em tempo real + gráfico simples (recharts já disponível) de evolução por stage/plano
+- **`admin.crm.funil.tsx`** — Kanban drag-and-drop (`@dnd-kit/core` + `@dnd-kit/sortable`) com 9 colunas coloridas conforme especificação. Cada card mostra logo, nome, categoria, responsável, telefone, plano, status, próxima ação, renovação. Clique abre Sheet lateral com Ficha Completa
+- **Ficha Completa** (Sheet) — abas: Dados / Plano / Timeline / Lembretes / Auditoria. Botões: WhatsApp, Email, Editar Empresa (abre link), Alterar Plano (usa server fns existentes), Conceder Teste, Suspender, Cancelar, Reativar
+- **`admin.crm.renovacoes.tsx`** — painel com buckets (Hoje / 7d / 15d / 30d / Atrasados)
+- **`admin.crm.relatorios.tsx`** — relatórios: por plano, categoria, bairro, novos, conversão, renovações, cancelamentos
+- **Busca + filtros globais** — plano, categoria, tipo, status, data, bairro; busca por nome/telefone/responsável/email/categoria
 
-`src/lib/plans.ts` e `src/lib/plan-limits.ts`:
-- `useCurrentPlan` e `useOwnerPlan` passam a chamar RPC `effective_plan` (fallback: computar no cliente com os novos campos).
-- Adicionar `usePlanMeta(userId)` retornando `{ slug, status, source, startedAt, expiresAt }` para exibir no dashboard do parceiro e página pública.
+Componentes reutilizáveis:
+- `<CrmLeadCard />`, `<CrmKanban />`, `<CrmLeadSheet />` (ficha), `<CrmTimeline />`, `<CrmRemindersList />`, `<CrmStatCard />`
 
-## 4. UI — Dashboard Master
+## 4. Cores por Status
 
-Novo módulo em `/admin/gerenciar-planos` (rota `admin.gerenciar-planos.tsx`) + item no menu `dashboard-nav.ts`:
+Tokens Tailwind semânticos:
+`lead` cinza, `contato` azul, `visita` laranja, `proposta` roxo, `negociacao` laranja, `teste` roxo, `ativo` verde, `renovacao` amarelo, `cancelado` vermelho.
 
-- Lista de parceiros (busca por email/nome, filtro por role, plano, status).
-- Cada linha: avatar, nome, roles, plano atual (badge), status, vencimento.
-- Ações rápidas em dropdown: Promover Destaque / Promover Ouro / Rebaixar Free / Suspender / Reativar / Conceder Teste (7/15/30 dias) / Renovar (+30/+90/+365).
-- Modal "Editar plano": plano, status, origem, data início, data vencimento (com checkbox "Sem vencimento"), motivo. Salvar chama `updateUserPlan`.
-- Aba/dialog "Histórico" mostrando `plan_audit_log`.
+## 5. Notificações
 
-Integrar seletor de plano nos formulários existentes de cadastro admin (empresas, farmácias via businesses, corretores, imobiliárias). Como plano vive em `profiles` (owner), o seletor no cadastro de conteúdo apenas aparece quando o admin também está definindo/alterando o dono; caso contrário, o fluxo canônico é editar o parceiro em Gerenciar Planos. Adicionar link rápido "Editar plano do dono" nos CRUDs.
+Reutiliza tabela `notifications` existente. Server fn `notifyAdminsCrmAlerts()` chamada por cron `pg_cron` (job diário) que gera alertas: teste vencendo (3d), plano vencendo (7d), renovação, novo cadastro, sem movimentação (>30d sem activity).
 
-## 5. Propagação imediata
+## 6. Painel Financeiro (Preparação)
 
-- Server functions invalidam consulta via retorno; cliente usa `queryClient.invalidateQueries({ queryKey: ['profile-plan'] })` e `['owner-plan']` após mutação.
-- Dashboards do parceiro já leem `useCurrentPlan`, então refletem no próximo refetch (sem novo login). Adicionar `refetchOnWindowFocus` já é padrão.
+Aba visual dentro da Ficha Completa mostrando `plan_slug`, `monthly_value`, `plan_status`, "Forma de pagamento: —", "Último pagamento: —", "Próximo vencimento: renewal_at". Somente leitura — estrutura pronta para Asaas.
 
-## Detalhes técnicos
+## 7. Navegação
 
-- Enums criados via `CREATE TYPE`; migração idempotente com `DO $$ ... IF NOT EXISTS`.
-- `updated_at` trigger já existe em `profiles`.
-- Audit trigger usa `SECURITY DEFINER` e `SET search_path = public`.
-- Novo item de menu apenas para role `admin` (não editor).
-- Sem alterações no fluxo Asaas atual: quando webhook Asaas rodar, ele passará `plan_source = 'asaas'` — coexistência garantida.
+- Adicionar item **"CRM Comercial"** em `src/lib/dashboard-nav.ts` (seção admin).
+- Rotas todas sob `_authenticated/admin/crm/*`, protegidas pelo `AdminLayout` existente (`useRequireAnyRole(["admin","editor"])`) + checagem extra `admin only` no componente CRM.
 
-## Fora de escopo
+## 8. Fora de escopo (fase futura)
 
-- Integração real com Asaas (permanece como está).
-- Cobrança automática, emails de vencimento (pode entrar em fase seguinte).
+- Integração real Asaas (webhook já existe; só exibimos preparação)
+- Envio real de WhatsApp/Email (botões apenas abrem `wa.me` / `mailto:`)
+- Não altera Dashboards de Empresa, Imprensa, Imóveis.
+
+---
+
+**Dependência nova:** `@dnd-kit/core` + `@dnd-kit/sortable` (Kanban).
+
+Confirma para eu implementar?
