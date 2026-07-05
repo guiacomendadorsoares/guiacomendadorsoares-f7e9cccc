@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
+import { LocationMap } from "@/components/location-map";
 import { fetchBusinessById } from "@/services/businesses.service";
 import { useOwnerPlan, can } from "@/lib/plan-limits";
 
