@@ -69,9 +69,11 @@ function HomePage() {
     <AppShell>
       <SmartHeader />
       <SearchHero />
+      <QuickShortcuts />
       <Reveal><HeroCarousel /></Reveal>
       <InstallPrompt />
       <HomePopup />
+
 
       <Reveal as="section" className="mb-7">
         <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" to="/guia" />
