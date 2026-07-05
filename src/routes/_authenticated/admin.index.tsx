@@ -66,6 +66,38 @@ function AdminHome() {
       </div>
 
       <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-lg font-bold">Assinaturas</h2>
+          <Link to="/admin/planos" className="text-xs font-semibold text-primary hover:underline">Configurar planos →</Link>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <PlanKpi label="Free" value={data?.plans.free ?? 0} tone="muted" />
+          <PlanKpi label="Destaque" value={data?.plans.destaque ?? 0} tone="primary" />
+          <PlanKpi label="Ouro" value={data?.plans.ouro ?? 0} tone="gold" />
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-lg font-bold">Farmácias</h2>
+          <span className="text-xs text-muted-foreground">Produtos cadastrados no comparador</span>
+        </div>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+          <div className="flex items-center gap-3">
+            <span className="grid h-10 w-10 place-items-center rounded-xl gradient-brand text-primary-foreground">
+              <Pill className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="font-display text-2xl font-bold">{data?.pharmProducts ?? 0}</p>
+              <p className="text-xs text-muted-foreground">Produtos totais em todas as farmácias</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+
+      <section>
         <h2 className="mb-3 font-display text-lg font-bold">Cadastro rápido</h2>
         <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
           {TABLES.map((t) => {
