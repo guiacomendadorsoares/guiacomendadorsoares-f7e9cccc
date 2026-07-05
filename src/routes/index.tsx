@@ -68,27 +68,24 @@ function HomePage() {
     <AppShell>
       <SmartHeader />
       <SearchHero />
-      <HeroCarousel />
+      <Reveal><HeroCarousel /></Reveal>
       <InstallPrompt />
       <HomePopup />
 
-      <section className="mb-7">
+      <Reveal as="section" className="mb-7">
         <SectionHeader title="Categorias" subtitle="Encontre tudo do bairro" to="/guia" />
         <CategoriesGrid />
-      </section>
+      </Reveal>
 
-      <PharmaciesHighlight />
-      
-
-      <OpenNowSection />
-      
-      <PromotionsPlaceholder />
-      <WhereToEat />
-      <LatestJobs />
-      <RecentProperties />
-      <NeighborhoodNews />
-      <UpcomingEvents />
-      <UtilidadePublicaHighlight />
+      <Reveal><PharmaciesHighlight /></Reveal>
+      <Reveal><OpenNowSection /></Reveal>
+      <Reveal><PromotionsPlaceholder /></Reveal>
+      <Reveal><WhereToEat /></Reveal>
+      <Reveal><LatestJobs /></Reveal>
+      <Reveal><RecentProperties /></Reveal>
+      <Reveal><NeighborhoodNews /></Reveal>
+      <Reveal><UpcomingEvents /></Reveal>
+      <Reveal><UtilidadePublicaHighlight /></Reveal>
     </AppShell>
   );
 }
