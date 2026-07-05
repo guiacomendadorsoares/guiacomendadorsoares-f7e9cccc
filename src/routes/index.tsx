@@ -401,7 +401,7 @@ function SkeletonRow({ compact = false, count = 3 }: { compact?: boolean; count?
 /* ---------- Sections ---------- */
 
 function FeaturedCompanies() {
-  const { data: items = [] } = useApprovedItems("businesses");
+  const { data: items = [], isLoading } = useApprovedItems("businesses");
   const placeholders: PHCard[] = [
     { title: "Sua empresa aqui", subtitle: "Anuncie seu negócio e apareça em destaque.", image: phEmpresa.url },
     { title: "Comércio local", subtitle: "Conecte-se com clientes da sua vizinhança.", image: phEmpresa2.url },
@@ -416,7 +416,7 @@ function FeaturedCompanies() {
 }
 
 function LatestJobs() {
-  const { data: items = [] } = useApprovedItems("jobs");
+  const { data: items = [], isLoading } = useApprovedItems("jobs");
   const placeholders: PHCard[] = [
     { title: "Vagas no bairro", subtitle: "Empresas locais publicarão oportunidades aqui.", image: phVaga.url },
     { title: "Trabalhe perto de casa", subtitle: "Menos deslocamento, mais qualidade de vida.", image: phVaga2.url },
@@ -431,7 +431,7 @@ function LatestJobs() {
 }
 
 function RecentProperties() {
-  const { data: items = [] } = useApprovedItems("properties");
+  const { data: items = [], isLoading } = useApprovedItems("properties");
   const placeholders: PHCard[] = [
     { title: "Casas para alugar", subtitle: "Confira opções por aqui em breve.", image: phImovel.url },
     { title: "Imóveis à venda", subtitle: "Corretores parceiros publicam aqui.", image: phImovel2.url },
@@ -446,7 +446,7 @@ function RecentProperties() {
 }
 
 function UpcomingEvents() {
-  const { data: items = [] } = useApprovedItems("events");
+  const { data: items = [], isLoading } = useApprovedItems("events");
   const placeholders: PHCard[] = [
     { title: "Festas do bairro", subtitle: "Eventos da comunidade aparecerão aqui.", image: phEvento.url },
     { title: "Shows e feiras", subtitle: "Fique por dentro da agenda local.", image: phEvento2.url },
@@ -461,7 +461,7 @@ function UpcomingEvents() {
 }
 
 function NeighborhoodNews() {
-  const { data: items = [] } = useApprovedItems("news", { limit: 5 });
+  const { data: items = [], isLoading } = useApprovedItems("news", { limit: 5 });
   const placeholders: PHCard[] = [
     { title: "Notícias do bairro", subtitle: "A redação está preparando os conteúdos.", image: phNoticia.url },
     { title: "Comunidade", subtitle: "Histórias dos moradores.", image: phNoticia2.url },
@@ -476,7 +476,7 @@ function NeighborhoodNews() {
 }
 
 function WhereToEat() {
-  const { data: items = [] } = useApprovedItems("businesses", { mainCategory: "alimentacao" });
+  const { data: items = [], isLoading } = useApprovedItems("businesses", { mainCategory: "alimentacao" });
   const placeholders: PHCard[] = [
     { title: "Restaurantes locais", subtitle: "Os favoritos da vizinhança em breve.", image: phComer.url },
     { title: "Lanchonetes", subtitle: "Sabores do bairro pertinho de você.", image: phComer2.url },
