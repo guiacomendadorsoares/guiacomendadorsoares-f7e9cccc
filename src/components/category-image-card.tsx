@@ -54,7 +54,7 @@ export function CategoryImageCard({ c, count }: { c: Category; count?: number })
       {img && (
         <img
           src={img}
-          alt={c.label}
+          alt={`Serviços de ${c.label} em Comendador Soares, Nova Iguaçu`}
           loading="lazy"
           width={768}
           height={576}
