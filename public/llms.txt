@@ -1,0 +1,23 @@
+# Guia Comendador Soares
+
+> Guia oficial do bairro Comendador Soares (Nova Iguaçu, RJ): empresas locais, farmácias, vagas de emprego, imóveis, notícias e utilidade pública.
+
+O Guia Comendador Soares é um diretório digital do bairro Comendador Soares, em Nova Iguaçu (RJ). Reúne comércio local, farmácias com comparador de preços, vagas de emprego, imóveis à venda e locação, notícias e informações de utilidade pública para moradores e visitantes.
+
+## Pages
+
+- [Home](/): Página inicial com destaques do bairro e categorias.
+- [Guia de empresas](/guia): Diretório completo por categorias (alimentação, saúde, beleza, serviços, etc).
+- [Buscar](/buscar): Busca por empresas, categorias e serviços.
+- [Farmácias](/farmacias): Comparador de preços de medicamentos das farmácias locais.
+- [Onde comer](/onde-comer): Restaurantes, lanchonetes e bares do bairro.
+- [Imóveis](/imoveis): Imóveis à venda e para alugar em Comendador Soares.
+- [Vagas de emprego](/vagas): Oportunidades de emprego, estágio e freelancer no bairro.
+- [Notícias](/noticias): Notícias e acontecimentos locais.
+- [Utilidade pública](/utilidade-publica): Serviços públicos, UPA, transporte e contatos úteis.
+- [Planos](/planos): Planos de assinatura para empresas.
+- [Anuncie](/anuncie): Como cadastrar sua empresa no guia.
+
+## Optional
+
+- [Entrar / Cadastrar](/auth): Área de autenticação de usuários.

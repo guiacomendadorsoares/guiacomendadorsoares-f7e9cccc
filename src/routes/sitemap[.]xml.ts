@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 
-const BASE_URL = "https://guiacomendadorsoares.lovable.app";
+const BASE_URL = "https://comendadorsoares.com.br";
 
 interface SitemapEntry {
   path: string;
@@ -16,13 +16,15 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "daily", priority: "1.0" },
           { path: "/guia", changefreq: "daily", priority: "0.9" },
+          { path: "/buscar", changefreq: "weekly", priority: "0.7" },
+          { path: "/farmacias", changefreq: "daily", priority: "0.9" },
           { path: "/imoveis", changefreq: "daily", priority: "0.9" },
           { path: "/vagas", changefreq: "daily", priority: "0.9" },
           { path: "/noticias", changefreq: "daily", priority: "0.8" },
           { path: "/onde-comer", changefreq: "weekly", priority: "0.7" },
+          { path: "/utilidade-publica", changefreq: "monthly", priority: "0.7" },
           { path: "/planos", changefreq: "monthly", priority: "0.7" },
           { path: "/anuncie", changefreq: "monthly", priority: "0.8" },
-          { path: "/auth", changefreq: "monthly", priority: "0.3" },
         ];
 
         const urls = entries

@@ -10,6 +10,17 @@ import fallback from "@/assets/news-1.jpg";
 const LABELS = Object.fromEntries(NEWS_FILTERS.map((f) => [f.value, f.label])) as Record<string, string>;
 
 export const Route = createFileRoute("/noticias/$id")({
+  head: ({ params }) => ({
+    meta: [
+      { title: "Notícia — Guia Comendador Soares" },
+      { name: "description", content: "Notícia local do bairro Comendador Soares, em Nova Iguaçu." },
+      { property: "og:title", content: "Notícia — Guia Comendador Soares" },
+      { property: "og:description", content: "Notícia local do bairro Comendador Soares, em Nova Iguaçu." },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: `https://comendadorsoares.com.br/noticias/${params.id}` },
+    ],
+    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/noticias/${params.id}` }],
+  }),
   component: NoticiaDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Notícia"><p className="text-sm text-destructive">{error.message}</p></AppShell>

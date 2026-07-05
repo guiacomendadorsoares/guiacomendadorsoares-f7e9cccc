@@ -18,8 +18,16 @@ import { useOwnerPlan, can } from "@/lib/plan-limits";
 
 
 export const Route = createFileRoute("/empresa/$id")({
-  head: () => ({
-    meta: [{ title: "Empresa — Guia CS" }],
+  head: ({ params }) => ({
+    meta: [
+      { title: "Empresa — Guia Comendador Soares" },
+      { name: "description", content: "Perfil da empresa no Guia Comendador Soares: contato, endereço, horário e mais." },
+      { property: "og:title", content: "Empresa — Guia Comendador Soares" },
+      { property: "og:description", content: "Perfil da empresa no Guia Comendador Soares: contato, endereço, horário e mais." },
+      { property: "og:type", content: "profile" },
+      { property: "og:url", content: `https://comendadorsoares.com.br/empresa/${params.id}` },
+    ],
+    links: [{ rel: "canonical", href: `https://comendadorsoares.com.br/empresa/${params.id}` }],
   }),
   component: EmpresaPage,
 });
