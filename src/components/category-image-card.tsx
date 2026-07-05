@@ -1,32 +1,46 @@
 import { Link } from "@tanstack/react-router";
 import type { Category } from "@/lib/guia-taxonomy";
 
-const IMAGE_QUERY: Record<string, string> = {
-  "alimentacao": "restaurant,food",
-  "saude": "hospital,healthcare",
-  "beleza-estetica": "salon,beauty",
-  "esportes-bem-estar": "gym,fitness",
-  "servicos": "workshop,tools",
-  "educacao": "school,classroom",
-  "moda-vestuario": "clothing,fashion,store",
-  "casa-construcao": "hardware,construction",
-  "automotivo": "auto,car,workshop",
-  "pet-shop": "petshop,dog",
-  "advogados": "lawyer,office",
-  "imobiliarias": "real-estate,house",
-  "utilidade-publica": "city,public",
-  "religiao": "church,cross",
-  "eventos-festas": "party,event",
-  "transportes": "delivery,truck",
-  "midia-marketing": "marketing,studio",
+import alimentacao from "@/assets/categories/alimentacao.jpg";
+import saude from "@/assets/categories/saude.jpg";
+import belezaEstetica from "@/assets/categories/beleza-estetica.jpg";
+import esportesBemEstar from "@/assets/categories/esportes-bem-estar.jpg";
+import automotivo from "@/assets/categories/automotivo.jpg";
+import casaConstrucao from "@/assets/categories/casa-construcao.jpg";
+import pets from "@/assets/categories/pets.jpg";
+import educacao from "@/assets/categories/educacao.jpg";
+import juridicoProfissional from "@/assets/categories/juridico-profissional.jpg";
+import imobiliario from "@/assets/categories/imobiliario.jpg";
+import comercio from "@/assets/categories/comercio.jpg";
+import servicosGerais from "@/assets/categories/servicos-gerais.jpg";
+import financeiro from "@/assets/categories/financeiro.jpg";
+import comunidade from "@/assets/categories/comunidade.jpg";
+import eventosEntretenimento from "@/assets/categories/eventos-entretenimento.jpg";
+import transporteLogistica from "@/assets/categories/transporte-logistica.jpg";
+import marketingPublicidade from "@/assets/categories/marketing-publicidade.jpg";
+
+const IMAGE_MAP: Record<string, string> = {
+  "alimentacao": alimentacao,
+  "saude": saude,
+  "beleza-estetica": belezaEstetica,
+  "esportes-bem-estar": esportesBemEstar,
+  "automotivo": automotivo,
+  "casa-construcao": casaConstrucao,
+  "pets": pets,
+  "educacao": educacao,
+  "juridico-profissional": juridicoProfissional,
+  "imobiliario": imobiliario,
+  "comercio": comercio,
+  "servicos-gerais": servicosGerais,
+  "financeiro": financeiro,
+  "comunidade": comunidade,
+  "eventos-entretenimento": eventosEntretenimento,
+  "transporte-logistica": transporteLogistica,
+  "marketing-publicidade": marketingPublicidade,
 };
 
-function imgFor(c: Category) {
-  const q = IMAGE_QUERY[c.slug] ?? c.label.toLowerCase().replace(/\s+/g, ",");
-  return `https://source.unsplash.com/600x400/?${encodeURIComponent(q)}`;
-}
-
 export function CategoryImageCard({ c, count }: { c: Category; count?: number }) {
+  const img = IMAGE_MAP[c.slug];
   return (
     <Link
       to="/guia/$categoria"
@@ -37,14 +51,17 @@ export function CategoryImageCard({ c, count }: { c: Category; count?: number })
         className="absolute inset-0"
         style={{ background: `linear-gradient(135deg, ${c.from}, ${c.to})` }}
       />
-      <img
-        src={imgFor(c)}
-        alt=""
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover opacity-90 mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
-        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/10" />
+      {img && (
+        <img
+          src={img}
+          alt={c.label}
+          loading="lazy"
+          width={768}
+          height={576}
+          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
 
       {typeof count === "number" && count > 0 && (
         <span className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[10px] font-bold text-foreground shadow">
