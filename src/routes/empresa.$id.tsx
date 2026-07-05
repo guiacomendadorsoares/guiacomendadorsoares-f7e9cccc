@@ -29,6 +29,8 @@ function EmpresaPage() {
     queryKey: ["business", id],
     queryFn: () => fetchBusinessById(id),
   });
+  const b: any = business ?? {};
+  const { plan: ownerPlan } = useOwnerPlan(b.submitted_by);
 
   if (isLoading) {
     return (
@@ -49,8 +51,7 @@ function EmpresaPage() {
     );
   }
 
-  const b: any = business;
-  const { plan: ownerPlan } = useOwnerPlan(b.submitted_by);
+
   const showWhatsapp = can(ownerPlan, "business", "whatsapp");
   const showSocial = can(ownerPlan, "business", "social");
   const showGallery = can(ownerPlan, "business", "gallery");
