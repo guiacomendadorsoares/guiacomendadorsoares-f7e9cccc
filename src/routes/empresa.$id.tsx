@@ -141,6 +141,13 @@ function EmpresaPage() {
           )}
         </div>
 
+        {(b.latitude != null && b.longitude != null) && (
+          <section className="mt-6">
+            <SectionTitle>Localização</SectionTitle>
+            <LocationMap lat={b.latitude} lng={b.longitude} label={b.name} height={260} />
+          </section>
+        )}
+
         {hours.length > 0 && (
           <section className="mt-6">
             <SectionTitle>Horário de funcionamento</SectionTitle>
