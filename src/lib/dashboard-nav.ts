@@ -54,6 +54,7 @@ export const adminNav: NavSection[] = [
     items: [
       { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
       { to: "/admin/planos", label: "Planos", icon: Crown },
+      { to: "/admin/gerenciar-planos", label: "Gerenciar Planos", icon: Crown },
       { to: "/admin/configuracoes", label: "Configurações", icon: Settings },
     ],
   },
