@@ -77,7 +77,9 @@ function HomePage() {
         <CategoriesGrid />
       </section>
 
+      <PharmaciesHighlight />
       <FeaturedCompanies />
+
       <OpenNowSection />
       <NearbyPlaceholder />
       <PromotionsPlaceholder />
@@ -556,4 +558,33 @@ function PromotionsPlaceholder() {
     </section>
   );
 }
+
+function PharmaciesHighlight() {
+  return (
+    <section className="mb-7">
+      <Link
+        to="/farmacias"
+        className="group relative block overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-emerald-500/15 via-primary/10 to-teal-400/15 p-5 shadow-elegant transition-all hover:-translate-y-0.5"
+      >
+        <div className="absolute -right-6 -top-6 text-8xl opacity-20 transition-transform group-hover:scale-110">💊</div>
+        <div className="relative">
+          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[10.5px] font-bold uppercase tracking-wider text-emerald-700">
+            Novidade
+          </span>
+          <h2 className="mt-2 font-display text-2xl font-black leading-tight text-foreground">
+            💊 Farmácias
+          </h2>
+          <p className="mt-1 max-w-[85%] text-sm text-muted-foreground">
+            Compare preços das farmácias de Comendador Soares.
+          </p>
+          <span className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-card">
+            <Search className="h-4 w-4" />
+            Pesquisar Produtos
+          </span>
+        </div>
+      </Link>
+    </section>
+  );
+}
+
 
