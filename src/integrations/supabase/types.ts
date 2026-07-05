@@ -357,6 +357,210 @@ export type Database = {
         }
         Relationships: []
       }
+      crm_activities: {
+        Row: {
+          content: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          lead_id: string
+          type: Database["public"]["Enums"]["crm_activity_type"]
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id: string
+          type: Database["public"]["Enums"]["crm_activity_type"]
+        }
+        Update: {
+          content?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lead_id?: string
+          type?: Database["public"]["Enums"]["crm_activity_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_audit_log: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          new_plan: string | null
+          new_source: string | null
+          new_stage: Database["public"]["Enums"]["crm_stage"] | null
+          previous_plan: string | null
+          previous_source: string | null
+          previous_stage: Database["public"]["Enums"]["crm_stage"] | null
+          reason: string | null
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          new_plan?: string | null
+          new_source?: string | null
+          new_stage?: Database["public"]["Enums"]["crm_stage"] | null
+          previous_plan?: string | null
+          previous_source?: string | null
+          previous_stage?: Database["public"]["Enums"]["crm_stage"] | null
+          reason?: string | null
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          new_plan?: string | null
+          new_source?: string | null
+          new_stage?: Database["public"]["Enums"]["crm_stage"] | null
+          previous_plan?: string | null
+          previous_source?: string | null
+          previous_stage?: Database["public"]["Enums"]["crm_stage"] | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_audit_log_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_leads: {
+        Row: {
+          address: string | null
+          category: string | null
+          company_name: string
+          contact_name: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          logo_url: string | null
+          monthly_value: number | null
+          neighborhood: string | null
+          next_action: string | null
+          next_action_at: string | null
+          notes: string | null
+          partner_type: Database["public"]["Enums"]["crm_partner_type"]
+          phone: string | null
+          plan_slug: string
+          plan_source: string
+          renewal_at: string | null
+          stage: Database["public"]["Enums"]["crm_stage"]
+          updated_at: string
+          user_id: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          company_name: string
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          monthly_value?: number | null
+          neighborhood?: string | null
+          next_action?: string | null
+          next_action_at?: string | null
+          notes?: string | null
+          partner_type?: Database["public"]["Enums"]["crm_partner_type"]
+          phone?: string | null
+          plan_slug?: string
+          plan_source?: string
+          renewal_at?: string | null
+          stage?: Database["public"]["Enums"]["crm_stage"]
+          updated_at?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          company_name?: string
+          contact_name?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          logo_url?: string | null
+          monthly_value?: number | null
+          neighborhood?: string | null
+          next_action?: string | null
+          next_action_at?: string | null
+          notes?: string | null
+          partner_type?: Database["public"]["Enums"]["crm_partner_type"]
+          phone?: string | null
+          plan_slug?: string
+          plan_source?: string
+          renewal_at?: string | null
+          stage?: Database["public"]["Enums"]["crm_stage"]
+          updated_at?: string
+          user_id?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      crm_reminders: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          done: boolean
+          due_at: string
+          id: string
+          lead_id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          done?: boolean
+          due_at: string
+          id?: string
+          lead_id: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          done?: boolean
+          due_at?: string
+          id?: string
+          lead_id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_reminders_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       curiosities: {
         Row: {
           approved_at: string | null
@@ -1395,6 +1599,30 @@ export type Database = {
         | "user"
       comment_target: "business" | "news" | "event"
       content_status: "draft" | "pending" | "approved" | "rejected"
+      crm_activity_type:
+        | "ligacao"
+        | "visita"
+        | "whatsapp"
+        | "email"
+        | "proposta"
+        | "reuniao"
+        | "observacao"
+      crm_partner_type:
+        | "empresa"
+        | "farmacia"
+        | "corretor"
+        | "imobiliaria"
+        | "lead"
+      crm_stage:
+        | "lead"
+        | "contato"
+        | "visita"
+        | "proposta"
+        | "negociacao"
+        | "teste"
+        | "ativo"
+        | "renovacao"
+        | "cancelado"
       job_type: "emprego" | "estagio" | "jovem-aprendiz" | "freelancer"
       listing_type: "venda" | "aluguel"
       news_category:
@@ -1549,6 +1777,33 @@ export const Constants = {
       app_role: ["admin", "editor", "partner", "broker", "influencer", "user"],
       comment_target: ["business", "news", "event"],
       content_status: ["draft", "pending", "approved", "rejected"],
+      crm_activity_type: [
+        "ligacao",
+        "visita",
+        "whatsapp",
+        "email",
+        "proposta",
+        "reuniao",
+        "observacao",
+      ],
+      crm_partner_type: [
+        "empresa",
+        "farmacia",
+        "corretor",
+        "imobiliaria",
+        "lead",
+      ],
+      crm_stage: [
+        "lead",
+        "contato",
+        "visita",
+        "proposta",
+        "negociacao",
+        "teste",
+        "ativo",
+        "renovacao",
+        "cancelado",
+      ],
       job_type: ["emprego", "estagio", "jovem-aprendiz", "freelancer"],
       listing_type: ["venda", "aluguel"],
       news_category: [
