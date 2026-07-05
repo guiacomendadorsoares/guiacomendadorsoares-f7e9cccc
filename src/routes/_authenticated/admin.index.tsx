@@ -172,6 +172,24 @@ function KpiCard({ label, value, icon: Icon, accent, href }: { label: string; va
   );
 }
 
+function PlanKpi({ label, value, tone }: { label: string; value: number; tone: "muted" | "primary" | "gold" }) {
+  const styles = tone === "gold"
+    ? "gradient-brand text-primary-foreground border-transparent"
+    : tone === "primary"
+    ? "bg-primary/10 text-primary border-primary/30"
+    : "bg-card text-muted-foreground border-border";
+  return (
+    <div className={`flex items-center justify-between rounded-2xl border p-5 shadow-card ${styles}`}>
+      <div className="flex items-center gap-2">
+        <Crown className="h-4 w-4" />
+        <span className="text-sm font-bold uppercase tracking-wider">{label}</span>
+      </div>
+      <span className="font-display text-2xl font-bold">{value}</span>
+    </div>
+  );
+}
+
+
 function Stat({ label, value, tone }: { label: string; value: number; tone?: "gold" | "primary" }) {
   return (
     <div>
