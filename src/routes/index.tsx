@@ -354,12 +354,13 @@ function RealRow({
             key={it.id}
             to={target.to}
             params={target.params}
-            className={`relative overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elegant ${size.card}`}
+            className={`group relative overflow-hidden rounded-2xl border border-border bg-card shadow-card transition-all duration-200 ease-out hover:-translate-y-1 hover:border-primary/30 hover:shadow-elegant active:scale-[0.98] motion-reduce:transition-none motion-reduce:hover:transform-none ${size.card}`}
           >
             <div className={`relative w-full overflow-hidden ${size.img}`}>
-              <img src={cover} alt={title} loading="lazy" className="h-full w-full object-cover" />
+              <img src={cover} alt={title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-[1.06] motion-reduce:transform-none" />
+              <span className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               {it.featured ? (
-                <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-gold-foreground">
+                <span className="absolute left-1.5 top-1.5 inline-flex items-center gap-1 rounded-full bg-gold px-1.5 py-0.5 text-[9px] font-semibold text-gold-foreground shadow-card">
                   <Sparkles className="h-2.5 w-2.5" /> Ouro
                 </span>
               ) : null}
@@ -376,6 +377,26 @@ function RealRow({
     </div>
   );
 }
+
+function SkeletonRow({ compact = false, count = 3 }: { compact?: boolean; count?: number }) {
+  const size = compact
+    ? { card: "min-w-[150px] max-w-[150px]", img: "h-20", pad: "p-2" }
+    : { card: "min-w-[230px] max-w-[230px]", img: "h-32", pad: "p-3" };
+  return (
+    <div className="-mx-1 flex gap-2.5 overflow-x-auto px-1 pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className={`overflow-hidden rounded-2xl border border-border bg-card shadow-card ${size.card}`}>
+          <div className={`w-full animate-pulse bg-muted ${size.img}`} />
+          <div className={`${size.pad} space-y-2`}>
+            <div className="h-3 w-4/5 animate-pulse rounded bg-muted" />
+            {!compact && <div className="h-2.5 w-3/5 animate-pulse rounded bg-muted" />}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 
 /* ---------- Sections ---------- */
 
