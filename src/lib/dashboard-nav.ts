@@ -3,7 +3,7 @@ import {
   LayoutDashboard, CheckCircle2, Building2, Briefcase, Home, Newspaper,
   Calendar, Sparkles, Handshake, Users, BarChart3, Settings, Wallet,
   User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound, Crown, LifeBuoy,
-  Image as ImageIcon,
+  Image as ImageIcon, TrendingUp,
 } from "lucide-react";
 import type { AppRole } from "@/hooks/use-auth";
 
