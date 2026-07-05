@@ -410,7 +410,7 @@ function FeaturedCompanies() {
   return (
     <section className="mb-7">
       <SectionHeader title="Empresas em destaque" subtitle="Selecionadas com plano Ouro" to="/guia" />
-      {items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phEmpresa.url} />}
+      {isLoading ? <SkeletonRow /> : items.length === 0 ? <PlaceholderRow cards={placeholders} /> : <RealRow items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phEmpresa.url} />}
     </section>
   );
 }
@@ -425,7 +425,7 @@ function LatestJobs() {
   return (
     <section className="mb-7">
       <SectionHeader title="Últimas vagas" subtitle="Trabalhe perto de casa" to="/vagas" />
-      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/vagas/$id", params: { id } })} fallbackImage={phVaga.url} />}
+      {isLoading ? <SkeletonRow compact /> : items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/vagas/$id", params: { id } })} fallbackImage={phVaga.url} />}
     </section>
   );
 }
@@ -440,7 +440,7 @@ function RecentProperties() {
   return (
     <section className="mb-7">
       <SectionHeader title="Imóveis em destaque" subtitle="Alugar e comprar" to="/imoveis" />
-      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/imoveis/$id", params: { id } })} fallbackImage={phImovel.url} />}
+      {isLoading ? <SkeletonRow compact /> : items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/imoveis/$id", params: { id } })} fallbackImage={phImovel.url} />}
     </section>
   );
 }
@@ -455,7 +455,7 @@ function UpcomingEvents() {
   return (
     <section className="mb-7">
       <SectionHeader title="Próximos eventos" subtitle="Acontece pertinho de você" />
-      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/eventos/$id", params: { id } })} fallbackImage={phEvento.url} />}
+      {isLoading ? <SkeletonRow compact /> : items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/eventos/$id", params: { id } })} fallbackImage={phEvento.url} />}
     </section>
   );
 }
@@ -470,7 +470,7 @@ function NeighborhoodNews() {
   return (
     <section className="mb-7">
       <SectionHeader title="Notícias do bairro" subtitle="As 5 mais recentes" to="/noticias" />
-      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/noticias/$id", params: { id } })} fallbackImage={phNoticia.url} />}
+      {isLoading ? <SkeletonRow compact /> : items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/noticias/$id", params: { id } })} fallbackImage={phNoticia.url} />}
     </section>
   );
 }
@@ -485,7 +485,7 @@ function WhereToEat() {
   return (
     <section className="mb-7">
       <SectionHeader title="Onde comer" subtitle="Restaurantes, pizzarias, açaí e mais" to="/onde-comer" />
-      {items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phComer.url} />}
+      {isLoading ? <SkeletonRow compact /> : items.length === 0 ? <PlaceholderRow compact cards={placeholders} /> : <RealRow compact items={items} to={(id) => ({ to: "/empresa/$id", params: { id } })} fallbackImage={phComer.url} />}
     </section>
   );
 }
