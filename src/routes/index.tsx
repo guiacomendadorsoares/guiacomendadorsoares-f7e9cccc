@@ -120,7 +120,7 @@ function SmartHeader() {
         <Link to="/" className="flex min-w-0 items-center gap-2">
           <img
             src={logoUrl}
-            alt="Logotipo do Guia Comendador Soares"
+            alt="Guia Comendador Soares — Guia comercial de Nova Iguaçu"
             className={`shrink-0 object-contain transition-all duration-300 ${scrolled ? "h-8 w-8" : "h-10 w-10"}`}
           />
           <div className="min-w-0 leading-tight">
