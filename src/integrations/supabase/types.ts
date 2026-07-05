@@ -684,6 +684,140 @@ export type Database = {
         }
         Relationships: []
       }
+      pharmacy_product_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      pharmacy_products: {
+        Row: {
+          active_ingredient: string | null
+          available: boolean
+          brand: string | null
+          business_id: string
+          category: string | null
+          created_at: string
+          delivery: boolean
+          description: string | null
+          id: string
+          image_url: string | null
+          name: string
+          pickup: boolean
+          price: number | null
+          promo_price: number | null
+          updated_at: string
+        }
+        Insert: {
+          active_ingredient?: string | null
+          available?: boolean
+          brand?: string | null
+          business_id: string
+          category?: string | null
+          created_at?: string
+          delivery?: boolean
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          pickup?: boolean
+          price?: number | null
+          promo_price?: number | null
+          updated_at?: string
+        }
+        Update: {
+          active_ingredient?: string | null
+          available?: boolean
+          brand?: string | null
+          business_id?: string
+          category?: string | null
+          created_at?: string
+          delivery?: boolean
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          pickup?: boolean
+          price?: number | null
+          promo_price?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_products_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pharmacy_search_events: {
+        Row: {
+          business_id: string | null
+          created_at: string
+          event_type: string
+          id: string
+          product_id: string | null
+          query: string
+          user_id: string | null
+        }
+        Insert: {
+          business_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          product_id?: string | null
+          query: string
+          user_id?: string | null
+        }
+        Update: {
+          business_id?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          product_id?: string | null
+          query?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_search_events_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pharmacy_search_events_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacy_products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       popups: {
         Row: {
           active: boolean
