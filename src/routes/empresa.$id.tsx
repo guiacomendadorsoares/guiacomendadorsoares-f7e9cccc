@@ -109,9 +109,10 @@ function EmpresaPage() {
                 <h1 className="font-display text-xl font-bold leading-tight text-foreground">
                   {b.name}
                 </h1>
-                {b.verified && (
+                {b.verified && showVerified && (
                   <BadgeCheck className="h-4 w-4 shrink-0 text-primary-vibrant" />
                 )}
+
               </div>
               <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                 {b.categoryLabel || b.category_label || b.subcategory || b.main_category}
