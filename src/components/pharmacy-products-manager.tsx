@@ -45,6 +45,10 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
   const qc = useQueryClient();
   const [selectedBiz, setSelectedBiz] = useState<string | null>(null);
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
+  const limits = useLimits();
+  const maxProducts: number = limits.pharmacy.max_products ?? 0;
+  const allowPromotion: boolean = !!limits.pharmacy.promotions;
+
 
   const { data: pharmacies = [] } = useQuery({
     queryKey: ["my-pharmacies", userId],
