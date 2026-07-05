@@ -78,7 +78,7 @@ function HomePage() {
       </section>
 
       <PharmaciesHighlight />
-      <FeaturedCompanies />
+      
 
       <OpenNowSection />
       <NearbyPlaceholder />
