@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle2, Building2, Briefcase, Home, Newspaper, Calendar, Sparkles, Users } from "lucide-react";
+import { CheckCircle2, Building2, Briefcase, Home, Newspaper, Calendar, Sparkles, Users, Pill, Crown } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
   component: AdminHome,
@@ -24,11 +24,23 @@ function useCounts() {
           out[t] = { total: total.count ?? 0, pending: pending.count ?? 0, approved: approved.count ?? 0 };
         }),
       );
-      const usersRes = await supabase.from("profiles").select("*", { count: "exact", head: true });
-      return { byTable: out, users: usersRes.count ?? 0 };
+      const [usersRes, profilesPlans, pharmProducts] = await Promise.all([
+        supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("profiles").select("current_plan"),
+        supabase.from("pharmacy_products").select("*", { count: "exact", head: true }),
+      ]);
+      const plans = { free: 0, destaque: 0, ouro: 0 } as Record<string, number>;
+      (profilesPlans.data ?? []).forEach((p: any) => { plans[p.current_plan ?? "free"] = (plans[p.current_plan ?? "free"] ?? 0) + 1; });
+      return {
+        byTable: out,
+        users: usersRes.count ?? 0,
+        plans,
+        pharmProducts: pharmProducts.count ?? 0,
+      };
     },
   });
 }
+
 
 const ICONS = {
   businesses: Building2, jobs: Briefcase, properties: Home,
