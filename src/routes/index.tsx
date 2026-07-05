@@ -77,7 +77,9 @@ function HomePage() {
         <CategoriesGrid />
       </section>
 
+      <PharmaciesHighlight />
       <FeaturedCompanies />
+
       <OpenNowSection />
       <NearbyPlaceholder />
       <PromotionsPlaceholder />
