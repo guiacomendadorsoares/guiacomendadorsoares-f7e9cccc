@@ -19,6 +19,7 @@ import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as OndeComerRouteImport } from './routes/onde-comer'
 import { Route as ImoveisRouteImport } from './routes/imoveis'
 import { Route as FavoritosRouteImport } from './routes/favoritos'
+import { Route as FarmaciasRouteImport } from './routes/farmacias'
 import { Route as BuscarRouteImport } from './routes/buscar'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AnuncieRouteImport } from './routes/anuncie'
@@ -110,6 +111,11 @@ const ImoveisRoute = ImoveisRouteImport.update({
 const FavoritosRoute = FavoritosRouteImport.update({
   id: '/favoritos',
   path: '/favoritos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FarmaciasRoute = FarmaciasRouteImport.update({
+  id: '/farmacias',
+  path: '/farmacias',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BuscarRoute = BuscarRouteImport.update({
@@ -350,6 +356,7 @@ export interface FileRoutesByFullPath {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
+  '/farmacias': typeof FarmaciasRoute
   '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
@@ -403,6 +410,7 @@ export interface FileRoutesByTo {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
+  '/farmacias': typeof FarmaciasRoute
   '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
@@ -457,6 +465,7 @@ export interface FileRoutesById {
   '/anuncie': typeof AnuncieRoute
   '/auth': typeof AuthRoute
   '/buscar': typeof BuscarRoute
+  '/farmacias': typeof FarmaciasRoute
   '/favoritos': typeof FavoritosRoute
   '/imoveis': typeof ImoveisRouteWithChildren
   '/onde-comer': typeof OndeComerRoute
@@ -512,6 +521,7 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/buscar'
+    | '/farmacias'
     | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
@@ -565,6 +575,7 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/buscar'
+    | '/farmacias'
     | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
@@ -618,6 +629,7 @@ export interface FileRouteTypes {
     | '/anuncie'
     | '/auth'
     | '/buscar'
+    | '/farmacias'
     | '/favoritos'
     | '/imoveis'
     | '/onde-comer'
@@ -673,6 +685,7 @@ export interface RootRouteChildren {
   AnuncieRoute: typeof AnuncieRoute
   AuthRoute: typeof AuthRoute
   BuscarRoute: typeof BuscarRoute
+  FarmaciasRoute: typeof FarmaciasRoute
   FavoritosRoute: typeof FavoritosRoute
   ImoveisRoute: typeof ImoveisRouteWithChildren
   OndeComerRoute: typeof OndeComerRoute
@@ -763,6 +776,13 @@ declare module '@tanstack/react-router' {
       path: '/favoritos'
       fullPath: '/favoritos'
       preLoaderRoute: typeof FavoritosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/farmacias': {
+      id: '/farmacias'
+      path: '/farmacias'
+      fullPath: '/farmacias'
+      preLoaderRoute: typeof FarmaciasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/buscar': {
@@ -1173,6 +1193,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnuncieRoute: AnuncieRoute,
   AuthRoute: AuthRoute,
   BuscarRoute: BuscarRoute,
+  FarmaciasRoute: FarmaciasRoute,
   FavoritosRoute: FavoritosRoute,
   ImoveisRoute: ImoveisRouteWithChildren,
   OndeComerRoute: OndeComerRoute,
