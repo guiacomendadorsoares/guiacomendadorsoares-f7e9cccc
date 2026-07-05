@@ -125,8 +125,8 @@ function daysUntil(iso: string | null | undefined): number | null {
 /* -------------------- Root page -------------------- */
 
 function CrmPage() {
-  const { hasRole } = useAuth();
-  if (!hasRole("admin")) {
+  const isAdmin = useHasRole("admin");
+  if (!isAdmin) {
     return (
       <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
         O CRM Comercial é exclusivo do Admin Master.
