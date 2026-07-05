@@ -3,19 +3,17 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Navigation, MapPin } from "lucide-react";
 import { directionsUrl } from "@/lib/geocode";
-import { renderToStaticMarkup } from "react-dom/server";
 
-const markerHtml = renderToStaticMarkup(
-  <div className="relative flex flex-col items-center">
-    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-primary/30">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-    </div>
-    <div className="-mt-1 h-3 w-3 rotate-45 bg-primary shadow-md" />
-  </div>,
-);
+const markerHtml = `
+<div style="position:relative;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 4px 8px rgba(0,0,0,.25));">
+  <div style="display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:9999px;background:hsl(var(--primary));color:hsl(var(--primary-foreground));box-shadow:0 0 0 4px hsl(var(--primary) / 0.25);">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+  </div>
+  <div style="margin-top:-4px;width:12px;height:12px;transform:rotate(45deg);background:hsl(var(--primary));"></div>
+</div>`;
 
 const icon = L.divIcon({
-  className: "!bg-transparent !border-0",
+  className: "location-map-marker",
   html: markerHtml,
   iconSize: [40, 52],
   iconAnchor: [20, 50],
