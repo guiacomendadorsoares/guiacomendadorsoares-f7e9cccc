@@ -1,10 +1,13 @@
 import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Pill, Plus, Trash2, Edit2, X, Save } from "lucide-react";
+import { Pill, Plus, Trash2, Edit2, X, Save, Lock } from "lucide-react";
 import { SingleImageUploader } from "@/components/image-uploader";
 import { fetchPharmacyCategories } from "@/services/pharmacies.service";
+import { useLimits, formatLimit } from "@/lib/plan-limits";
+
 
 type Product = {
   id: string;
@@ -42,6 +45,10 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
   const qc = useQueryClient();
   const [selectedBiz, setSelectedBiz] = useState<string | null>(null);
   const [editing, setEditing] = useState<Partial<Product> | null>(null);
+  const limits = useLimits();
+  const maxProducts: number = limits.pharmacy.max_products ?? 0;
+  const allowPromotion: boolean = !!limits.pharmacy.promotions;
+
 
   const { data: pharmacies = [] } = useQuery({
     queryKey: ["my-pharmacies", userId],
@@ -81,6 +88,13 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
     mutationFn: async (p: Partial<Product>) => {
       if (!p.name?.trim()) throw new Error("Nome obrigatório");
       if (!p.business_id) throw new Error("Selecione uma farmácia");
+      if (!p.id && maxProducts !== -1 && products.length >= maxProducts) {
+        throw new Error(`Você atingiu o limite do seu plano (${maxProducts} produtos). Faça upgrade para cadastrar mais.`);
+      }
+      if (p.promo_price != null && !allowPromotion) {
+        throw new Error("Promoções estão disponíveis a partir do plano Destaque. Faça upgrade para ativar.");
+      }
+
       const payload = {
         business_id: p.business_id,
         name: p.name.trim(),
@@ -161,22 +175,37 @@ export function PharmacyProductsManager({ userId }: { userId: string }) {
       )}
 
       <div className="grid grid-cols-3 gap-2 text-center">
-        <StatBox label="Produtos" value={stats.total} />
+        <StatBox label={`Produtos ${products.length}/${formatLimit(maxProducts)}`} value={stats.total} />
         <StatBox label="Em promoção" value={stats.promo} />
         <StatBox label="Indisponíveis" value={stats.unavailable} />
       </div>
+
+      {maxProducts !== -1 && products.length >= maxProducts && (
+        <div className="flex items-center justify-between gap-3 rounded-xl border border-destructive/40 bg-destructive/5 p-3 text-sm">
+          <span className="flex items-center gap-2"><Lock className="h-4 w-4 text-destructive" /> Você atingiu o limite do seu plano ({maxProducts} produtos).</span>
+          <Link to="/planos" className="rounded-full bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">Fazer upgrade</Link>
+        </div>
+      )}
 
       <div className="flex items-center justify-between">
         <h3 className="font-display text-sm font-bold uppercase tracking-wider text-muted-foreground">
           Produtos
         </h3>
         <button
-          onClick={() => setEditing(empty(activeBiz!))}
-          className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-card"
+          onClick={() => {
+            if (maxProducts !== -1 && products.length >= maxProducts) {
+              toast.error("Limite do plano atingido. Faça upgrade para cadastrar mais.");
+              return;
+            }
+            setEditing(empty(activeBiz!));
+          }}
+          disabled={maxProducts !== -1 && products.length >= maxProducts}
+          className="inline-flex items-center gap-1 rounded-full bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-card disabled:opacity-50"
         >
           <Plus className="h-3.5 w-3.5" /> Novo produto
         </button>
       </div>
+
 
       {editing && (
         <ProductForm
