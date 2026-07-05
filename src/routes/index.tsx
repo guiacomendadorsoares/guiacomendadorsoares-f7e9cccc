@@ -211,15 +211,16 @@ function SearchHero() {
         onSubmit={submit}
         className="mt-4 flex items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 shadow-elegant"
       >
-        <Search className="h-5 w-5 shrink-0 text-primary" />
+        <Search className="h-5 w-5 shrink-0 text-primary transition-transform duration-300 focus-within:scale-110" />
         <div className="relative min-w-0 flex-1">
           <input
             value={term}
             onChange={(e) => setTerm(e.target.value)}
-            placeholder="O que você está procurando hoje?"
-            className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground"
+            placeholder={`Procure ${PLACEHOLDER_HINTS[hintIndex].toLowerCase()}...`}
+            className="w-full bg-transparent text-[15px] outline-none placeholder:text-muted-foreground transition-all"
             aria-label="Buscar"
           />
+
           {term.length === 0 && (
             <span
               key={hintIndex}
