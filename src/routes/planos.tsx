@@ -373,35 +373,38 @@ function FinalCta() {
 }
 
 
-function buildBullets(slug: PlanSlug, b: any, p: any): string[] {
+function buildBullets(slug: PlanSlug, _b: any, _p: any): string[] {
   const out: string[] = [];
   if (slug === "free") {
     out.push(
-      "Nome, categoria, endereço e telefone",
-      "Logo da empresa",
-      "Horário de funcionamento",
-      `Até ${p.max_listings ?? 3} imóveis · ${p.max_photos ?? 5} fotos cada`,
+      "Nome, categoria e subcategoria",
+      "Logo, endereço, telefone e horário",
+      "Descrição até 500 caracteres",
+      "1 foto da empresa",
+      "1 vaga de emprego por mês",
     );
   }
   if (slug === "destaque") {
     out.push(
       "Tudo do Free",
-      "Banner e galeria de fotos",
-      "Redes sociais + WhatsApp",
-      "Promoções e estatísticas básicas",
-      "Selo Empresa Verificada",
-      `Até ${p.max_listings ?? 10} imóveis · ${p.max_photos ?? 15} fotos`,
+      "Até 20 fotos + banner + galeria",
+      "WhatsApp, mapa e Como Chegar",
+      "Site, Instagram e Facebook",
+      "Até 10 vagas · 10 promoções · 50 produtos",
+      "Destaque na categoria + prioridade nas buscas",
+      "Selo Empresa Verificada + estatísticas básicas",
     );
   }
   if (slug === "ouro") {
     out.push(
       "Tudo do Destaque",
-      "Destaque na Home e na categoria",
-      "Banner rotativo + prioridade nas buscas",
-      "Estatísticas avançadas",
-      "Postagens patrocinadas",
-      "Imóveis ilimitados + vídeos",
+      "Fotos, produtos, promoções e vagas ilimitados",
+      "Destaque na Home + Empresa do Dia",
+      "Vídeos + banner rotativo + posts patrocinados",
+      "Prioridade máxima nas buscas",
+      "Estatísticas avançadas + relatórios mensais",
     );
   }
   return out;
 }
+
