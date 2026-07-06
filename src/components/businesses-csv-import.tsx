@@ -8,12 +8,26 @@ import { supabase } from "@/integrations/supabase/client";
 import { CATEGORIES, findCategory } from "@/lib/guia-taxonomy";
 
 // -------- CSV parser (RFC 4180-ish, handles quotes/newlines) ---------
-function parseCsv(text: string): string[][] {
+function detectDelimiter(text: string): string {
+  // Sample the first non-quoted line to guess , ; or tab
+  const firstLine = text.replace(/^\uFEFF/, "").split(/\r?\n/)[0] ?? "";
+  const counts: Record<string, number> = {
+    ",": (firstLine.match(/,/g) || []).length,
+    ";": (firstLine.match(/;/g) || []).length,
+    "\t": (firstLine.match(/\t/g) || []).length,
+  };
+  let best = ","; let max = -1;
+  for (const [d, n] of Object.entries(counts)) if (n > max) { best = d; max = n; }
+  return best;
+}
+
+function parseCsv(text: string, delimiter?: string): string[][] {
+  const src = text.replace(/^\uFEFF/, "");
+  const delim = delimiter ?? detectDelimiter(src);
   const rows: string[][] = [];
   let cur: string[] = [];
   let field = "";
   let inQuotes = false;
-  const src = text.replace(/^\uFEFF/, "");
   for (let i = 0; i < src.length; i++) {
     const c = src[i];
     if (inQuotes) {
@@ -23,7 +37,7 @@ function parseCsv(text: string): string[][] {
       } else field += c;
     } else {
       if (c === '"') inQuotes = true;
-      else if (c === ",") { cur.push(field); field = ""; }
+      else if (c === delim) { cur.push(field); field = ""; }
       else if (c === "\n" || c === "\r") {
         if (c === "\r" && src[i + 1] === "\n") i++;
         cur.push(field); rows.push(cur); cur = []; field = "";
