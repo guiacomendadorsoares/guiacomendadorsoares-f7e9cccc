@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Upload, Download, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, findCategory, findSubcategory } from "@/lib/guia-taxonomy";
+import { CATEGORIES, findCategory } from "@/lib/guia-taxonomy";
 
 // -------- CSV parser (RFC 4180-ish, handles quotes/newlines) ---------
 function parseCsv(text: string): string[][] {
