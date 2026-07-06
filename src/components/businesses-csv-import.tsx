@@ -203,10 +203,9 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
             </div>
 
             <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              <p className="font-semibold text-foreground">Colunas aceitas:</p>
-              <p className="mt-1"><code>name, category, subcategory, address, description, phone, whatsapp, email, instagram, logo_url, banner_url</code></p>
-              <p className="mt-2"><strong>category</strong> pode ser o slug (<code>alimentacao</code>) ou o nome (<code>Alimentação</code>). Mesma coisa para <strong>subcategory</strong>.</p>
-              <p className="mt-1">Obrigatórios: <strong>name, category, address</strong>.</p>
+              <p className="font-semibold text-foreground">Colunas da planilha (todas obrigatórias exceto telefone):</p>
+              <p className="mt-1"><code>name, category, address, phone</code></p>
+              <p className="mt-2"><strong>category</strong> pode ser o slug (<code>alimentacao</code>) ou o nome (<code>Alimentação</code>).</p>
             </div>
 
             {rows.length > 0 && (
