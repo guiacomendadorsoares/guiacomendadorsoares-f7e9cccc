@@ -73,8 +73,8 @@ type ParsedRow = {
 };
 
 const TEMPLATE_CSV =
-  "name,category,subcategory,address,description,phone,whatsapp,email,instagram,logo_url,banner_url\n" +
-  "Padaria Exemplo,alimentacao,padarias,Rua das Flores 123,Padaria artesanal do bairro,(21) 99999-0000,,contato@exemplo.com,@padariaexemplo,,\n";
+  "name,category,address,phone\n" +
+  "Padaria Exemplo,alimentacao,Rua das Flores 123,(21) 99999-0000\n";
 
 export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
   const qc = useQueryClient();
