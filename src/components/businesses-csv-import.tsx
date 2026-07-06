@@ -109,7 +109,12 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
     if (table.length < 2) { toast.error("Planilha vazia ou sem linhas."); return; }
     const header = table[0].map((h) => HEADER_ALIASES[norm(h)] ?? (norm(h) as Key));
     const missing = ["name", "category", "address"].filter((k) => !header.includes(k as Key));
-    if (missing.length) { toast.error(`Colunas obrigatórias faltando: ${missing.join(", ")}`); return; }
+    if (missing.length) {
+      toast.error(
+        `Colunas obrigatórias faltando: ${missing.join(", ")}. Cabeçalhos detectados: ${table[0].join(" | ")}`
+      );
+      return;
+    }
 
     // Fetch existing names within categories to detect duplicates (single query).
     const { data: existing } = await supabase
