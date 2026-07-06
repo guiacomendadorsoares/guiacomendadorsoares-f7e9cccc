@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Upload, Download, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, findCategory, findSubcategory } from "@/lib/guia-taxonomy";
+import { CATEGORIES, findCategory } from "@/lib/guia-taxonomy";
 
 // -------- CSV parser (RFC 4180-ish, handles quotes/newlines) ---------
 function parseCsv(text: string): string[][] {
@@ -34,25 +34,14 @@ function parseCsv(text: string): string[][] {
   return rows.filter((r) => r.some((v) => v.trim() !== ""));
 }
 
-const HEADER_KEYS = [
-  "name", "category", "subcategory", "address",
-  "description", "phone", "whatsapp", "email",
-  "instagram", "logo_url", "banner_url",
-] as const;
+const HEADER_KEYS = ["name", "category", "address", "phone"] as const;
 type Key = typeof HEADER_KEYS[number];
 
 const HEADER_ALIASES: Record<string, Key> = {
   nome: "name", name: "name",
   categoria: "category", category: "category",
-  subcategoria: "subcategory", subcategory: "subcategory",
   endereco: "address", "endereço": "address", address: "address",
-  descricao: "description", "descrição": "description", description: "description",
-  telefone: "phone", phone: "phone",
-  whatsapp: "whatsapp", zap: "whatsapp",
-  email: "email", "e-mail": "email",
-  instagram: "instagram", insta: "instagram",
-  logo: "logo_url", logo_url: "logo_url",
-  banner: "banner_url", banner_url: "banner_url",
+  telefone: "phone", phone: "phone", tel: "phone",
 };
 
 function norm(s: string) {
@@ -66,14 +55,6 @@ function resolveCategory(input: string): { slug: string; label: string } | null 
   return c ? { slug: c.slug, label: c.label } : null;
 }
 
-function resolveSubcategory(catSlug: string, input: string): { slug: string; label: string } | null {
-  const cat = findCategory(catSlug);
-  if (!cat) return null;
-  const q = norm(input);
-  if (!q) return null;
-  const s = cat.subcategories.find((sc) => norm(sc.slug) === q || norm(sc.label) === q);
-  return s ? { slug: s.slug, label: s.label } : null;
-}
 
 type ParsedRow = {
   index: number;
@@ -84,8 +65,8 @@ type ParsedRow = {
 };
 
 const TEMPLATE_CSV =
-  "name,category,subcategory,address,description,phone,whatsapp,email,instagram,logo_url,banner_url\n" +
-  "Padaria Exemplo,alimentacao,padarias,Rua das Flores 123,Padaria artesanal do bairro,(21) 99999-0000,,contato@exemplo.com,@padariaexemplo,,\n";
+  "name,category,address,phone\n" +
+  "Padaria Exemplo,alimentacao,Rua das Flores 123,(21) 99999-0000\n";
 
 export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
   const qc = useQueryClient();
@@ -133,8 +114,6 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
       const cat = resolveCategory(rec.category ?? "");
       if (!cat) { row.error = `Categoria inválida: "${rec.category}"`; parsed.push(row); continue; }
-      const sub = rec.subcategory ? resolveSubcategory(cat.slug, rec.subcategory) : null;
-      if (rec.subcategory && !sub) { row.error = `Subcategoria inválida: "${rec.subcategory}"`; parsed.push(row); continue; }
 
       const key = `${norm(rec.name)}|${norm(cat.slug)}`;
       if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
@@ -145,16 +124,10 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
         name: rec.name,
         main_category: cat.slug,
         category: cat.slug,
-        subcategory: sub?.slug ?? null,
-        category_label: sub?.label ?? cat.label,
+        subcategory: null,
+        category_label: cat.label,
         address: rec.address,
-        description: rec.description || null,
         phone: rec.phone || null,
-        whatsapp: rec.whatsapp || null,
-        email: rec.email || null,
-        instagram: rec.instagram || null,
-        logo_url: rec.logo_url || null,
-        banner_url: rec.banner_url || null,
         status: "approved",
       };
       parsed.push(row);
@@ -222,10 +195,9 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
             </div>
 
             <div className="rounded-lg border border-border bg-muted/30 p-3 text-xs text-muted-foreground">
-              <p className="font-semibold text-foreground">Colunas aceitas:</p>
-              <p className="mt-1"><code>name, category, subcategory, address, description, phone, whatsapp, email, instagram, logo_url, banner_url</code></p>
-              <p className="mt-2"><strong>category</strong> pode ser o slug (<code>alimentacao</code>) ou o nome (<code>Alimentação</code>). Mesma coisa para <strong>subcategory</strong>.</p>
-              <p className="mt-1">Obrigatórios: <strong>name, category, address</strong>.</p>
+              <p className="font-semibold text-foreground">Colunas da planilha (todas obrigatórias exceto telefone):</p>
+              <p className="mt-1"><code>name, category, address, phone</code></p>
+              <p className="mt-2"><strong>category</strong> pode ser o slug (<code>alimentacao</code>) ou o nome (<code>Alimentação</code>).</p>
             </div>
 
             {rows.length > 0 && (
