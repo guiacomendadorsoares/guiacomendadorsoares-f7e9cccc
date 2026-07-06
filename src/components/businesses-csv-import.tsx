@@ -62,10 +62,125 @@ function norm(s: string) {
   return s.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
+function slugifyCategoryInput(s: string) {
+  return norm(s).replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+}
+
+const CATEGORY_ALIASES: Record<string, string> = {
+  comida: "alimentacao",
+  restaurante: "alimentacao",
+  restaurantes: "alimentacao",
+  lanchonete: "alimentacao",
+  lanchonetes: "alimentacao",
+  padaria: "alimentacao",
+  padarias: "alimentacao",
+  pizzaria: "alimentacao",
+  hamburgueria: "alimentacao",
+  acai: "alimentacao",
+  sorveteria: "alimentacao",
+  farmacia: "saude",
+  farmacias: "saude",
+  clinica: "saude",
+  clinicas: "saude",
+  dentista: "saude",
+  dentistas: "saude",
+  veterinaria: "saude",
+  veterinarias: "saude",
+  beleza: "beleza-estetica",
+  estetica: "beleza-estetica",
+  salao: "beleza-estetica",
+  saloes: "beleza-estetica",
+  barbearia: "beleza-estetica",
+  barbearias: "beleza-estetica",
+  academia: "esportes-bem-estar",
+  academias: "esportes-bem-estar",
+  esporte: "esportes-bem-estar",
+  esportes: "esportes-bem-estar",
+  "bem-estar": "esportes-bem-estar",
+  bemestar: "esportes-bem-estar",
+  auto: "automotivo",
+  oficina: "automotivo",
+  oficinas: "automotivo",
+  automovel: "automotivo",
+  automoveis: "automotivo",
+  carro: "automotivo",
+  carros: "automotivo",
+  casa: "casa-construcao",
+  construcao: "casa-construcao",
+  obras: "casa-construcao",
+  reforma: "casa-construcao",
+  reformas: "casa-construcao",
+  material: "casa-construcao",
+  pet: "pets",
+  animal: "pets",
+  animais: "pets",
+  escola: "educacao",
+  escolas: "educacao",
+  curso: "educacao",
+  cursos: "educacao",
+  ensino: "educacao",
+  juridico: "juridico-profissional",
+  advogado: "juridico-profissional",
+  advogados: "juridico-profissional",
+  contador: "juridico-profissional",
+  contadores: "juridico-profissional",
+  profissional: "juridico-profissional",
+  profissionais: "juridico-profissional",
+  imoveis: "imobiliario",
+  imovel: "imobiliario",
+  corretor: "imobiliario",
+  corretores: "imobiliario",
+  loja: "comercio",
+  lojas: "comercio",
+  mercado: "comercio",
+  mercados: "comercio",
+  varejo: "comercio",
+  comercio: "comercio",
+  servico: "servicos-gerais",
+  servicos: "servicos-gerais",
+  "servicos-geral": "servicos-gerais",
+  chaveiro: "servicos-gerais",
+  assistencia: "servicos-gerais",
+  banco: "financeiro",
+  bancos: "financeiro",
+  seguro: "financeiro",
+  seguros: "financeiro",
+  financas: "financeiro",
+  igreja: "comunidade",
+  igrejas: "comunidade",
+  ong: "comunidade",
+  ongs: "comunidade",
+  festa: "eventos-entretenimento",
+  festas: "eventos-entretenimento",
+  evento: "eventos-entretenimento",
+  eventos: "eventos-entretenimento",
+  entretenimento: "eventos-entretenimento",
+  frete: "transporte-logistica",
+  fretes: "transporte-logistica",
+  transporte: "transporte-logistica",
+  transportes: "transporte-logistica",
+  logistica: "transporte-logistica",
+  taxi: "transporte-logistica",
+  mototaxi: "transporte-logistica",
+  publicidade: "marketing-publicidade",
+  marketing: "marketing-publicidade",
+  grafica: "marketing-publicidade",
+  graficas: "marketing-publicidade",
+};
+
+const CATEGORY_HELP = CATEGORIES.map((cat) => cat.label).join(", ");
+
 function resolveCategory(input: string): { slug: string; label: string } | null {
   const q = norm(input);
+  const slug = slugifyCategoryInput(input);
   if (!q) return null;
-  const c = CATEGORIES.find((cat) => norm(cat.slug) === q || norm(cat.label) === q);
+  const aliasSlug = CATEGORY_ALIASES[q] ?? CATEGORY_ALIASES[slug];
+  const c = CATEGORIES.find((cat) =>
+    norm(cat.slug) === q ||
+    slugifyCategoryInput(cat.label) === slug ||
+    cat.slug === aliasSlug ||
+    cat.subcategories.some((sub) => slugifyCategoryInput(sub.label) === slug || norm(sub.label) === q)
+  );
   return c ? { slug: c.slug, label: c.label } : null;
 }
 
@@ -132,7 +247,7 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       if (!rec.name) { row.error = "Nome vazio"; parsed.push(row); continue; }
       if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
       const cat = resolveCategory(rec.category ?? "");
-      if (!cat) { row.error = `Categoria inválida: "${rec.category}"`; parsed.push(row); continue; }
+      if (!cat) { row.error = `Categoria inválida: "${rec.category}". Use: ${CATEGORY_HELP}`; parsed.push(row); continue; }
 
       const key = `${norm(rec.name)}|${norm(cat.slug)}`;
       if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
