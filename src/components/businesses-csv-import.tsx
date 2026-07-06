@@ -122,8 +122,6 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
       const cat = resolveCategory(rec.category ?? "");
       if (!cat) { row.error = `Categoria inválida: "${rec.category}"`; parsed.push(row); continue; }
-      const sub = rec.subcategory ? resolveSubcategory(cat.slug, rec.subcategory) : null;
-      if (rec.subcategory && !sub) { row.error = `Subcategoria inválida: "${rec.subcategory}"`; parsed.push(row); continue; }
 
       const key = `${norm(rec.name)}|${norm(cat.slug)}`;
       if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
@@ -134,16 +132,10 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
         name: rec.name,
         main_category: cat.slug,
         category: cat.slug,
-        subcategory: sub?.slug ?? null,
-        category_label: sub?.label ?? cat.label,
+        subcategory: null,
+        category_label: cat.label,
         address: rec.address,
-        description: rec.description || null,
         phone: rec.phone || null,
-        whatsapp: rec.whatsapp || null,
-        email: rec.email || null,
-        instagram: rec.instagram || null,
-        logo_url: rec.logo_url || null,
-        banner_url: rec.banner_url || null,
         status: "approved",
       };
       parsed.push(row);
