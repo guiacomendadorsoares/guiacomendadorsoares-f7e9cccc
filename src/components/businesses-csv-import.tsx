@@ -34,25 +34,14 @@ function parseCsv(text: string): string[][] {
   return rows.filter((r) => r.some((v) => v.trim() !== ""));
 }
 
-const HEADER_KEYS = [
-  "name", "category", "subcategory", "address",
-  "description", "phone", "whatsapp", "email",
-  "instagram", "logo_url", "banner_url",
-] as const;
+const HEADER_KEYS = ["name", "category", "address", "phone"] as const;
 type Key = typeof HEADER_KEYS[number];
 
 const HEADER_ALIASES: Record<string, Key> = {
   nome: "name", name: "name",
   categoria: "category", category: "category",
-  subcategoria: "subcategory", subcategory: "subcategory",
   endereco: "address", "endereço": "address", address: "address",
-  descricao: "description", "descrição": "description", description: "description",
-  telefone: "phone", phone: "phone",
-  whatsapp: "whatsapp", zap: "whatsapp",
-  email: "email", "e-mail": "email",
-  instagram: "instagram", insta: "instagram",
-  logo: "logo_url", logo_url: "logo_url",
-  banner: "banner_url", banner_url: "banner_url",
+  telefone: "phone", phone: "phone", tel: "phone",
 };
 
 function norm(s: string) {
