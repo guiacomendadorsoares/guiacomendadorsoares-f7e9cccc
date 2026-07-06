@@ -55,14 +55,6 @@ function resolveCategory(input: string): { slug: string; label: string } | null 
   return c ? { slug: c.slug, label: c.label } : null;
 }
 
-function resolveSubcategory(catSlug: string, input: string): { slug: string; label: string } | null {
-  const cat = findCategory(catSlug);
-  if (!cat) return null;
-  const q = norm(input);
-  if (!q) return null;
-  const s = cat.subcategories.find((sc) => norm(sc.slug) === q || norm(sc.label) === q);
-  return s ? { slug: s.slug, label: s.label } : null;
-}
 
 type ParsedRow = {
   index: number;
