@@ -223,7 +223,7 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
     const table = parseCsv(text);
     if (table.length < 2) { toast.error("Planilha vazia ou sem linhas."); return; }
     const header = table[0].map((h) => HEADER_ALIASES[norm(h)] ?? (norm(h) as Key));
-    const missing = ["name", "category", "address"].filter((k) => !header.includes(k as Key));
+    const missing = ["name", "category", "address", "phone"].filter((k) => !header.includes(k as Key));
     if (missing.length) {
       toast.error(
         `Colunas obrigatórias faltando: ${missing.join(", ")}. Cabeçalhos detectados: ${table[0].join(" | ")}`
@@ -246,6 +246,7 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
 
       if (!rec.name) { row.error = "Nome vazio"; parsed.push(row); continue; }
       if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
+      if (!rec.phone) { row.error = "Telefone vazio"; parsed.push(row); continue; }
       const cat = resolveCategory(rec.category ?? "");
       if (!cat) { row.error = `Categoria inválida: "${rec.category}". Use: ${CATEGORY_HELP}`; parsed.push(row); continue; }
 
