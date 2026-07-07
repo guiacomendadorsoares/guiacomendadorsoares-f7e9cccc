@@ -247,8 +247,10 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       if (!rec.name) { row.error = "Nome vazio"; parsed.push(row); continue; }
       if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
       if (!rec.phone) { row.error = "Telefone vazio"; parsed.push(row); continue; }
-      const cat = resolveCategory(rec.category ?? "");
-      if (!cat) { row.error = `Categoria inválida: "${rec.category}". Use: ${CATEGORY_HELP}`; parsed.push(row); continue; }
+      const cat = resolveCategory(rec.category ?? "") ?? (rec.category?.trim()
+        ? { slug: slugifyCategoryInput(rec.category), label: rec.category.trim() }
+        : null);
+      if (!cat) { row.error = `Categoria vazia`; parsed.push(row); continue; }
 
       const key = `${norm(rec.name)}|${norm(cat.slug)}`;
       if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
