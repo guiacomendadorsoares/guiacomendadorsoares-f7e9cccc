@@ -246,12 +246,21 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       return;
     }
 
-    // Fetch existing names within categories to detect duplicates (single query).
-    const { data: existing } = await supabase
-      .from("businesses").select("name, category").limit(5000);
-    const dupSet = new Set(
-      (existing ?? []).map((r: any) => `${norm(r.name ?? "")}|${norm(r.category ?? "")}`)
-    );
+    // Fetch ALL existing names (paginated) to detect duplicates by normalized name.
+    const dupSet = new Set<string>();
+    const pageSize = 1000;
+    for (let from = 0; ; from += pageSize) {
+      const { data, error } = await supabase
+        .from("businesses")
+        .select("name, address")
+        .range(from, from + pageSize - 1);
+      if (error) break;
+      (data ?? []).forEach((r: any) => {
+        dupSet.add(norm(r.name ?? ""));
+        dupSet.add(`${norm(r.name ?? "")}|${norm(r.address ?? "")}`);
+      });
+      if (!data || data.length < pageSize) break;
+    }
 
     const parsed: ParsedRow[] = [];
     for (let i = 1; i < table.length; i++) {
