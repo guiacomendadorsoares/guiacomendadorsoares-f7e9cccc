@@ -8,6 +8,7 @@ import {
   Star,
   BadgeCheck,
   MessageCircle,
+  Phone,
 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
