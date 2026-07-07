@@ -217,9 +217,24 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
     URL.revokeObjectURL(url);
   }
 
+  async function readFileSmart(file: File): Promise<string> {
+    const buf = await file.arrayBuffer();
+    // Try UTF-8 strict — falls back if bytes aren't valid UTF-8 (e.g. Excel/Windows-1252)
+    try {
+      const utf8 = new TextDecoder("utf-8", { fatal: true }).decode(buf);
+      // Heuristic: if it decoded but shows classic mojibake ("Ã©", "Ã§"), it was Latin-1 mislabeled
+      if (/Ã[\u0080-\u00BF]|Â[\u0080-\u00BF]/.test(utf8)) {
+        return new TextDecoder("windows-1252").decode(buf);
+      }
+      return utf8;
+    } catch {
+      return new TextDecoder("windows-1252").decode(buf);
+    }
+  }
+
   async function handleFile(file: File) {
     setProgress(null);
-    const text = await file.text();
+    const text = await readFileSmart(file);
     const table = parseCsv(text);
     if (table.length < 2) { toast.error("Planilha vazia ou sem linhas."); return; }
     const header = table[0].map((h) => HEADER_ALIASES[norm(h)] ?? (norm(h) as Key));
