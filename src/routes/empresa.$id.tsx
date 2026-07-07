@@ -8,6 +8,7 @@ import {
   Star,
   BadgeCheck,
   MessageCircle,
+  Phone,
 } from "lucide-react";
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
@@ -115,8 +116,10 @@ function EmpresaPage() {
   const cover = showBanner ? (b.cover_url || b.banner_url || b.logo_url || null) : (b.logo_url || null);
   const description = (b.description || "").slice(0, ownerPlan?.slug === "free" ? 500 : 4000);
   const instagram = showSocial ? (b.instagram || "") : "";
-  const whatsapp = showWhatsapp ? (b.whatsapp || "") : "";
+  const phone = b.phone || "";
+  const whatsapp = showWhatsapp ? (b.whatsapp || b.phone || "") : "";
   const waUrl = whatsapp ? `https://wa.me/${whatsapp.replace(/\D/g, "")}` : "#";
+  const telUrl = phone ? `tel:${phone.replace(/[^\d+]/g, "")}` : "#";
   const initials = b.name.split(/\s+/).filter(Boolean).slice(0, 2).map((s: string) => s[0]).join("").toUpperCase();
   const from = b.from || "#1f3a2e";
   const to = b.to || "#4a8a6b";
@@ -183,6 +186,11 @@ function EmpresaPage() {
 
         <div className="mt-4 flex flex-col gap-2">
           {b.address && <InfoRow icon={<MapPin className="h-4 w-4" />} label={b.address} />}
+          {phone && (
+            <a href={telUrl} className="block">
+              <InfoRow icon={<Phone className="h-4 w-4" />} label={phone} />
+            </a>
+          )}
           {instagram && (
             <a
               href={`https://instagram.com/${instagram}`}
