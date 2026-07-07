@@ -279,11 +279,11 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
 
 function InfoRow({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <GlassCard className="flex items-center gap-3 p-3 text-sm text-foreground">
-      <span className="grid h-8 w-8 place-items-center rounded-full bg-primary/10 text-primary-vibrant">
+    <GlassCard className="flex items-start gap-3 p-3 text-sm text-foreground">
+      <span className="mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-primary/10 text-primary-vibrant">
         {icon}
       </span>
-      <span className="min-w-0 flex-1 truncate">{label}</span>
+      <span className="min-w-0 flex-1 whitespace-pre-line break-words leading-snug">{label}</span>
     </GlassCard>
   );
 }
