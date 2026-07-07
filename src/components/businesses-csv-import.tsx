@@ -254,12 +254,12 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
 
       row.status = "ok";
       row.values = {
-        name: rec.name,
+        name: rec.name || "",
         main_category: cat.slug,
         category: cat.slug,
         subcategory: null,
         category_label: cat.label,
-        address: rec.address,
+        address: rec.address || "",
         phone: rec.phone || null,
         status: "approved",
       };
