@@ -272,9 +272,12 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
         ? { slug: slugifyCategoryInput(rec.category), label: rec.category.trim() }
         : { slug: "sem-categoria", label: "Sem categoria" });
 
-      const key = `${norm(rec.name)}|${norm(cat.slug)}`;
-      if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
-      dupSet.add(key);
+      const nameKey = norm(rec.name);
+      const nameAddrKey = `${nameKey}|${norm(rec.address)}`;
+      if (!nameKey) { row.error = "Nome vazio"; parsed.push(row); continue; }
+      if (dupSet.has(nameKey) || dupSet.has(nameAddrKey)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
+      dupSet.add(nameKey);
+      dupSet.add(nameAddrKey);
 
       row.status = "ok";
       row.values = {
