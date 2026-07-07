@@ -185,6 +185,11 @@ function EmpresaPage() {
 
         <div className="mt-4 flex flex-col gap-2">
           {b.address && <InfoRow icon={<MapPin className="h-4 w-4" />} label={b.address} />}
+          {phone && (
+            <a href={telUrl} className="block">
+              <InfoRow icon={<Phone className="h-4 w-4" />} label={phone} />
+            </a>
+          )}
           {instagram && (
             <a
               href={`https://instagram.com/${instagram}`}
