@@ -244,13 +244,9 @@ export function BusinessesCsvImport({ onDone }: { onDone?: () => void }) {
       header.forEach((k, j) => { rec[k] = (table[i][j] ?? "").trim(); });
       const row: ParsedRow = { index: i, raw: rec, status: "invalid" };
 
-      if (!rec.name) { row.error = "Nome vazio"; parsed.push(row); continue; }
-      if (!rec.address) { row.error = "Endereço vazio"; parsed.push(row); continue; }
-      if (!rec.phone) { row.error = "Telefone vazio"; parsed.push(row); continue; }
       const cat = resolveCategory(rec.category ?? "") ?? (rec.category?.trim()
         ? { slug: slugifyCategoryInput(rec.category), label: rec.category.trim() }
-        : null);
-      if (!cat) { row.error = `Categoria vazia`; parsed.push(row); continue; }
+        : { slug: "sem-categoria", label: "Sem categoria" });
 
       const key = `${norm(rec.name)}|${norm(cat.slug)}`;
       if (dupSet.has(key)) { row.status = "duplicate"; row.error = "Já existe (pulado)"; parsed.push(row); continue; }
