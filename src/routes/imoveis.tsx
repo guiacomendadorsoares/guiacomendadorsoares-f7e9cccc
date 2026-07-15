@@ -158,7 +158,7 @@ function ImoveisPage() {
           description={properties.length === 0 ? "Em breve novos imóveis serão publicados pelos corretores parceiros." : "Tente ajustar os filtros ou busque por outro termo."}
         />
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((p) => (
             <PropertyCard key={p.id} property={p} />
           ))}

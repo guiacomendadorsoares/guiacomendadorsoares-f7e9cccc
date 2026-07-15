@@ -83,7 +83,7 @@ function SubPage() {
           description="Em breve novas empresas serão adicionadas nesta subcategoria."
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
           {items.map((b) => <GuiaBusinessCard key={b.id} b={b} />)}
         </div>
       )}

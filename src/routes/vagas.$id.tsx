@@ -135,7 +135,7 @@ function VagaDetalhe() {
           Vaga não encontrada. <Link to="/vagas" className="text-primary underline">Voltar</Link>
         </p>
       ) : (
-        <article className="flex flex-col gap-4">
+        <article className="mx-auto flex w-full max-w-3xl flex-col gap-4">
           <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
             <div className="flex items-start gap-3">
               <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary">

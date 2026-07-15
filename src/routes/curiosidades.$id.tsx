@@ -64,7 +64,7 @@ function CuriosidadeDetalhe() {
           Curiosidade não encontrada. <Link to="/" className="text-primary underline">Voltar</Link>
         </p>
       ) : (
-        <article className="flex flex-col gap-4">
+        <article className="mx-auto flex w-full max-w-3xl flex-col gap-4">
           <div className="relative w-full overflow-hidden rounded-2xl">
             <img src={data.image} alt={data.title} className="h-64 w-full object-cover" />
           </div>
