@@ -23,7 +23,7 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-card">
+    <div className="relative mx-auto w-full max-w-2xl overflow-hidden rounded-3xl border border-dashed border-border bg-card/60 px-6 py-12 text-center shadow-card">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-0 opacity-70"

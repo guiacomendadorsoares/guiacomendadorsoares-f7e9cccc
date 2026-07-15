@@ -126,7 +126,7 @@ function CategoryPage() {
               <h2 className="mb-2 flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 <Sparkles className="h-3.5 w-3.5 text-gold" /> Em destaque
               </h2>
-              <div className="flex flex-col gap-3">
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {featured.map((b) => <GuiaBusinessCard key={b.id} b={b} />)}
               </div>
             </section>
@@ -136,7 +136,7 @@ function CategoryPage() {
               {featured.length > 0 && (
                 <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Todas</h2>
               )}
-              <div className="flex flex-col gap-3">
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                 {others.map((b) => <GuiaBusinessCard key={b.id} b={b} />)}
               </div>
             </section>

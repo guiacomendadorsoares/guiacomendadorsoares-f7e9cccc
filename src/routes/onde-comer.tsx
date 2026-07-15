@@ -93,7 +93,7 @@ function OndeComerPage() {
           description="Em breve mais opções de Alimentação por aqui."
         />
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((b) => (
             <GuiaBusinessCard key={b.id} b={b} />
           ))}

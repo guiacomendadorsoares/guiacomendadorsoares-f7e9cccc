@@ -77,9 +77,11 @@ function NoticiasPage() {
               <h2 className="mt-2 font-display text-sm font-bold uppercase tracking-wider text-muted-foreground">
                 Mais notícias
               </h2>
-              {rest.map((n) => (
-                <NewsCard key={n.id} item={n} />
-              ))}
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {rest.map((n) => (
+                  <NewsCard key={n.id} item={n} />
+                ))}
+              </div>
             </>
           )}
         </div>

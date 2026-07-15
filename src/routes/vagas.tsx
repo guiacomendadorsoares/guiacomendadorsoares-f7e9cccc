@@ -98,7 +98,7 @@ function VagasPage() {
           description={sampleJobs.length === 0 ? "As empresas parceiras ainda não publicaram oportunidades. Volte em breve." : "Tente ajustar os filtros ou a busca para encontrar oportunidades."}
         />
       ) : (
-        <div className="space-y-3 pb-2">
+        <div className="grid gap-3 pb-2 md:grid-cols-2 lg:grid-cols-3">
           {filtered.map((job) => (
             <JobCard key={job.id} job={job} />
           ))}

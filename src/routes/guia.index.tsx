@@ -84,7 +84,7 @@ function GuiaHome() {
               description="Tente outro termo ou explore as categorias abaixo."
             />
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {searchResults.map((b) => <GuiaBusinessCard key={b.id} b={b} />)}
             </div>
           )}
