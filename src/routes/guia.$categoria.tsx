@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { GuiaBusinessCard } from "@/components/guia-business-card";
-import { findCategory, CATEGORIES } from "@/lib/guia-taxonomy";
+import { findCategory, ACTIVE_CATEGORIES } from "@/lib/guia-taxonomy";
 import { fetchBusinessesByCategory } from "@/services/businesses.service";
 import { ArrowLeft, Search, Store, Sparkles } from "lucide-react";
 
@@ -161,7 +161,7 @@ function CategoryPage() {
       <div className="mt-8 text-xs text-muted-foreground">
         <p className="mb-2 font-semibold">Outras categorias</p>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.filter((c) => c.slug !== cat.slug).slice(0, 8).map((c) => (
+          {ACTIVE_CATEGORIES.filter((c) => c.slug !== cat.slug).slice(0, 8).map((c) => (
             <Link
               key={c.slug}
               to="/guia/$categoria"

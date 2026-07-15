@@ -5,7 +5,7 @@ import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { CategoryImageCard } from "@/components/category-image-card";
 import { GuiaBusinessCard } from "@/components/guia-business-card";
-import { CATEGORIES } from "@/lib/guia-taxonomy";
+import { ACTIVE_CATEGORIES } from "@/lib/guia-taxonomy";
 import { fetchBusinesses, fetchCategoryCounts } from "@/services/businesses.service";
 import { Search, Store, MapPin } from "lucide-react";
 
@@ -37,7 +37,7 @@ function GuiaHome() {
   });
 
   const sortedCategories = useMemo(
-    () => [...CATEGORIES].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
+    () => [...ACTIVE_CATEGORIES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || a.label.localeCompare(b.label, "pt-BR")),
     [],
   );
 
