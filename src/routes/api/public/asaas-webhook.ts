@@ -1,4 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Buffer } from "node:buffer";
+import { timingSafeEqual } from "node:crypto";
+
+function safeEqual(a: string, b: string): boolean {
+  const ab = Buffer.from(a, "utf8");
+  const bb = Buffer.from(b, "utf8");
+  if (ab.length !== bb.length) return false;
+  return timingSafeEqual(ab, bb);
+}
 
 // Asaas webhook receiver.
 // Configure no painel Asaas: URL = https://<seu-dominio>/api/public/asaas-webhook
@@ -8,8 +17,8 @@ export const Route = createFileRoute("/api/public/asaas-webhook")({
     handlers: {
       POST: async ({ request }) => {
         const expected = process.env.ASAAS_WEBHOOK_TOKEN;
-        const provided = request.headers.get("asaas-access-token");
-        if (!expected || provided !== expected) {
+        const provided = request.headers.get("asaas-access-token") ?? "";
+        if (!expected || !safeEqual(provided, expected)) {
           return new Response("Unauthorized", { status: 401 });
         }
 

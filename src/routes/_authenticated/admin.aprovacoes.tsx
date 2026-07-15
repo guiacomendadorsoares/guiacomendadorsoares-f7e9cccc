@@ -84,10 +84,10 @@ function ApprovalList({ table }: { table: ContentTable }) {
               <p className="text-xs text-muted-foreground">Enviado em {new Date(row.created_at).toLocaleString("pt-BR")}</p>
             </div>
             <div className="flex shrink-0 gap-2">
-              <Button size="sm" variant="outline" onClick={() => setRejecting(row.id)}>
+              <Button size="sm" variant="outline" aria-label="Rejeitar" onClick={() => setRejecting(row.id)}>
                 <X className="h-4 w-4" />
               </Button>
-              <Button size="sm" onClick={() => approveMut.mutate(row.id)} disabled={approveMut.isPending}>
+              <Button size="sm" aria-label="Aprovar" onClick={() => approveMut.mutate(row.id)} disabled={approveMut.isPending}>
                 <Check className="h-4 w-4" />
               </Button>
             </div>
