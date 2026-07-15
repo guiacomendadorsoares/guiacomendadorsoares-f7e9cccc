@@ -1,10 +1,17 @@
 import {
-  HeartPulse, Scale, GraduationCap, Dumbbell, UtensilsCrossed, Scissors,
-  Dog, Car, Home, Wrench, ShoppingBag, Landmark, Building2, Church,
-  PartyPopper, Truck, Megaphone, type LucideIcon,
+  HeartPulse, GraduationCap, Dumbbell, UtensilsCrossed, Scissors,
+  Dog, Car, Home, Hammer, ShoppingBag, Landmark, Church,
+  PartyPopper, Truck, Shirt, Sofa, Laptop, ShoppingCart, Building,
+  Palmtree, Briefcase, Building2, type LucideIcon,
 } from "lucide-react";
 
-export type Subcategory = { slug: string; label: string };
+export type Subcategory = {
+  slug: string;
+  label: string;
+  icon?: LucideIcon;
+  description?: string;
+  order?: number;
+};
 
 export type Category = {
   slug: string;
@@ -14,124 +21,235 @@ export type Category = {
   from: string;
   to: string;
   description: string;
+  banner?: string;
+  active: boolean;
   showOnHome: boolean;
+  order?: number;
   subcategories: Subcategory[];
 };
 
-const sub = (label: string): Subcategory => ({
+const sub = (label: string, extra: Partial<Subcategory> = {}): Subcategory => ({
   slug: label
     .toLowerCase()
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
   label,
+  ...extra,
 });
+
+const subs = (labels: string[]): Subcategory[] =>
+  labels.map((l, i) => sub(l, { order: i + 1 }));
 
 export const CATEGORIES: Category[] = [
   {
     slug: "alimentacao", label: "Alimentação", emoji: "🍔", icon: UtensilsCrossed,
-    from: "#b8842b", to: "#f0c068", showOnHome: true,
-    description: "Restaurantes, lanchonetes, padarias e muito mais.",
-    subcategories: ["Restaurantes","Pizzarias","Hamburguerias","Lanchonetes","Padarias","Confeitarias","Açaí","Sorveterias","Churrascarias","Comida Japonesa","Marmitarias"].map(sub),
+    from: "#b8842b", to: "#f0c068", showOnHome: true, active: true, order: 1,
+    description: "Restaurantes, lanchonetes, padarias, bares e delivery.",
+    subcategories: subs([
+      "Restaurantes","Pizzarias","Hamburguerias","Lanchonetes","Padarias",
+      "Confeitarias","Docerias","Cafeterias","Açaiterias","Sorveterias",
+      "Churrascarias","Comida Japonesa","Comida Italiana","Comida Árabe",
+      "Marmitex","Delivery","Bares","Adegas","Distribuidoras de Bebidas",
+    ]),
   },
   {
-    slug: "saude", label: "Saúde", emoji: "🏥", icon: HeartPulse,
-    from: "#1a4d3a", to: "#5dd6a1", showOnHome: true,
-    description: "Clínicas, profissionais e farmácias do bairro.",
-    subcategories: ["Clínicas Médicas","Dentistas","Psicólogos","Fisioterapeutas","Nutricionistas","Farmácias","Laboratórios","Clínicas Veterinárias"].map(sub),
+    slug: "saude", label: "Saúde", emoji: "💊", icon: HeartPulse,
+    from: "#1a4d3a", to: "#5dd6a1", showOnHome: true, active: true, order: 2,
+    description: "Clínicas, profissionais, farmácias e laboratórios.",
+    subcategories: subs([
+      "Clínicas","Médicos","Dentistas","Psicólogos","Nutricionistas",
+      "Fisioterapeutas","Farmácias","Laboratórios","Clínicas de Exames",
+      "Óticas","Home Care",
+    ]),
   },
   {
     slug: "beleza-estetica", label: "Beleza e Estética", emoji: "💄", icon: Scissors,
-    from: "#8a5e1f", to: "#e8b85a", showOnHome: true,
-    description: "Salões, barbearias e estúdios de estética.",
-    subcategories: ["Salões de Beleza","Barbearias","Manicure","Estética Facial","Estética Corporal","Maquiagem"].map(sub),
+    from: "#8a5e1f", to: "#e8b85a", showOnHome: true, active: true, order: 3,
+    description: "Salões, barbearias, estética e bem-estar.",
+    subcategories: subs([
+      "Salões","Barbearias","Manicure","Pedicure","Maquiagem",
+      "Design de Sobrancelhas","Alongamento de Cílios","Estética Facial",
+      "Estética Corporal","Massoterapia","Depilação",
+    ]),
   },
   {
-    slug: "esportes-bem-estar", label: "Esportes e Bem-estar", emoji: "🏋️", icon: Dumbbell,
-    from: "#1a4d3a", to: "#34c781", showOnHome: true,
-    description: "Academias, estúdios e práticas esportivas.",
-    subcategories: ["Academias","Crossfit","Artes Marciais","Escolinhas de Futebol","Dança","Yoga","Pilates"].map(sub),
+    slug: "esportes-bem-estar", label: "Academia e Esportes", emoji: "🏋️", icon: Dumbbell,
+    from: "#1a4d3a", to: "#34c781", showOnHome: true, active: true, order: 4,
+    description: "Academias, estúdios, práticas esportivas e suplementos.",
+    subcategories: subs([
+      "Academias","Personal Trainer","CrossFit","Pilates","Yoga","Funcional",
+      "Artes Marciais","Dança","Natação","Suplementos",
+    ]),
   },
   {
-    slug: "automotivo", label: "Automotivo", emoji: "🚗", icon: Car,
-    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true,
-    description: "Oficinas, peças e serviços para o seu veículo.",
-    subcategories: ["Oficinas Mecânicas","Auto Elétricas","Borracharias","Lava Jato","Auto Peças","Guinchos","Despachantes Veiculares"].map(sub),
+    slug: "moda", label: "Moda", emoji: "👕", icon: Shirt,
+    from: "#8a2e5e", to: "#e85aa8", showOnHome: true, active: true, order: 5,
+    description: "Roupas, calçados, acessórios e joias.",
+    subcategories: subs([
+      "Moda Feminina","Moda Masculina","Moda Infantil","Moda Fitness",
+      "Calçados","Bolsas","Acessórios","Joias","Bijuterias","Relojoarias",
+    ]),
   },
   {
     slug: "casa-construcao", label: "Casa e Construção", emoji: "🏠", icon: Home,
-    from: "#2a5444", to: "#6ec79a", showOnHome: true,
-    description: "Materiais, profissionais e reformas.",
-    subcategories: ["Material de Construção","Vidraçarias","Marmorarias","Marcenarias","Serralherias","Pintores","Pedreiros","Eletricistas","Encanadores","Gesso e Drywall"].map(sub),
+    from: "#2a5444", to: "#6ec79a", showOnHome: true, active: true, order: 6,
+    description: "Materiais, acabamentos e profissionais da construção.",
+    subcategories: subs([
+      "Material de Construção","Elétrica","Hidráulica","Ferragens","Madeireiras",
+      "Pisos","Tintas","Vidraçarias","Marmorarias","Marcenarias","Serralherias","Gesso",
+    ]),
   },
   {
-    slug: "pets", label: "Pets", emoji: "🐶", icon: Dog,
-    from: "#2a5444", to: "#6ec79a", showOnHome: true,
+    slug: "casa-decoracao", label: "Casa e Decoração", emoji: "🛋️", icon: Sofa,
+    from: "#6b3a2a", to: "#d4a574", showOnHome: true, active: true, order: 7,
+    description: "Móveis, decoração, iluminação e utilidades.",
+    subcategories: subs([
+      "Móveis","Planejados","Colchões","Decoração","Iluminação","Cortinas",
+      "Persianas","Papel de Parede","Tapetes","Utilidades Domésticas",
+    ]),
+  },
+  {
+    slug: "servicos-gerais", label: "Serviços", emoji: "🔧", icon: Hammer,
+    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true, active: true, order: 8,
+    description: "Profissionais para todo tipo de demanda do dia a dia.",
+    subcategories: subs([
+      "Eletricistas","Encanadores","Pedreiros","Pintores","Chaveiros",
+      "Costureiras","Assistência Técnica","Lavanderias","Jardineiros",
+      "Dedetização","Limpeza","Mudanças","Fretes",
+    ]),
+  },
+  {
+    slug: "automotivo", label: "Automotivo", emoji: "🚗", icon: Car,
+    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true, active: true, order: 9,
+    description: "Oficinas, peças e serviços para o seu veículo.",
+    subcategories: subs([
+      "Oficinas","Mecânicas","Auto Elétrica","Borracharias","Lava Jato",
+      "Guincho","Autopeças","Troca de Óleo","Funilaria","Pintura",
+      "Autoescolas","Despachantes",
+    ]),
+  },
+  {
+    slug: "pets", label: "Pet", emoji: "🐶", icon: Dog,
+    from: "#2a5444", to: "#6ec79a", showOnHome: true, active: true, order: 10,
     description: "Tudo para o seu melhor amigo.",
-    subcategories: ["Pet Shops","Banho e Tosa","Veterinários","Adestramento"].map(sub),
+    subcategories: subs([
+      "Pet Shop","Veterinário","Banho e Tosa","Hotel Pet","Adestramento","Rações",
+    ]),
   },
   {
-    slug: "educacao", label: "Educação", emoji: "🎓", icon: GraduationCap,
-    from: "#b8842b", to: "#e8b85a", showOnHome: true,
-    description: "Escolas, cursos e reforço escolar.",
-    subcategories: ["Escolas","Creches","Cursos Profissionalizantes","Cursos de Idiomas","Reforço Escolar","Informática"].map(sub),
+    slug: "juridico-profissional", label: "Profissionais", emoji: "💼", icon: Briefcase,
+    from: "#1f3a2e", to: "#3b6b54", showOnHome: true, active: true, order: 11,
+    description: "Advogados, contadores, corretores e consultores.",
+    subcategories: subs([
+      "Advogados","Contadores","Corretores","Arquitetos","Engenheiros",
+      "Designers","Fotógrafos","Consultores",
+    ]),
   },
   {
-    slug: "juridico-profissional", label: "Jurídico e Profissional", emoji: "⚖️", icon: Scale,
-    from: "#1f3a2e", to: "#3b6b54", showOnHome: true,
-    description: "Advogados, contadores e consultores.",
-    subcategories: ["Advogados","Contadores","Despachantes","Consultores","Corretores de Seguros","Peritos"].map(sub),
-  },
-  {
-    slug: "imobiliario", label: "Imobiliário", emoji: "🏢", icon: Building2,
-    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true,
-    description: "Corretores e imobiliárias do bairro.",
-    subcategories: ["Corretores","Imobiliárias","Administração de Condomínios"].map(sub),
-  },
-  {
-    slug: "comercio", label: "Comércio", emoji: "🛒", icon: ShoppingBag,
-    from: "#b8842b", to: "#f0c068", showOnHome: true,
-    description: "Lojas, mercados e variedades.",
-    subcategories: ["Mercados","Hortifrúti","Lojas de Roupas","Calçados","Papelarias","Presentes","Utilidades Domésticas","Informática","Celulares"].map(sub),
-  },
-  {
-    slug: "servicos-gerais", label: "Serviços Gerais", emoji: "🔧", icon: Wrench,
-    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true,
-    description: "Profissionais para todo tipo de demanda.",
-    subcategories: ["Chaveiros","Assistência Técnica","Segurança Eletrônica","Câmeras","Dedetização","Limpeza","Mudanças e Fretes"].map(sub),
+    slug: "tecnologia", label: "Tecnologia", emoji: "💻", icon: Laptop,
+    from: "#0f2a4d", to: "#4f8bd6", showOnHome: true, active: true, order: 12,
+    description: "Informática, celulares, marketing digital e automação.",
+    subcategories: subs([
+      "Informática","Celulares","Assistência Técnica","Marketing Digital",
+      "Desenvolvimento de Sites","Desenvolvimento de Apps","Automação Comercial",
+      "CFTV","Energia Solar","Provedores de Internet",
+    ]),
   },
   {
     slug: "financeiro", label: "Financeiro", emoji: "🏦", icon: Landmark,
-    from: "#1a4d3a", to: "#34c781", showOnHome: false,
-    description: "Bancos, cooperativas e seguros.",
-    subcategories: ["Bancos","Correspondentes Bancários","Cooperativas de Crédito","Seguros"].map(sub),
+    from: "#1a4d3a", to: "#34c781", showOnHome: false, active: true, order: 13,
+    description: "Bancos, cooperativas, seguros e crédito.",
+    subcategories: subs([
+      "Bancos","Cooperativas","Financeiras","Consórcios","Seguros",
+      "Correspondentes Bancários",
+    ]),
+  },
+  {
+    slug: "imobiliario", label: "Imóveis", emoji: "🏢", icon: Building2,
+    from: "#1f3a2e", to: "#4a8a6b", showOnHome: true, active: true, order: 14,
+    description: "Corretores, imobiliárias e administração de condomínios.",
+    subcategories: subs([
+      "Imobiliárias","Compra","Venda","Aluguel","Administração de Condomínios",
+    ]),
+  },
+  {
+    slug: "educacao", label: "Educação", emoji: "🎓", icon: GraduationCap,
+    from: "#b8842b", to: "#e8b85a", showOnHome: true, active: true, order: 15,
+    description: "Escolas, cursos, idiomas e reforço escolar.",
+    subcategories: subs([
+      "Escolas","Creches","Cursos","Idiomas","Reforço Escolar",
+      "Música","Informática","Pré-Vestibular",
+    ]),
+  },
+  {
+    slug: "eventos-entretenimento", label: "Eventos", emoji: "🎉", icon: PartyPopper,
+    from: "#8a5e1f", to: "#e8b85a", showOnHome: false, active: true, order: 16,
+    description: "Casas de festa, buffets, decoração e produção.",
+    subcategories: subs([
+      "Casas de Festa","Buffets","Decoração","DJ","Fotografia","Filmagem",
+      "Brindes","Convites","Som e Iluminação",
+    ]),
+  },
+  {
+    slug: "transporte-logistica", label: "Logística", emoji: "🚚", icon: Truck,
+    from: "#1f3a2e", to: "#4a8a6b", showOnHome: false, active: true, order: 17,
+    description: "Motoboy, transportadoras, fretes e mudanças.",
+    subcategories: subs([
+      "Motoboy","Transportadoras","Entregas","Fretes","Mudanças",
+    ]),
+  },
+  {
+    slug: "comercio", label: "Compras", emoji: "🛍️", icon: ShoppingCart,
+    from: "#b8842b", to: "#f0c068", showOnHome: true, active: true, order: 18,
+    description: "Papelarias, presentes, cosméticos e utilidades.",
+    subcategories: subs([
+      "Papelarias","Brinquedos","Presentes","Armarinhos","Utilidades",
+      "Importados","Cosméticos",
+    ]),
+  },
+  {
+    slug: "servicos-publicos", label: "Serviços Públicos", emoji: "🏛️", icon: Building,
+    from: "#0c2340", to: "#2d5a8a", showOnHome: false, active: true, order: 19,
+    description: "Órgãos públicos, saúde e segurança.",
+    subcategories: subs([
+      "Prefeitura","Correios","Cartórios","Detran","Hospitais",
+      "Polícia","Bombeiros","UBS",
+    ]),
   },
   {
     slug: "comunidade", label: "Comunidade", emoji: "⛪", icon: Church,
-    from: "#1f3a2e", to: "#3b6b54", showOnHome: false,
-    description: "Igrejas, ONGs e projetos sociais.",
-    subcategories: ["Igrejas","ONGs","Associações","Projetos Sociais"].map(sub),
+    from: "#1f3a2e", to: "#3b6b54", showOnHome: false, active: true, order: 20,
+    description: "Igrejas, ONGs, associações e clubes.",
+    subcategories: subs([
+      "Igrejas","ONGs","Associações","Clubes","Centros Comunitários",
+    ]),
   },
   {
-    slug: "eventos-entretenimento", label: "Eventos e Entretenimento", emoji: "🎉", icon: PartyPopper,
-    from: "#8a5e1f", to: "#e8b85a", showOnHome: false,
-    description: "Tudo para a sua festa ou evento.",
-    subcategories: ["Casas de Festa","Decoração","Fotógrafos","Filmagem","DJs","Sonorização","Buffet"].map(sub),
+    slug: "lazer-turismo", label: "Lazer e Turismo", emoji: "🎭", icon: Palmtree,
+    from: "#0d7a5f", to: "#5cbdb9", showOnHome: false, active: true, order: 21,
+    description: "Parques, cinema, hospedagem e turismo.",
+    subcategories: subs([
+      "Parques","Praças","Clubes","Cinema","Teatro","Turismo","Hotéis","Pousadas",
+    ]),
   },
+  // Legacy — mantido oculto para compatibilidade com empresas já cadastradas
   {
-    slug: "transporte-logistica", label: "Transporte e Logística", emoji: "🚚", icon: Truck,
-    from: "#1f3a2e", to: "#4a8a6b", showOnHome: false,
-    description: "Mototáxi, fretes, mudanças e transportadoras.",
-    subcategories: ["Mototáxi","Táxi","Transportadoras","Fretes","Mudanças"].map(sub),
-  },
-  {
-    slug: "marketing-publicidade", label: "Marketing e Publicidade", emoji: "📣", icon: Megaphone,
-    from: "#8a5e1f", to: "#e8b85a", showOnHome: false,
-    description: "Agências, social media, design e publicidade.",
-    subcategories: ["Agências de Marketing","Social Media","Design Gráfico","Produção de Conteúdo","Tráfego Pago","Sites e E-commerce","Gráficas","Comunicação Visual"].map(sub),
+    slug: "marketing-publicidade", label: "Marketing e Publicidade", emoji: "📣", icon: ShoppingBag,
+    from: "#8a5e1f", to: "#e8b85a", showOnHome: false, active: false, order: 99,
+    description: "Categoria legada — ver Tecnologia › Marketing Digital.",
+    subcategories: subs([
+      "Agências de Marketing","Social Media","Design Gráfico","Tráfego Pago",
+      "Sites e E-commerce","Gráficas","Comunicação Visual",
+    ]),
   },
 ];
 
-export const CATEGORY_OPTIONS = CATEGORIES.map((c) => ({ value: c.slug, label: `${c.emoji} ${c.label}` }));
+export const ACTIVE_CATEGORIES = CATEGORIES.filter((c) => c.active);
+
+export const CATEGORY_OPTIONS = ACTIVE_CATEGORIES.map((c) => ({
+  value: c.slug,
+  label: `${c.emoji} ${c.label}`,
+}));
 
 export function findCategory(slug: string | undefined): Category | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
