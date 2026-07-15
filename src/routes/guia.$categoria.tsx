@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { GuiaBusinessCard } from "@/components/guia-business-card";
-import { findCategory, CATEGORIES } from "@/lib/guia-taxonomy";
+import { findCategory, ACTIVE_CATEGORIES } from "@/lib/guia-taxonomy";
 import { fetchBusinessesByCategory } from "@/services/businesses.service";
 import { ArrowLeft, Search, Store, Sparkles } from "lucide-react";
 
