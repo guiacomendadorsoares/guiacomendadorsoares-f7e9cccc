@@ -37,7 +37,7 @@ function GuiaHome() {
   });
 
   const sortedCategories = useMemo(
-    () => [...CATEGORIES].sort((a, b) => a.label.localeCompare(b.label, "pt-BR")),
+    () => [...ACTIVE_CATEGORIES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || a.label.localeCompare(b.label, "pt-BR")),
     [],
   );
 
