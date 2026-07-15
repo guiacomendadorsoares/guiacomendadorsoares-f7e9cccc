@@ -73,12 +73,12 @@ function GuiaHome() {
       </div>
 
       {/* Resultados de busca global */}
-      {query.trim().length >= 2 ? (
+      {hasQuery ? (
         <section className="mb-6">
           <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            {searchResults.length} resultado{searchResults.length === 1 ? "" : "s"}
+            {searching ? "Buscando…" : `${searchResults.length} resultado${searchResults.length === 1 ? "" : "s"}`}
           </h2>
-          {searchResults.length === 0 ? (
+          {!searching && searchResults.length === 0 ? (
             <EmptyState
               icon={<Store className="h-5 w-5" />}
               title="Nada encontrado"
