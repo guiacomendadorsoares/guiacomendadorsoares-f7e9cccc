@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VagasRouteImport } from './routes/vagas'
 import { Route as UtilidadePublicaRouteImport } from './routes/utilidade-publica'
-import { Route as TestarNotificacoesRouteImport } from './routes/testar-notificacoes'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as PlanosRouteImport } from './routes/planos'
@@ -45,6 +44,7 @@ import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/a
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes/_authenticated/admin.utilidade-publica'
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
+import { Route as AuthenticatedAdminTestarNotificacoesRouteImport } from './routes/_authenticated/admin.testar-notificacoes'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
 import { Route as AuthenticatedAdminPopupsRouteImport } from './routes/_authenticated/admin.popups'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
@@ -73,11 +73,6 @@ const VagasRoute = VagasRouteImport.update({
 const UtilidadePublicaRoute = UtilidadePublicaRouteImport.update({
   id: '/utilidade-publica',
   path: '/utilidade-publica',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TestarNotificacoesRoute = TestarNotificacoesRouteImport.update({
-  id: '/testar-notificacoes',
-  path: '/testar-notificacoes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -250,6 +245,12 @@ const AuthenticatedAdminUsuariosRoute =
     path: '/usuarios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminTestarNotificacoesRoute =
+  AuthenticatedAdminTestarNotificacoesRouteImport.update({
+    id: '/testar-notificacoes',
+    path: '/testar-notificacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminRelatoriosRoute =
   AuthenticatedAdminRelatoriosRouteImport.update({
     id: '/relatorios',
@@ -377,7 +378,6 @@ export interface FileRoutesByFullPath {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -413,6 +413,7 @@ export interface FileRoutesByFullPath {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/popups': typeof AuthenticatedAdminPopupsRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
+  '/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -433,7 +434,6 @@ export interface FileRoutesByTo {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRouteWithChildren
   '/minha-conta': typeof AuthenticatedMinhaContaRoute
@@ -468,6 +468,7 @@ export interface FileRoutesByTo {
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/popups': typeof AuthenticatedAdminPopupsRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
+  '/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -490,7 +491,6 @@ export interface FileRoutesById {
   '/planos': typeof PlanosRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/testar-notificacoes': typeof TestarNotificacoesRoute
   '/utilidade-publica': typeof UtilidadePublicaRoute
   '/vagas': typeof VagasRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -526,6 +526,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/popups': typeof AuthenticatedAdminPopupsRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
+  '/_authenticated/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
   '/_authenticated/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
@@ -548,7 +549,6 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/admin'
@@ -584,6 +584,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/popups'
     | '/admin/relatorios'
+    | '/admin/testar-notificacoes'
     | '/admin/usuarios'
     | '/admin/utilidade-publica'
     | '/admin/vagas'
@@ -604,7 +605,6 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/minha-conta'
@@ -639,6 +639,7 @@ export interface FileRouteTypes {
     | '/admin/planos'
     | '/admin/popups'
     | '/admin/relatorios'
+    | '/admin/testar-notificacoes'
     | '/admin/usuarios'
     | '/admin/utilidade-publica'
     | '/admin/vagas'
@@ -660,7 +661,6 @@ export interface FileRouteTypes {
     | '/planos'
     | '/reset-password'
     | '/sitemap.xml'
-    | '/testar-notificacoes'
     | '/utilidade-publica'
     | '/vagas'
     | '/_authenticated/admin'
@@ -696,6 +696,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/popups'
     | '/_authenticated/admin/relatorios'
+    | '/_authenticated/admin/testar-notificacoes'
     | '/_authenticated/admin/usuarios'
     | '/_authenticated/admin/utilidade-publica'
     | '/_authenticated/admin/vagas'
@@ -718,7 +719,6 @@ export interface RootRouteChildren {
   PlanosRoute: typeof PlanosRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TestarNotificacoesRoute: typeof TestarNotificacoesRoute
   UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRouteWithChildren
   CuriosidadesIdRoute: typeof CuriosidadesIdRoute
@@ -745,13 +745,6 @@ declare module '@tanstack/react-router' {
       path: '/utilidade-publica'
       fullPath: '/utilidade-publica'
       preLoaderRoute: typeof UtilidadePublicaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/testar-notificacoes': {
-      id: '/testar-notificacoes'
-      path: '/testar-notificacoes'
-      fullPath: '/testar-notificacoes'
-      preLoaderRoute: typeof TestarNotificacoesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -985,6 +978,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/testar-notificacoes': {
+      id: '/_authenticated/admin/testar-notificacoes'
+      path: '/testar-notificacoes'
+      fullPath: '/admin/testar-notificacoes'
+      preLoaderRoute: typeof AuthenticatedAdminTestarNotificacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/relatorios': {
       id: '/_authenticated/admin/relatorios'
       path: '/relatorios'
@@ -1141,6 +1141,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminPopupsRoute: typeof AuthenticatedAdminPopupsRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
+  AuthenticatedAdminTestarNotificacoesRoute: typeof AuthenticatedAdminTestarNotificacoesRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
   AuthenticatedAdminUtilidadePublicaRoute: typeof AuthenticatedAdminUtilidadePublicaRoute
   AuthenticatedAdminVagasRoute: typeof AuthenticatedAdminVagasRoute
@@ -1169,6 +1170,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminPopupsRoute: AuthenticatedAdminPopupsRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
+  AuthenticatedAdminTestarNotificacoesRoute:
+    AuthenticatedAdminTestarNotificacoesRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
   AuthenticatedAdminUtilidadePublicaRoute:
     AuthenticatedAdminUtilidadePublicaRoute,
@@ -1245,7 +1248,6 @@ const rootRouteChildren: RootRouteChildren = {
   PlanosRoute: PlanosRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TestarNotificacoesRoute: TestarNotificacoesRoute,
   UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRouteWithChildren,
   CuriosidadesIdRoute: CuriosidadesIdRoute,

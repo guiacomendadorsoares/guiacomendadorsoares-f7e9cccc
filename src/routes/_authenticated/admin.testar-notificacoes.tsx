@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { AppShell } from "@/components/app-shell";
 import { Button } from "@/components/ui/button";
 
-export const Route = createFileRoute("/testar-notificacoes")({
+export const Route = createFileRoute("/_authenticated/admin/testar-notificacoes")({
   component: TestNotificationsPage,
   head: () => ({ meta: [{ title: "Testar Notificações" }] }),
 });
