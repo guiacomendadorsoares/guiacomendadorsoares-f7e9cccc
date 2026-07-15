@@ -148,6 +148,7 @@ export type Database = {
           owner_id: string | null
           phone: string | null
           rejection_reason: string | null
+          search_tsv: unknown
           slug: string | null
           status: Database["public"]["Enums"]["content_status"]
           subcategory: string | null
@@ -181,6 +182,7 @@ export type Database = {
           owner_id?: string | null
           phone?: string | null
           rejection_reason?: string | null
+          search_tsv?: unknown
           slug?: string | null
           status?: Database["public"]["Enums"]["content_status"]
           subcategory?: string | null
@@ -214,6 +216,7 @@ export type Database = {
           owner_id?: string | null
           phone?: string | null
           rejection_reason?: string | null
+          search_tsv?: unknown
           slug?: string | null
           status?: Database["public"]["Enums"]["content_status"]
           subcategory?: string | null
@@ -1599,6 +1602,16 @@ export type Database = {
       }
     }
     Functions: {
+      businesses_tsv: {
+        Args: {
+          _cat_label: string
+          _desc: string
+          _main: string
+          _name: string
+          _sub: string
+        }
+        Returns: unknown
+      }
       effective_plan: { Args: { _user_id: string }; Returns: string }
       has_role: {
         Args: {

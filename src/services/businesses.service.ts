@@ -3,6 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Business } from "@/lib/businesses";
 import { getDisplayImageUrl, getDisplayImageUrls } from "@/lib/storage";
 
+const DEFAULT_PAGE_SIZE = 24;
+
+function stripAccents(s: string): string {
+  return s.normalize("NFD").replace(/\p{Diacritic}/gu, "");
+}
+
 async function hydrateBusinessImages(row: any): Promise<Business> {
   return {
     ...row,
@@ -89,4 +95,81 @@ export async function fetchCategoryCounts(): Promise<Record<string, number>> {
     counts[k] = (counts[k] ?? 0) + 1;
   }
   return counts;
+}
+
+// ---------------------------------------------------------------------------
+// Paginated + full-text search (server-side)
+// ---------------------------------------------------------------------------
+
+export interface BusinessesPageArgs {
+  mainCategory?: string;
+  subcategory?: string;
+  query?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export interface BusinessesPage {
+  items: Business[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export async function fetchBusinessesPaged(args: BusinessesPageArgs): Promise<BusinessesPage> {
+  const page = Math.max(1, args.page ?? 1);
+  const pageSize = Math.min(100, Math.max(1, args.pageSize ?? DEFAULT_PAGE_SIZE));
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
+
+  let q = supabase
+    .from("businesses")
+    .select("*", { count: "exact" })
+    .eq("status", "approved");
+
+  if (args.mainCategory) q = q.eq("main_category", args.mainCategory);
+  if (args.subcategory) q = q.eq("subcategory", args.subcategory);
+
+  const term = (args.query ?? "").trim();
+  if (term.length >= 2) {
+    q = q.textSearch("search_tsv", stripAccents(term), {
+      type: "websearch",
+      config: "simple",
+    });
+  }
+
+  q = q
+    .order("featured", { ascending: false })
+    .order("name", { ascending: true })
+    .range(from, to);
+
+  const { data, error, count } = await q;
+  if (error) {
+    console.error("[businesses.service] paged error:", error.message);
+    return { items: [], total: 0, page, pageSize };
+  }
+  const items = await Promise.all((data ?? []).map(hydrateBusinessImages));
+  return { items, total: count ?? items.length, page, pageSize };
+}
+
+/**
+ * Full-text search across approved businesses. Uses the generated `search_tsv`
+ * column (Portuguese + unaccent) via a GIN index for O(log n) lookup.
+ */
+export async function searchBusinesses(query: string, limit = 30): Promise<Business[]> {
+  const term = query.trim();
+  if (term.length < 2) return [];
+  const { data, error } = await supabase
+    .from("businesses")
+    .select("*")
+    .eq("status", "approved")
+    .textSearch("search_tsv", stripAccents(term), { type: "websearch", config: "simple" })
+    .order("featured", { ascending: false })
+    .order("name", { ascending: true })
+    .limit(limit);
+  if (error) {
+    console.error("[businesses.service] search error:", error.message);
+    return [];
+  }
+  return Promise.all((data ?? []).map(hydrateBusinessImages));
 }

@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/ui-bits";
 import { CategoryImageCard } from "@/components/category-image-card";
 import { GuiaBusinessCard } from "@/components/guia-business-card";
 import { ACTIVE_CATEGORIES } from "@/lib/guia-taxonomy";
-import { fetchBusinesses, fetchCategoryCounts } from "@/services/businesses.service";
+import { fetchCategoryCounts, searchBusinesses } from "@/services/businesses.service";
 import { Search, Store, MapPin } from "lucide-react";
 
 
@@ -22,36 +22,37 @@ export const Route = createFileRoute("/guia/")({
   component: GuiaHome,
 });
 
+function useDebounced<T>(value: T, delay = 250): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
+
 function GuiaHome() {
   const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounced(query, 250);
+  const hasQuery = debouncedQuery.trim().length >= 2;
 
   const { data: counts = {} } = useQuery({
     queryKey: ["guia", "counts"],
     queryFn: fetchCategoryCounts,
   });
 
-  const { data: all = [] } = useQuery({
-    queryKey: ["guia", "all"],
-    queryFn: fetchBusinesses,
-    enabled: query.trim().length >= 2,
+  const { data: searchResults = [], isFetching: searching } = useQuery({
+    queryKey: ["guia", "search", debouncedQuery.trim().toLowerCase()],
+    queryFn: () => searchBusinesses(debouncedQuery, 30),
+    enabled: hasQuery,
+    placeholderData: keepPreviousData,
+    staleTime: 30_000,
   });
 
   const sortedCategories = useMemo(
     () => [...ACTIVE_CATEGORIES].sort((a, b) => (a.order ?? 999) - (b.order ?? 999) || a.label.localeCompare(b.label, "pt-BR")),
     [],
   );
-
-
-  const searchResults = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 2) return [];
-    return all.filter((b) => {
-      const name = b.name.toLowerCase();
-      const cat = (b.main_category ?? "").toLowerCase();
-      const sub = (b.subcategory ?? "").toLowerCase();
-      return name.includes(q) || cat.includes(q) || sub.includes(q);
-    }).slice(0, 30);
-  }, [all, query]);
 
   return (
     <AppShell title="Guia comercial" subtitle="Descubra o comércio do bairro">
@@ -72,12 +73,12 @@ function GuiaHome() {
       </div>
 
       {/* Resultados de busca global */}
-      {query.trim().length >= 2 ? (
+      {hasQuery ? (
         <section className="mb-6">
           <h2 className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">
-            {searchResults.length} resultado{searchResults.length === 1 ? "" : "s"}
+            {searching ? "Buscando…" : `${searchResults.length} resultado${searchResults.length === 1 ? "" : "s"}`}
           </h2>
-          {searchResults.length === 0 ? (
+          {!searching && searchResults.length === 0 ? (
             <EmptyState
               icon={<Store className="h-5 w-5" />}
               title="Nada encontrado"
