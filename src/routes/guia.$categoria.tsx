@@ -161,7 +161,7 @@ function CategoryPage() {
       <div className="mt-8 text-xs text-muted-foreground">
         <p className="mb-2 font-semibold">Outras categorias</p>
         <div className="flex flex-wrap gap-2">
-          {CATEGORIES.filter((c) => c.slug !== cat.slug).slice(0, 8).map((c) => (
+          {ACTIVE_CATEGORIES.filter((c) => c.slug !== cat.slug).slice(0, 8).map((c) => (
             <Link
               key={c.slug}
               to="/guia/$categoria"
