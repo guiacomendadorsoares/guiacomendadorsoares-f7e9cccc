@@ -9,6 +9,5 @@ Disallow: /painel-imoveis
 Disallow: /portal-imprensa
 Disallow: /favoritos
 Disallow: /perfil
-Disallow: /admin
 
 Sitemap: https://comendadorsoares.com.br/sitemap.xml
