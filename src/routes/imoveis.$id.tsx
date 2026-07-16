@@ -5,8 +5,59 @@ import { supabase } from "@/integrations/supabase/client";
 import { BottomNav } from "@/components/bottom-nav";
 import { GlassCard } from "@/components/cards";
 
+async function fetchPropertyById(id: string) {
+  const { data, error } = await supabase.from("properties").select("*").eq("id", id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export const Route = createFileRoute("/imoveis/$id")({
-  head: () => ({ meta: [{ title: "Imóvel — Guia CS" }] }),
+  loader: ({ params }) => fetchPropertyById(params.id).then((property) => ({ property })),
+  head: ({ params, loaderData }) => {
+    const p: any = loaderData?.property ?? null;
+    const name = p?.title ?? "Imóvel";
+    const title = `${name} — Comendador Soares, Nova Iguaçu`.slice(0, 60);
+    const rawDesc = (p?.description ?? p?.address ?? "").trim();
+    const desc = (rawDesc || `Detalhes de ${name} em Comendador Soares, Nova Iguaçu.`).slice(0, 155);
+    const url = `https://comendadorsoares.com.br/imoveis/${params.id}`;
+    const image = p?.cover_url || (Array.isArray(p?.gallery_urls) && p.gallery_urls[0]) || undefined;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts: Array<any> = [];
+    if (p) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Product",
+          name: p.title,
+          description: rawDesc || undefined,
+          image: image || undefined,
+          offers: p.price
+            ? {
+                "@type": "Offer",
+                priceCurrency: "BRL",
+                price: p.price,
+                availability: "https://schema.org/InStock",
+              }
+            : undefined,
+          url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: ImovelPage,
 });
 
