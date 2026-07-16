@@ -6,7 +6,77 @@ import { supabase } from "@/integrations/supabase/client";
 import { getDisplayImageUrl } from "@/lib/storage";
 import fallback from "@/assets/placeholders/evento.jpg.asset.json";
 
+async function fetchEventById(id: string) {
+  const { data, error } = await supabase
+    .from("events")
+    .select("id,title,summary,description,cover_url,location,starts_at,ends_at,price,is_free,url")
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export const Route = createFileRoute("/eventos/$id")({
+  loader: ({ params }) => fetchEventById(params.id).then((event) => ({ event })),
+  head: ({ params, loaderData }) => {
+    const e: any = loaderData?.event ?? null;
+    const name = e?.title ?? "Evento";
+    const title = `${name} — Comendador Soares, Nova Iguaçu`.slice(0, 60);
+    const rawDesc = (e?.summary ?? e?.description ?? "").trim();
+    const desc = (rawDesc || `Detalhes do evento ${name} em Comendador Soares, Nova Iguaçu.`).slice(0, 155);
+    const url = `https://comendadorsoares.com.br/eventos/${params.id}`;
+    const image = e?.cover_url || undefined;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts: Array<any> = [];
+    if (e) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: e.title,
+          description: rawDesc || undefined,
+          startDate: e.starts_at || undefined,
+          endDate: e.ends_at || undefined,
+          image: image || undefined,
+          eventStatus: "https://schema.org/EventScheduled",
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+          location: e.location
+            ? {
+                "@type": "Place",
+                name: e.location,
+                address: {
+                  "@type": "PostalAddress",
+                  addressLocality: "Nova Iguaçu",
+                  addressRegion: "RJ",
+                  addressCountry: "BR",
+                },
+              }
+            : undefined,
+          offers: e.is_free
+            ? { "@type": "Offer", price: "0", priceCurrency: "BRL", availability: "https://schema.org/InStock" }
+            : e.price
+              ? { "@type": "Offer", price: e.price, priceCurrency: "BRL", availability: "https://schema.org/InStock" }
+              : undefined,
+          url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: EventoDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Evento">
