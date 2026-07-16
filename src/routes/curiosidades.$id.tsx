@@ -6,8 +6,56 @@ import { supabase } from "@/integrations/supabase/client";
 import { getDisplayImageUrl } from "@/lib/storage";
 import fallback from "@/assets/placeholders/curiosidade.jpg.asset.json";
 
+async function fetchCuriosityById(id: string) {
+  const { data, error } = await supabase
+    .from("curiosities")
+    .select("id,title,body,cover_url,status")
+    .eq("id", id)
+    .eq("status", "approved")
+    .maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
 export const Route = createFileRoute("/curiosidades/$id")({
-  head: () => ({ meta: [{ title: "Curiosidade — Guia CS" }] }),
+  loader: ({ params }) => fetchCuriosityById(params.id).then((curiosity) => ({ curiosity })),
+  head: ({ params, loaderData }) => {
+    const c: any = loaderData?.curiosity ?? null;
+    const name = c?.title ?? "Curiosidade";
+    const title = `${name} — Comendador Soares`.slice(0, 60);
+    const rawDesc = (c?.body ?? "").trim();
+    const desc = (rawDesc || `Curiosidade sobre Comendador Soares, Nova Iguaçu.`).slice(0, 155);
+    const url = `https://comendadorsoares.com.br/curiosidades/${params.id}`;
+    const image = c?.cover_url || undefined;
+    const meta: Array<any> = [
+      { title },
+      { name: "description", content: desc },
+      { property: "og:title", content: title },
+      { property: "og:description", content: desc },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: url },
+      { name: "twitter:card", content: image ? "summary_large_image" : "summary" },
+    ];
+    if (image) {
+      meta.push({ property: "og:image", content: image });
+      meta.push({ name: "twitter:image", content: image });
+    }
+    const scripts: Array<any> = [];
+    if (c) {
+      scripts.push({
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: c.title,
+          description: rawDesc ? rawDesc.slice(0, 200) : undefined,
+          image: image || undefined,
+          url,
+        }),
+      });
+    }
+    return { meta, links: [{ rel: "canonical", href: url }], scripts };
+  },
   component: CuriosidadeDetalhe,
   errorComponent: ({ error }) => (
     <AppShell title="Curiosidade">
