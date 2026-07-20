@@ -122,6 +122,224 @@ export type Database = {
         }
         Relationships: []
       }
+      business_audit_log: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          business_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          field_name: string | null
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          new_value: Json | null
+          previous_value: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          business_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          field_name?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_value?: Json | null
+          previous_value?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          business_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          field_name?: string | null
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          new_value?: Json | null
+          previous_value?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_audit_log_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_claim_documents: {
+        Row: {
+          claim_id: string
+          created_at: string
+          doc_type: string
+          file_name: string
+          file_path: string
+          id: string
+          mime_type: string
+          size_bytes: number
+          uploaded_by: string
+        }
+        Insert: {
+          claim_id: string
+          created_at?: string
+          doc_type: string
+          file_name: string
+          file_path: string
+          id?: string
+          mime_type: string
+          size_bytes: number
+          uploaded_by: string
+        }
+        Update: {
+          claim_id?: string
+          created_at?: string
+          doc_type?: string
+          file_name?: string
+          file_path?: string
+          id?: string
+          mime_type?: string
+          size_bytes?: number
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_claim_documents_claim_id_fkey"
+            columns: ["claim_id"]
+            isOneToOne: false
+            referencedRelation: "business_claims"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_claims: {
+        Row: {
+          business_id: string
+          claimant_user_id: string
+          cpf: string
+          created_at: string
+          deleted_at: string | null
+          email: string
+          full_name: string
+          id: string
+          internal_notes: string | null
+          phone: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          role_in_company: string
+          status: string
+          updated_at: string
+          verification_method: string
+          whatsapp: string | null
+        }
+        Insert: {
+          business_id: string
+          claimant_user_id: string
+          cpf: string
+          created_at?: string
+          deleted_at?: string | null
+          email: string
+          full_name: string
+          id?: string
+          internal_notes?: string | null
+          phone: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role_in_company: string
+          status?: string
+          updated_at?: string
+          verification_method?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          business_id?: string
+          claimant_user_id?: string
+          cpf?: string
+          created_at?: string
+          deleted_at?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          internal_notes?: string | null
+          phone?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          role_in_company?: string
+          status?: string
+          updated_at?: string
+          verification_method?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_claims_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      business_members: {
+        Row: {
+          business_id: string
+          created_at: string
+          deleted_at: string | null
+          id: string
+          invited_by: string | null
+          is_primary_owner: boolean
+          role: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          invited_by?: string | null
+          is_primary_owner?: boolean
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string
+          deleted_at?: string | null
+          id?: string
+          invited_by?: string | null
+          is_primary_owner?: boolean
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_members_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       businesses: {
         Row: {
           address: string
@@ -1602,6 +1820,7 @@ export type Database = {
       }
     }
     Functions: {
+      business_has_owner: { Args: { _business_id: string }; Returns: boolean }
       businesses_tsv: {
         Args: {
           _cat_label: string
@@ -1613,6 +1832,10 @@ export type Database = {
         Returns: unknown
       }
       effective_plan: { Args: { _user_id: string }; Returns: string }
+      has_business_permission: {
+        Args: { _business_id: string; _permission?: string; _user_id: string }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
