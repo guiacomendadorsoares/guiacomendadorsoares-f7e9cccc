@@ -1,11 +1,29 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { DashboardShell, useRequireAnyRole } from "@/components/dashboard-shell";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { DashboardShell, useRequireAnyRole, StatusBadge } from "@/components/dashboard-shell";
 import { ContentCrud } from "@/components/content-crud";
 import { MyPlanCard } from "@/components/my-plan-card";
 import { useCurrentUser } from "@/hooks/use-auth";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { PharmacyProductsManager } from "@/components/pharmacy-products-manager";
-
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { supabase } from "@/integrations/supabase/client";
+import { Building2, Loader2, Users, Plus, Trash2, ShieldCheck, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
+import {
+  listMyBusinesses, listTeam, inviteMemberByEmail, updateMemberRole, removeMember,
+  canManageTeam, canEditBusiness, ROLE_LABEL, ROLE_DESC, ASSIGNABLE_ROLES,
+  type MyBusiness, type MemberRole,
+} from "@/lib/business-owner";
 
 export const Route = createFileRoute("/_authenticated/painel-empresa")({
   component: PainelEmpresa,
@@ -14,34 +32,314 @@ export const Route = createFileRoute("/_authenticated/painel-empresa")({
 function PainelEmpresa() {
   const { ready } = useRequireAnyRole(["partner", "admin"]);
   const { user } = useCurrentUser();
+
+  const { data: businesses, isLoading } = useQuery({
+    queryKey: ["my-businesses", user?.id],
+    queryFn: () => listMyBusinesses(user!.id),
+    enabled: !!user?.id,
+  });
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = useMemo(
+    () => businesses?.find((b) => b.id === (selectedId ?? businesses?.[0]?.id)) ?? businesses?.[0] ?? null,
+    [businesses, selectedId],
+  );
+
   if (!ready || !user) return null;
+
   return (
     <DashboardShell role="partner" title="Painel da Empresa" subtitle="Gerencie sua presença no Guia">
       <div className="space-y-6">
         <MyPlanCard kind="business" />
-        <Tabs defaultValue="empresa">
-        <TabsList>
-          <TabsTrigger value="empresa">Empresa</TabsTrigger>
-          <TabsTrigger value="farmacia">💊 Farmácia</TabsTrigger>
-          <TabsTrigger value="vagas">Vagas</TabsTrigger>
-          <TabsTrigger value="eventos">Eventos</TabsTrigger>
-        </TabsList>
-        <TabsContent value="empresa" className="mt-4">
 
-          <ContentCrud table="businesses" ownerOnly={user.id} forcePending />
-        </TabsContent>
-        <TabsContent value="farmacia" className="mt-4">
-          <PharmacyProductsManager userId={user.id} />
-        </TabsContent>
-        <TabsContent value="vagas" className="mt-4">
-          <ContentCrud table="jobs" ownerOnly={user.id} forcePending />
+        {/* Business selector */}
+        <section className="rounded-2xl border border-border bg-card p-4 shadow-card">
+          <div className="mb-3 flex items-center gap-2">
+            <Building2 className="h-4 w-4 text-primary" />
+            <h2 className="font-display text-sm font-bold">Minhas empresas</h2>
+          </div>
+          {isLoading ? (
+            <div className="grid place-items-center py-6"><Loader2 className="h-4 w-4 animate-spin" /></div>
+          ) : !businesses?.length ? (
+            <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+              Nenhuma empresa vinculada ainda. Cadastre uma nova ou reivindique uma existente pelo Guia.
+            </p>
+          ) : (
+            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+              {businesses.map((b) => (
+                <BusinessTile
+                  key={b.id}
+                  b={b}
+                  active={selected?.id === b.id}
+                  onClick={() => setSelectedId(b.id)}
+                />
+              ))}
+            </div>
+          )}
+        </section>
 
-        </TabsContent>
-        <TabsContent value="eventos" className="mt-4">
-          <ContentCrud table="events" ownerOnly={user.id} forcePending />
-        </TabsContent>
-      </Tabs>
+        {selected && (
+          <Tabs defaultValue="empresa" key={selected.id}>
+            <TabsList className="flex-wrap">
+              <TabsTrigger value="empresa">Dados</TabsTrigger>
+              <TabsTrigger value="equipe"><Users className="mr-1 h-3.5 w-3.5" /> Equipe</TabsTrigger>
+              <TabsTrigger value="farmacia">💊 Farmácia</TabsTrigger>
+              <TabsTrigger value="vagas">Vagas</TabsTrigger>
+              <TabsTrigger value="eventos">Eventos</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="empresa" className="mt-4">
+              {canEditBusiness(selected.role, selected.is_primary_owner) ? (
+                <ContentCrud table="businesses" ownerOnly={user.id} forcePending />
+              ) : (
+                <ReadOnlyNotice roleLabel={ROLE_LABEL[selected.role]} />
+              )}
+            </TabsContent>
+
+            <TabsContent value="equipe" className="mt-4">
+              <TeamManager
+                business={selected}
+                canManage={canManageTeam(selected.role, selected.is_primary_owner)}
+                currentUserId={user.id}
+              />
+            </TabsContent>
+
+            <TabsContent value="farmacia" className="mt-4">
+              <PharmacyProductsManager userId={user.id} />
+            </TabsContent>
+
+            <TabsContent value="vagas" className="mt-4">
+              <ContentCrud table="jobs" ownerOnly={user.id} forcePending />
+            </TabsContent>
+
+            <TabsContent value="eventos" className="mt-4">
+              <ContentCrud table="events" ownerOnly={user.id} forcePending />
+            </TabsContent>
+          </Tabs>
+        )}
       </div>
     </DashboardShell>
+  );
+}
+
+function BusinessTile({ b, active, onClick }: { b: MyBusiness; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`group flex items-center gap-3 rounded-xl border p-3 text-left transition ${
+        active ? "border-primary bg-primary/5 ring-2 ring-primary/40" : "border-border bg-background hover:border-primary/40"
+      }`}
+    >
+      <div className="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-lg bg-muted">
+        {b.cover_url ? (
+          <img src={b.cover_url} alt="" className="h-full w-full object-cover" />
+        ) : (
+          <Building2 className="h-5 w-5 text-muted-foreground" />
+        )}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold">{b.name}</p>
+        <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
+          <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+            {ROLE_LABEL[b.role]}
+          </span>
+          {b.is_primary_owner && (
+            <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-600">
+              <ShieldCheck className="h-2.5 w-2.5" /> Titular
+            </span>
+          )}
+          {b.status && <StatusBadge status={b.status as any} />}
+        </div>
+      </div>
+      <Link
+        to="/empresa/$id"
+        params={{ id: b.id }}
+        onClick={(e) => e.stopPropagation()}
+        className="shrink-0 rounded-md p-1.5 text-muted-foreground opacity-0 transition group-hover:opacity-100 hover:bg-muted"
+        title="Ver no Guia"
+      >
+        <ExternalLink className="h-3.5 w-3.5" />
+      </Link>
+    </button>
+  );
+}
+
+function ReadOnlyNotice({ roleLabel }: { roleLabel: string }) {
+  return (
+    <div className="rounded-xl border border-dashed border-border bg-muted/30 p-6 text-center text-sm text-muted-foreground">
+      Seu papel <strong>{roleLabel}</strong> não permite editar os dados desta empresa. Peça ao proprietário
+      ou gerente para atualizar seu papel para <strong>Editor</strong> ou superior.
+    </div>
+  );
+}
+
+function TeamManager({
+  business, canManage, currentUserId,
+}: { business: MyBusiness; canManage: boolean; currentUserId: string }) {
+  const qc = useQueryClient();
+  const queryKey = ["business-team", business.id];
+  const { data: team, isLoading } = useQuery({
+    queryKey,
+    queryFn: () => listTeam(business.id),
+  });
+
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<MemberRole>("editor");
+  const [confirmRemove, setConfirmRemove] = useState<{ id: string; name: string } | null>(null);
+
+  const invite = useMutation({
+    mutationFn: () => inviteMemberByEmail({ businessId: business.id, email, role }),
+    onSuccess: () => {
+      toast.success("Membro adicionado à equipe.");
+      setEmail("");
+      qc.invalidateQueries({ queryKey });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const changeRole = useMutation({
+    mutationFn: (p: { id: string; role: MemberRole }) => updateMemberRole(p.id, p.role),
+    onSuccess: () => { toast.success("Papel atualizado."); qc.invalidateQueries({ queryKey }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) => removeMember(id),
+    onSuccess: () => { toast.success("Membro removido."); setConfirmRemove(null); qc.invalidateQueries({ queryKey }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="space-y-4">
+      {canManage && (
+        <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
+          <div className="mb-3 flex items-center gap-2">
+            <Plus className="h-4 w-4 text-primary" />
+            <h3 className="font-display text-sm font-bold">Adicionar membro</h3>
+          </div>
+          <form
+            onSubmit={(e) => { e.preventDefault(); invite.mutate(); }}
+            className="grid gap-3 sm:grid-cols-[1fr_180px_auto]"
+          >
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">E-mail cadastrado</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="pessoa@exemplo.com"
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold text-muted-foreground">Papel</Label>
+              <Select value={role} onValueChange={(v) => setRole(v as MemberRole)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {ASSIGNABLE_ROLES.map((r) => (
+                    <SelectItem key={r} value={r}>{ROLE_LABEL[r]}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-end">
+              <Button type="submit" disabled={invite.isPending} className="w-full sm:w-auto">
+                {invite.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Adicionar"}
+              </Button>
+            </div>
+          </form>
+          <p className="mt-2 text-xs text-muted-foreground">
+            A pessoa precisa ter conta no Guia com o mesmo e-mail. {ROLE_DESC[role]}
+          </p>
+        </div>
+      )}
+
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
+        <div className="mb-3 flex items-center gap-2">
+          <Users className="h-4 w-4 text-primary" />
+          <h3 className="font-display text-sm font-bold">Equipe ({team?.length ?? 0})</h3>
+        </div>
+        {isLoading ? (
+          <div className="grid place-items-center py-6"><Loader2 className="h-4 w-4 animate-spin" /></div>
+        ) : !team?.length ? (
+          <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+            Nenhum membro vinculado ainda.
+          </p>
+        ) : (
+          <ul className="space-y-2">
+            {team.map((m) => {
+              const isSelf = m.user_id === currentUserId;
+              const editable = canManage && !m.is_primary_owner && !isSelf;
+              return (
+                <li key={m.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-3 rounded-xl border border-border p-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold text-sm">
+                      {m.profile?.full_name || m.profile?.email || "Sem nome"}
+                      {isSelf && <span className="ml-1.5 text-xs text-muted-foreground">(você)</span>}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">{m.profile?.email ?? "—"}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                      {m.is_primary_owner && (
+                        <span className="inline-flex items-center gap-0.5 rounded-full bg-amber-500/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-600">
+                          <ShieldCheck className="h-2.5 w-2.5" /> Titular
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {editable ? (
+                      <Select
+                        value={m.role}
+                        onValueChange={(v) => changeRole.mutate({ id: m.id, role: v as MemberRole })}
+                      >
+                        <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          {ASSIGNABLE_ROLES.map((r) => (
+                            <SelectItem key={r} value={r}>{ROLE_LABEL[r]}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <span className="rounded-full bg-primary/10 px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-primary">
+                        {ROLE_LABEL[m.role]}
+                      </span>
+                    )}
+                    {editable && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setConfirmRemove({ id: m.id, name: m.profile?.full_name || m.profile?.email || "membro" })}
+                        title="Remover"
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+
+      <AlertDialog open={!!confirmRemove} onOpenChange={(o) => !o && setConfirmRemove(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Remover {confirmRemove?.name} da equipe?</AlertDialogTitle>
+            <AlertDialogDescription>Esta pessoa perderá o acesso à empresa imediatamente.</AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => confirmRemove && remove.mutate(confirmRemove.id)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Remover
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   );
 }
