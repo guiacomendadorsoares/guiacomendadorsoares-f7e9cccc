@@ -131,40 +131,86 @@ export async function inviteMemberByEmail(params: {
     .maybeSingle();
 
   if (existing?.id) {
+    const prevRole = existing.role;
     const { error: upErr } = await (supabase as any)
       .from("business_members")
       .update({ role: params.role, status: "active", deleted_at: null })
       .eq("id", existing.id);
     if (upErr) throw upErr;
+    await logBusinessAudit({
+      businessId: params.businessId,
+      entityType: "business_members",
+      entityId: existing.id,
+      action: "member_reactivated",
+      previousValue: { role: prevRole },
+      newValue: { role: params.role, email },
+    });
     return;
   }
 
   const { data: u } = await supabase.auth.getUser();
-  const { error: insErr } = await (supabase as any).from("business_members").insert({
+  const { data: inserted, error: insErr } = await (supabase as any).from("business_members").insert({
     business_id: params.businessId,
     user_id: prof.user_id,
     role: params.role,
     status: "active",
     is_primary_owner: false,
     invited_by: u.user?.id ?? null,
-  });
+  }).select("id").maybeSingle();
   if (insErr) throw insErr;
+  await logBusinessAudit({
+    businessId: params.businessId,
+    entityType: "business_members",
+    entityId: inserted?.id ?? null,
+    action: "member_invited",
+    newValue: { email, role: params.role },
+  });
 }
 
 export async function updateMemberRole(memberId: string, role: MemberRole): Promise<void> {
+  const { data: prev } = await (supabase as any)
+    .from("business_members")
+    .select("role,business_id")
+    .eq("id", memberId)
+    .maybeSingle();
   const { error } = await (supabase as any)
     .from("business_members")
     .update({ role })
     .eq("id", memberId);
   if (error) throw error;
+  if (prev?.business_id) {
+    await logBusinessAudit({
+      businessId: prev.business_id,
+      entityType: "business_members",
+      entityId: memberId,
+      action: "member_role_changed",
+      fieldName: "role",
+      previousValue: prev.role,
+      newValue: role,
+    });
+  }
 }
 
 export async function removeMember(memberId: string): Promise<void> {
+  const { data: prev } = await (supabase as any)
+    .from("business_members")
+    .select("role,business_id,user_id")
+    .eq("id", memberId)
+    .maybeSingle();
   const { error } = await (supabase as any)
     .from("business_members")
     .update({ status: "removed", deleted_at: new Date().toISOString() })
     .eq("id", memberId);
   if (error) throw error;
+  if (prev?.business_id) {
+    await logBusinessAudit({
+      businessId: prev.business_id,
+      entityType: "business_members",
+      entityId: memberId,
+      action: "member_removed",
+      previousValue: { role: prev.role, user_id: prev.user_id },
+    });
+  }
 }
 
 export function canManageTeam(role: MemberRole, isPrimary: boolean): boolean {
