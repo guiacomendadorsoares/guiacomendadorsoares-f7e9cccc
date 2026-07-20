@@ -63,16 +63,15 @@ export function storagePathFromPublicUrl(url: string): string | null {
 
 export async function getDisplayImageUrl(url: string | null | undefined): Promise<string | null> {
   if (!url) return null;
-  const path = storagePathFromPublicUrl(url);
-  if (!path) return url;
-
-  const { data, error } = await supabase.storage.from(BUCKET).createSignedUrl(path, SIGNED_URL_TTL_SECONDS);
-  if (error) {
-    console.error("[storage] signed url error:", error.message);
-    return url;
-  }
-  return data.signedUrl;
+  // O bucket "uploads" é público — devolvemos a URL diretamente.
+  // Gerar signed URL por imagem custava dezenas de round-trips por render (home lenta).
+  if (/^https?:\/\//i.test(url) || url.startsWith("data:") || url.startsWith("blob:")) return url;
+  const path = storagePathFromPublicUrl(url) ?? url;
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  return data.publicUrl;
 }
+// Mantido para compat futura (não usado no caminho quente).
+void SIGNED_URL_TTL_SECONDS;
 
 export async function getDisplayImageUrls(urls: string[] | null | undefined): Promise<string[]> {
   if (!Array.isArray(urls)) return [];
