@@ -3,7 +3,7 @@ import {
   LayoutDashboard, CheckCircle2, Building2, Briefcase, Home, Newspaper,
   Calendar, Sparkles, Handshake, Users, BarChart3, Settings, Wallet,
   User, Heart, MessageSquare, Bell, FileEdit, Megaphone, KeyRound, Crown, LifeBuoy,
-  Image as ImageIcon, TrendingUp,
+  Image as ImageIcon, TrendingUp, ShieldCheck,
 } from "lucide-react";
 import type { AppRole } from "@/hooks/use-auth";
 
@@ -52,6 +52,7 @@ export const adminNav: NavSection[] = [
     title: "Comercial",
     items: [
       { to: "/admin/crm", label: "CRM Comercial", icon: TrendingUp },
+      { to: "/admin/reivindicacoes", label: "Reivindicações", icon: ShieldCheck },
       { to: "/admin/cupons", label: "Cupons Trial (dias grátis)", icon: Sparkles },
       { to: "/admin/financeiro", label: "Financeiro", icon: Wallet },
     ],
