@@ -11,11 +11,13 @@ import { fetchNews } from "@/services/news.service";
 export const Route = createFileRoute("/noticias/")({
   head: () => ({
     meta: [
-      { title: "Notícias do Bairro — Guia CS" },
+      { title: "Notícias de Comendador Soares — Guia CS" },
       {
         name: "description",
-        content: "Últimas notícias de Comendador Soares: bairro, segurança, trânsito, obras, saúde e educação.",
+        content: "Últimas notícias de Comendador Soares: bairro, segurança, trânsito, obras, saúde e educação em Nova Iguaçu.",
       },
+      { property: "og:title", content: "Notícias de Comendador Soares — Guia CS" },
+      { property: "og:description", content: "Últimas notícias do bairro Comendador Soares em Nova Iguaçu." },
     ],
   }),
   component: NoticiasPage,

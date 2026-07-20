@@ -11,11 +11,13 @@ import { findCategory } from "@/lib/guia-taxonomy";
 export const Route = createFileRoute("/onde-comer")({
   head: () => ({
     meta: [
-      { title: "Onde Comer — Guia CS" },
+      { title: "Onde Comer em Comendador Soares — Guia CS" },
       {
         name: "description",
-        content: "Restaurantes, hamburguerias, pizzarias e mais em Comendador Soares.",
+        content: "Restaurantes, hamburguerias, pizzarias, lanchonetes e delivery em Comendador Soares, Nova Iguaçu.",
       },
+      { property: "og:title", content: "Onde Comer em Comendador Soares — Guia CS" },
+      { property: "og:description", content: "Sabores do bairro: restaurantes, pizzarias e lanchonetes em Comendador Soares." },
     ],
   }),
   component: OndeComerPage,

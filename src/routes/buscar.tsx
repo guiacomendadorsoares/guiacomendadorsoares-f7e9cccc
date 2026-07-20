@@ -19,8 +19,10 @@ export const Route = createFileRoute("/buscar")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Buscar — Guia Comendador Soares" },
-      { name: "description", content: "Encontre empresas, serviços e categorias em Comendador Soares." },
+      { title: "Buscar Empresas — Guia Comendador Soares" },
+      { name: "description", content: "Encontre empresas, serviços e categorias no bairro Comendador Soares, em Nova Iguaçu." },
+      { property: "og:title", content: "Buscar Empresas — Guia Comendador Soares" },
+      { property: "og:description", content: "Busque empresas e serviços por nome ou categoria no Guia Comendador Soares." },
     ],
   }),
   component: BuscarPage,

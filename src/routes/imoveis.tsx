@@ -17,8 +17,10 @@ import { Search, Building2 } from "lucide-react";
 export const Route = createFileRoute("/imoveis")({
   head: () => ({
     meta: [
-      { title: "Imóveis — Guia CS" },
-      { name: "description", content: "Imóveis para alugar e comprar em Comendador Soares." },
+      { title: "Imóveis em Comendador Soares — Guia CS" },
+      { name: "description", content: "Casas, apartamentos, terrenos e imóveis comerciais para alugar e comprar em Comendador Soares, Nova Iguaçu." },
+      { property: "og:title", content: "Imóveis em Comendador Soares — Guia CS" },
+      { property: "og:description", content: "Casas, apartamentos e comerciais para alugar e comprar no bairro Comendador Soares." },
     ],
   }),
   component: ImoveisPage,
