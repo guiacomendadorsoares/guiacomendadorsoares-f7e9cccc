@@ -17,12 +17,13 @@ import {
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { Building2, Loader2, Users, Plus, Trash2, ShieldCheck, ExternalLink } from "lucide-react";
+import { Building2, Loader2, Users, Plus, Trash2, ShieldCheck, ExternalLink, History, Crown } from "lucide-react";
 import { toast } from "sonner";
 import {
   listMyBusinesses, listTeam, inviteMemberByEmail, updateMemberRole, removeMember,
   canManageTeam, canEditBusiness, ROLE_LABEL, ROLE_DESC, ASSIGNABLE_ROLES,
-  type MyBusiness, type MemberRole,
+  listBusinessAudit, transferOwnership,
+  type MyBusiness, type MemberRole, type TeamMember,
 } from "@/lib/business-owner";
 
 export const Route = createFileRoute("/_authenticated/painel-empresa")({
