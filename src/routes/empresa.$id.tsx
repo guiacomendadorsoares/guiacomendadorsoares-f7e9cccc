@@ -209,6 +209,28 @@ function EmpresaPage() {
           )}
         </div>
 
+        {!hasOwner && (
+          <section className="mt-5">
+            <Link
+              to="/empresa/$id/reivindicar"
+              params={{ id: b.id }}
+              className="flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 to-gold/10 p-4 shadow-card transition-all active:scale-[0.99]"
+            >
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-sm font-bold text-foreground">
+                  Sou o proprietário desta empresa
+                </span>
+                <span className="block text-[11.5px] leading-snug text-muted-foreground">
+                  Assuma a administração e gerencie fotos, horário, contatos e promoções.
+                </span>
+              </span>
+            </Link>
+          </section>
+        )}
+
         {(b.latitude != null && b.longitude != null) && (
           <section className="mt-6">
             <SectionTitle>Localização</SectionTitle>
