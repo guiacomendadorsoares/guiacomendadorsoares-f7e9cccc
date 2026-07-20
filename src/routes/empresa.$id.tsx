@@ -209,7 +209,21 @@ function EmpresaPage() {
           )}
         </div>
 
-        {!hasOwner && (
+        {hasOwner ? (
+          <section className="mt-5">
+            <div className="flex items-center gap-3 rounded-2xl border border-primary/20 bg-primary/5 p-4">
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-primary text-primary-foreground">
+                <ShieldCheck className="h-5 w-5" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-display text-sm font-bold text-foreground">Administrada pelo proprietário</p>
+                <p className="text-[11.5px] leading-snug text-muted-foreground">
+                  As informações desta empresa são mantidas por quem a representa oficialmente.
+                </p>
+              </div>
+            </div>
+          </section>
+        ) : (
           <section className="mt-5">
             <Link
               to="/empresa/$id/reivindicar"
