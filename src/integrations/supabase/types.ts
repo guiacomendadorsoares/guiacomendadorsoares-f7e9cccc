@@ -1852,6 +1852,14 @@ export type Database = {
         Args: { _business_id: string; _user_id: string }
         Returns: boolean
       }
+      transfer_business_ownership: {
+        Args: {
+          _business_id: string
+          _new_owner_user_id: string
+          _reason?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
