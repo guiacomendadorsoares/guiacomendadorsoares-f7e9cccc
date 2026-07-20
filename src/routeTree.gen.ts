@@ -47,6 +47,7 @@ import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated/admin.usuarios'
 import { Route as AuthenticatedAdminTestarNotificacoesRouteImport } from './routes/_authenticated/admin.testar-notificacoes'
 import { Route as AuthenticatedAdminRelatoriosRouteImport } from './routes/_authenticated/admin.relatorios'
+import { Route as AuthenticatedAdminReivindicacoesRouteImport } from './routes/_authenticated/admin.reivindicacoes'
 import { Route as AuthenticatedAdminPopupsRouteImport } from './routes/_authenticated/admin.popups'
 import { Route as AuthenticatedAdminPlanosRouteImport } from './routes/_authenticated/admin.planos'
 import { Route as AuthenticatedAdminParceirosRouteImport } from './routes/_authenticated/admin.parceiros'
@@ -263,6 +264,12 @@ const AuthenticatedAdminRelatoriosRoute =
     path: '/relatorios',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminReivindicacoesRoute =
+  AuthenticatedAdminReivindicacoesRouteImport.update({
+    id: '/reivindicacoes',
+    path: '/reivindicacoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminPopupsRoute =
   AuthenticatedAdminPopupsRouteImport.update({
     id: '/popups',
@@ -418,6 +425,7 @@ export interface FileRoutesByFullPath {
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/popups': typeof AuthenticatedAdminPopupsRoute
+  '/admin/reivindicacoes': typeof AuthenticatedAdminReivindicacoesRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -474,6 +482,7 @@ export interface FileRoutesByTo {
   '/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/admin/popups': typeof AuthenticatedAdminPopupsRoute
+  '/admin/reivindicacoes': typeof AuthenticatedAdminReivindicacoesRoute
   '/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -533,6 +542,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/parceiros': typeof AuthenticatedAdminParceirosRoute
   '/_authenticated/admin/planos': typeof AuthenticatedAdminPlanosRoute
   '/_authenticated/admin/popups': typeof AuthenticatedAdminPopupsRoute
+  '/_authenticated/admin/reivindicacoes': typeof AuthenticatedAdminReivindicacoesRoute
   '/_authenticated/admin/relatorios': typeof AuthenticatedAdminRelatoriosRoute
   '/_authenticated/admin/testar-notificacoes': typeof AuthenticatedAdminTestarNotificacoesRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -592,6 +602,7 @@ export interface FileRouteTypes {
     | '/admin/parceiros'
     | '/admin/planos'
     | '/admin/popups'
+    | '/admin/reivindicacoes'
     | '/admin/relatorios'
     | '/admin/testar-notificacoes'
     | '/admin/usuarios'
@@ -648,6 +659,7 @@ export interface FileRouteTypes {
     | '/admin/parceiros'
     | '/admin/planos'
     | '/admin/popups'
+    | '/admin/reivindicacoes'
     | '/admin/relatorios'
     | '/admin/testar-notificacoes'
     | '/admin/usuarios'
@@ -706,6 +718,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/parceiros'
     | '/_authenticated/admin/planos'
     | '/_authenticated/admin/popups'
+    | '/_authenticated/admin/reivindicacoes'
     | '/_authenticated/admin/relatorios'
     | '/_authenticated/admin/testar-notificacoes'
     | '/_authenticated/admin/usuarios'
@@ -1011,6 +1024,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRelatoriosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/reivindicacoes': {
+      id: '/_authenticated/admin/reivindicacoes'
+      path: '/reivindicacoes'
+      fullPath: '/admin/reivindicacoes'
+      preLoaderRoute: typeof AuthenticatedAdminReivindicacoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/popups': {
       id: '/_authenticated/admin/popups'
       path: '/popups'
@@ -1159,6 +1179,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminParceirosRoute: typeof AuthenticatedAdminParceirosRoute
   AuthenticatedAdminPlanosRoute: typeof AuthenticatedAdminPlanosRoute
   AuthenticatedAdminPopupsRoute: typeof AuthenticatedAdminPopupsRoute
+  AuthenticatedAdminReivindicacoesRoute: typeof AuthenticatedAdminReivindicacoesRoute
   AuthenticatedAdminRelatoriosRoute: typeof AuthenticatedAdminRelatoriosRoute
   AuthenticatedAdminTestarNotificacoesRoute: typeof AuthenticatedAdminTestarNotificacoesRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
@@ -1188,6 +1209,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminParceirosRoute: AuthenticatedAdminParceirosRoute,
   AuthenticatedAdminPlanosRoute: AuthenticatedAdminPlanosRoute,
   AuthenticatedAdminPopupsRoute: AuthenticatedAdminPopupsRoute,
+  AuthenticatedAdminReivindicacoesRoute: AuthenticatedAdminReivindicacoesRoute,
   AuthenticatedAdminRelatoriosRoute: AuthenticatedAdminRelatoriosRoute,
   AuthenticatedAdminTestarNotificacoesRoute:
     AuthenticatedAdminTestarNotificacoesRoute,
