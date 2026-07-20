@@ -18,6 +18,7 @@ export const Route = createFileRoute("/auth")({
     meta: [
       { title: "Entrar — Guia Comendador Soares" },
       { name: "description", content: "Acesse sua conta no Guia Comendador Soares." },
+      { name: "robots", content: "noindex,nofollow" },
     ],
   }),
   component: AuthPage,

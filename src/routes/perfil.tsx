@@ -9,6 +9,7 @@ export const Route = createFileRoute("/perfil")({
     meta: [
       { title: "Perfil — Guia CS" },
       { name: "description", content: "Sua conta no Guia Comendador Soares." },
+      { name: "robots", content: "noindex,nofollow" },
     ],
   }),
   component: PerfilPage,
