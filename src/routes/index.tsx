@@ -36,13 +36,13 @@ import phComer3 from "@/assets/placeholders/comer-3.jpg.asset.json";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Guia Comendador Soares — Comércio, Vagas e Serviços em Nova Iguaçu" },
+      { title: "Guia Comendador Soares — Comércio e Vagas em Nova Iguaçu" },
       {
         name: "description",
         content:
           "Guia completo do bairro Comendador Soares, em Nova Iguaçu: empresas, farmácias, serviços, vagas de emprego, imóveis, eventos e notícias.",
       },
-      { property: "og:title", content: "Guia Comendador Soares — Comércio, Vagas e Serviços em Nova Iguaçu" },
+      { property: "og:title", content: "Guia Comendador Soares — Comércio e Vagas em Nova Iguaçu" },
       {
         property: "og:description",
         content: "O guia oficial do bairro Comendador Soares em Nova Iguaçu: comércio, vagas, imóveis e comunidade.",

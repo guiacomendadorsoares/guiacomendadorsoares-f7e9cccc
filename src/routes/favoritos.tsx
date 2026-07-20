@@ -8,6 +8,7 @@ export const Route = createFileRoute("/favoritos")({
     meta: [
       { title: "Favoritos — Guia Comendador Soares" },
       { name: "description", content: "Seus lugares, vagas e conteúdos favoritos do bairro." },
+      { name: "robots", content: "noindex,nofollow" },
     ],
   }),
   component: FavoritosPage,

@@ -9,10 +9,10 @@ import { Search, SlidersHorizontal, Briefcase } from "lucide-react";
 export const Route = createFileRoute("/vagas")({
   head: () => ({
     meta: [
-      { title: "Vagas e Estágios — Guia CS" },
-      { name: "description", content: "Encontre vagas de emprego, estágios, jovem aprendiz e freelances no bairro Comendador Soares e região." },
-      { property: "og:title", content: "Vagas e Estágios — Guia CS" },
-      { property: "og:description", content: "Empregos e oportunidades perto de casa." },
+      { title: "Vagas de Emprego em Comendador Soares — Guia CS" },
+      { name: "description", content: "Encontre vagas de emprego, estágios, jovem aprendiz e freelances no bairro Comendador Soares e região de Nova Iguaçu." },
+      { property: "og:title", content: "Vagas de Emprego em Comendador Soares — Guia CS" },
+      { property: "og:description", content: "Empregos, estágios e oportunidades perto de casa no bairro Comendador Soares." },
     ],
   }),
   component: VagasPage,

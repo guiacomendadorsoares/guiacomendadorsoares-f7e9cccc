@@ -23,7 +23,7 @@ import logoUrl from "@/assets/logo.png";
 export const Route = createFileRoute("/anuncie")({
   head: () => ({
     meta: [
-      { title: "Anuncie no Guia Comendador Soares — Mais visibilidade para seu negócio" },
+      { title: "Anuncie no Guia Comendador Soares — Mais visibilidade" },
       {
         name: "description",
         content:
@@ -33,6 +33,20 @@ export const Route = createFileRoute("/anuncie")({
       {
         property: "og:description",
         content: "Mais visibilidade, mais clientes, mais vendas. Comece grátis.",
+      },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: FAQS.map((f) => ({
+            "@type": "Question",
+            name: f.q,
+            acceptedAnswer: { "@type": "Answer", text: f.a },
+          })),
+        }),
       },
     ],
   }),

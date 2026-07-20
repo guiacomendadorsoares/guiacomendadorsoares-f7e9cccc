@@ -8,6 +8,12 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/_authenticated/minha-conta")({
+  head: () => ({
+    meta: [
+      { title: "Minha conta — Guia Comendador Soares" },
+      { name: "robots", content: "noindex,nofollow" },
+    ],
+  }),
   component: MinhaContaPage,
 });
 
