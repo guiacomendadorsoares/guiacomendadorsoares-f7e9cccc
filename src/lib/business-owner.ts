@@ -174,3 +174,77 @@ export function canManageTeam(role: MemberRole, isPrimary: boolean): boolean {
 export function canEditBusiness(role: MemberRole, isPrimary: boolean): boolean {
   return isPrimary || role === "proprietario" || role === "gerente" || role === "editor";
 }
+
+// ============= Audit =============
+export type AuditEntry = {
+  id: string;
+  business_id: string | null;
+  actor_user_id: string | null;
+  entity_type: string;
+  entity_id: string | null;
+  field_name: string | null;
+  previous_value: any;
+  new_value: any;
+  action: string;
+  metadata: any;
+  created_at: string;
+  actor?: { email: string | null; full_name: string | null } | null;
+};
+
+export async function logBusinessAudit(params: {
+  businessId: string;
+  entityType: string;
+  entityId?: string | null;
+  action: string;
+  fieldName?: string | null;
+  previousValue?: any;
+  newValue?: any;
+  metadata?: any;
+}): Promise<void> {
+  const { data: u } = await supabase.auth.getUser();
+  if (!u.user?.id) return;
+  await (supabase as any).from("business_audit_log").insert({
+    business_id: params.businessId,
+    actor_user_id: u.user.id,
+    entity_type: params.entityType,
+    entity_id: params.entityId ?? null,
+    action: params.action,
+    field_name: params.fieldName ?? null,
+    previous_value: params.previousValue ?? null,
+    new_value: params.newValue ?? null,
+    metadata: params.metadata ?? null,
+  });
+}
+
+export async function listBusinessAudit(businessId: string, limit = 100): Promise<AuditEntry[]> {
+  const { data, error } = await (supabase as any)
+    .from("business_audit_log")
+    .select("*")
+    .eq("business_id", businessId)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (error) throw error;
+  const rows = (data ?? []) as AuditEntry[];
+  const ids = Array.from(new Set(rows.map((r) => r.actor_user_id).filter(Boolean))) as string[];
+  if (!ids.length) return rows;
+  const { data: profs } = await (supabase as any)
+    .from("profiles")
+    .select("user_id,email,full_name")
+    .in("user_id", ids);
+  const byId = new Map<string, any>((profs ?? []).map((p: any) => [p.user_id, p]));
+  return rows.map((r) => ({ ...r, actor: r.actor_user_id ? byId.get(r.actor_user_id) ?? null : null }));
+}
+
+// ============= Ownership transfer =============
+export async function transferOwnership(params: {
+  businessId: string;
+  newOwnerUserId: string;
+  reason?: string;
+}): Promise<void> {
+  const { error } = await (supabase as any).rpc("transfer_business_ownership", {
+    _business_id: params.businessId,
+    _new_owner_user_id: params.newOwnerUserId,
+    _reason: params.reason ?? null,
+  });
+  if (error) throw error;
+}
