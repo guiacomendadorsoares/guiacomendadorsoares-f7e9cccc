@@ -1,78 +1,98 @@
-# CRM Comercial — Dashboard Master
+# Módulo de Reivindicação de Empresa (Business Claim)
 
-Módulo completo de gestão comercial integrado aos planos e cadastros existentes. Acessível **somente** pelo perfil `admin`.
+Sistema completo para que proprietários assumam empresas já cadastradas, com arquitetura multi-usuário preparada para filiais, funções e permissões granulares.
 
-## 1. Banco de Dados (1 migration)
-
-Novas tabelas em `public` (todas com RLS + GRANT + policies via `has_role(auth.uid(),'admin')`):
-
-- **`crm_leads`** — pipeline comercial
-  - `user_id` (nullable, FK profiles.user_id — vira cliente ao converter)
-  - `company_name`, `category`, `partner_type` (empresa/farmacia/corretor/imobiliaria/lead)
-  - `contact_name`, `phone`, `whatsapp`, `email`, `address`, `neighborhood`
-  - `stage` (enum: `lead`, `contato`, `visita`, `proposta`, `negociacao`, `teste`, `ativo`, `renovacao`, `cancelado`)
-  - `plan_slug`, `plan_source`, `monthly_value`, `next_action`, `next_action_at`, `renewal_at`
-  - `notes`, `created_by`
-- **`crm_activities`** — timeline (ligação, visita, whatsapp, email, proposta, reunião, observação) com `type`, `content`, `created_by`, `created_at`
-- **`crm_reminders`** — lembretes com `title`, `due_at`, `done`, `lead_id`
-- **`crm_audit_log`** — histórico (aproveita padrão do `plan_audit_log`) para mudanças de stage/plan/status
-
-Trigger `set_updated_at` reutilizado. Trigger de auditoria em `crm_leads`.
-
-## 2. Server Functions (`src/lib/crm.functions.ts`)
-
-Todas com `.middleware([requireSupabaseAuth])` + verificação `has_role admin`:
-
-- `listCrmLeads({ filters })`, `getCrmLead({ id })`, `upsertCrmLead(...)`, `deleteCrmLead({ id })`
-- `moveCrmLeadStage({ id, stage })` — usado pelo Kanban
-- `addCrmActivity({ leadId, type, content })`, `listCrmActivities({ leadId })`
-- `addCrmReminder(...)`, `toggleCrmReminder(...)`, `listCrmReminders(...)`
-- `crmDashboardStats()` — retorna contagens dos indicadores
-- `crmRenewalBuckets()` — vence hoje/7d/15d/30d/atrasado
-
-Reutiliza `updateUserPlan` / `grantTrial` já existentes para operações de plano.
-
-## 3. UI — Nova Área `/admin/crm`
-
-Layout com sub-abas dentro do Dashboard Master:
-
-- **`admin.crm.tsx`** — layout com tabs (Dashboard, Funil, Renovações, Relatórios) + `<Outlet />`
-- **`admin.crm.index.tsx`** — Dashboard com cards de indicadores em tempo real + gráfico simples (recharts já disponível) de evolução por stage/plano
-- **`admin.crm.funil.tsx`** — Kanban drag-and-drop (`@dnd-kit/core` + `@dnd-kit/sortable`) com 9 colunas coloridas conforme especificação. Cada card mostra logo, nome, categoria, responsável, telefone, plano, status, próxima ação, renovação. Clique abre Sheet lateral com Ficha Completa
-- **Ficha Completa** (Sheet) — abas: Dados / Plano / Timeline / Lembretes / Auditoria. Botões: WhatsApp, Email, Editar Empresa (abre link), Alterar Plano (usa server fns existentes), Conceder Teste, Suspender, Cancelar, Reativar
-- **`admin.crm.renovacoes.tsx`** — painel com buckets (Hoje / 7d / 15d / 30d / Atrasados)
-- **`admin.crm.relatorios.tsx`** — relatórios: por plano, categoria, bairro, novos, conversão, renovações, cancelamentos
-- **Busca + filtros globais** — plano, categoria, tipo, status, data, bairro; busca por nome/telefone/responsável/email/categoria
-
-Componentes reutilizáveis:
-- `<CrmLeadCard />`, `<CrmKanban />`, `<CrmLeadSheet />` (ficha), `<CrmTimeline />`, `<CrmRemindersList />`, `<CrmStatCard />`
-
-## 4. Cores por Status
-
-Tokens Tailwind semânticos:
-`lead` cinza, `contato` azul, `visita` laranja, `proposta` roxo, `negociacao` laranja, `teste` roxo, `ativo` verde, `renovacao` amarelo, `cancelado` vermelho.
-
-## 5. Notificações
-
-Reutiliza tabela `notifications` existente. Server fn `notifyAdminsCrmAlerts()` chamada por cron `pg_cron` (job diário) que gera alertas: teste vencendo (3d), plano vencendo (7d), renovação, novo cadastro, sem movimentação (>30d sem activity).
-
-## 6. Painel Financeiro (Preparação)
-
-Aba visual dentro da Ficha Completa mostrando `plan_slug`, `monthly_value`, `plan_status`, "Forma de pagamento: —", "Último pagamento: —", "Próximo vencimento: renewal_at". Somente leitura — estrutura pronta para Asaas.
-
-## 7. Navegação
-
-- Adicionar item **"CRM Comercial"** em `src/lib/dashboard-nav.ts` (seção admin).
-- Rotas todas sob `_authenticated/admin/crm/*`, protegidas pelo `AdminLayout` existente (`useRequireAnyRole(["admin","editor"])`) + checagem extra `admin only` no componente CRM.
-
-## 8. Fora de escopo (fase futura)
-
-- Integração real Asaas (webhook já existe; só exibimos preparação)
-- Envio real de WhatsApp/Email (botões apenas abrem `wa.me` / `mailto:`)
-- Não altera Dashboards de Empresa, Imprensa, Imóveis.
+Dado o tamanho, proponho entregar em **5 fases sequenciais**, cada uma testável e utilizável de forma independente. Assim você pode validar cada etapa antes da próxima.
 
 ---
 
-**Dependência nova:** `@dnd-kit/core` + `@dnd-kit/sortable` (Kanban).
+## Fase 1 — Fundação (Banco + Reivindicação básica)
 
-Confirma para eu implementar?
+**Tabelas novas** (migration única, com GRANT + RLS):
+
+- `business_members` — vínculo N:N usuário↔empresa
+  - `business_id`, `user_id`, `role`, `status` (active/suspended), `is_primary_owner`
+- `business_roles` — funções configuráveis (proprietario, admin_empresa, gerente, marketing, financeiro, editor, atendimento, leitura)
+- `business_permissions` — permissões por função (edit_business, edit_products, edit_hours, manage_team, view_stats, etc.)
+- `business_claims` — solicitações de reivindicação
+  - dados do solicitante (nome, cpf, cargo, telefone, whatsapp, email)
+  - `status` (pending, in_review, awaiting_docs, approved, rejected, already_claimed, canceled)
+  - `verification_method` (manual, email_code, whatsapp_code, sms_code, domain)
+  - notas internas
+- `business_claim_documents` — uploads (cartão CNPJ, contrato social, vínculo, identidade)
+- `business_audit_log` — histórico (usuário, empresa, campo, valor antigo, valor novo, IP, dispositivo)
+
+**Storage:** novo bucket privado `business-claims` com RLS (dono da claim + admin).
+
+**RLS chave:**
+- Empresa é "reivindicável" quando não tem `business_members` com `is_primary_owner=true`.
+- Solicitante vê apenas as próprias claims. Admin vê tudo (via `has_role('admin')`).
+
+**Interface Fase 1:**
+- Botão **"Sou o proprietário desta empresa"** em `src/routes/empresa.$id.tsx` (só aparece se empresa não tem dono).
+- Página de solicitação `/empresa/$id/reivindicar` com formulário + upload multi-arquivo (validação de tipo/tamanho: PDF/JPG/PNG até 10MB).
+- Se não logado → redireciona para `/auth` guardando o destino.
+
+---
+
+## Fase 2 — Painel Administrativo de Claims
+
+Nova rota `/_authenticated/admin.reivindicacoes.tsx` com:
+
+- Lista com filtros: empresa, solicitante, cidade, data, status, busca livre
+- Ficha detalhada por claim: dados empresa + solicitante + docs (preview) + histórico + observações internas
+- Ações: **Aprovar**, **Recusar**, **Solicitar novos documentos**, **Reabrir**, **Transferir propriedade**, **Suspender vínculo**, **Excluir**
+- Ao aprovar: cria `business_members` com `role='proprietario'` e `is_primary_owner=true` — não altera `businesses`
+- Item de menu no `dashboard-nav.ts` na categoria Comercial
+
+---
+
+## Fase 3 — Painel do Proprietário (Painel Empresa)
+
+Reformular `src/routes/_authenticated/painel-empresa.tsx` para trabalhar com `business_members`:
+
+- Selector de empresa (usuário pode ter várias)
+- Edição de todos os campos listados (logo, capa, galeria, descrição, categorias, produtos, promoções, cupons, horário, contatos, redes sociais, localização, formas de pagamento, PIX, FAQ, SEO)
+- Guard por permissão: cada ação verifica `business_permissions` da função do usuário
+- Server functions em `src/lib/business-members.functions.ts` com `requireSupabaseAuth` + checagem de permissão
+
+---
+
+## Fase 4 — Equipe, Convites e Moderação
+
+- Aba **Equipe** no painel: listar membros, convidar por email, alterar função, suspender, remover
+- Tabela `business_invitations` com token único (expira em 7 dias)
+- Página pública `/convite/$token` para aceitar convite
+- **Parâmetro global de moderação** (em `businesses` ou tabela `system_settings`):
+  - Modo 1: alterações vão ao ar direto
+  - Modo 2: alterações ficam em `business_pending_changes` com diff (valor antigo → novo) para aprovação
+- Tela admin de pending changes com aprovar/recusar/editar
+
+---
+
+## Fase 5 — Notificações, Filiais e Auditoria completa
+
+- Notificações in-app (tabela existente) para: nova reivindicação, aprovação, recusa, novo membro, alteração aprovada/recusada, troca de proprietário
+- Estrutura de filiais: coluna `parent_business_id` em `businesses` + UI para vincular
+- Auditoria completa: trigger em `businesses`, `business_members` e conteúdos filhos gravando em `business_audit_log` com IP/dispositivo
+- Códigos de verificação por email (usando resend/lovable email) — estrutura preparada para WhatsApp/SMS quando o conector for adicionado
+
+---
+
+## Detalhes técnicos
+
+- **Stack:** TanStack Start + Lovable Cloud (Supabase). Zero edge functions — tudo via `createServerFn`.
+- **Segurança:** RLS em todas as tabelas, `has_role()` para admins, função `has_business_permission(user_id, business_id, permission)` SECURITY DEFINER para checagens de permissão sem recursão.
+- **Uploads:** bucket privado + signed URLs curtas (5 min) só para admin e dono da claim.
+- **Soft delete:** coluna `deleted_at` em `business_members`, `business_claims`, `business_invitations`.
+- **Índices:** em `business_id`, `user_id`, `status`, `created_at` de todas as tabelas transacionais.
+- **Reuso:** aproveita `ImageUploader`, `AdminContentTable`, `AppShell`, componentes shadcn e o padrão de aprovações existente (`src/lib/approvals.ts`).
+- **Rate limit:** infra atual não tem primitivo — deixarei documentado; não implemento manualmente.
+
+## Fora de escopo (assumido para depois)
+
+Marketplace, delivery, chat cliente↔empresa, agendamentos, integrações externas (Google Business, Meta, ERP). A arquitetura de `business_members` + `business_permissions` já suporta esses módulos futuros.
+
+---
+
+**Confirma o plano e a divisão em 5 fases?** Se sim, começo pela **Fase 1** (migration + botão + formulário de reivindicação).
