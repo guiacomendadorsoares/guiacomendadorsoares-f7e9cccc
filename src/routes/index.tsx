@@ -335,6 +335,8 @@ function useApprovedItems(
   const { mainCategory, limit = 3 } = opts;
   return useQuery({
     queryKey: ["home-items", table, mainCategory ?? "all", limit],
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
     queryFn: async () => {
       const hasFeatured = table === "businesses" || table === "properties";
       const cols = table === "businesses"
