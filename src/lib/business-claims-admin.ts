@@ -146,16 +146,23 @@ export async function transferOwnership(businessId: string, newUserId: string): 
     .eq("business_id", businessId)
     .eq("is_primary_owner", true);
   if (e1) throw e1;
-  // Upsert new primary owner
-  const { error: e2 } = await (supabase as any).from("business_members").upsert(
-    {
-      business_id: businessId,
-      user_id: newUserId,
-      role: "proprietario",
-      status: "active",
-      is_primary_owner: true,
-    },
-    { onConflict: "business_id,user_id" },
-  );
-  if (e2) throw e2;
+  const { data: existing } = await (supabase as any)
+    .from("business_members")
+    .select("id")
+    .eq("business_id", businessId)
+    .eq("user_id", newUserId)
+    .maybeSingle();
+  if (existing?.id) {
+    const { error } = await (supabase as any)
+      .from("business_members")
+      .update({ role: "proprietario", status: "active", is_primary_owner: true, deleted_at: null })
+      .eq("id", existing.id);
+    if (error) throw error;
+  } else {
+    const { error } = await (supabase as any).from("business_members").insert({
+      business_id: businessId, user_id: newUserId,
+      role: "proprietario", status: "active", is_primary_owner: true,
+    });
+    if (error) throw error;
+  }
 }
