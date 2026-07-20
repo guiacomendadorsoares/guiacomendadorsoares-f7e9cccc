@@ -40,6 +40,7 @@ import { Route as AuthenticatedMinhaContaRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as GuiaCategoriaSubcategoriaRouteImport } from './routes/guia.$categoria.$subcategoria'
+import { Route as EmpresaIdReivindicarRouteImport } from './routes/empresa.$id.reivindicar'
 import { Route as ApiPublicAsaasWebhookRouteImport } from './routes/api/public/asaas-webhook'
 import { Route as AuthenticatedAdminVagasRouteImport } from './routes/_authenticated/admin.vagas'
 import { Route as AuthenticatedAdminUtilidadePublicaRouteImport } from './routes/_authenticated/admin.utilidade-publica'
@@ -223,6 +224,11 @@ const GuiaCategoriaSubcategoriaRoute =
     path: '/$subcategoria',
     getParentRoute: () => GuiaCategoriaRoute,
   } as any)
+const EmpresaIdReivindicarRoute = EmpresaIdReivindicarRouteImport.update({
+  id: '/reivindicar',
+  path: '/reivindicar',
+  getParentRoute: () => EmpresaIdRoute,
+} as any)
 const ApiPublicAsaasWebhookRoute = ApiPublicAsaasWebhookRouteImport.update({
   id: '/api/public/asaas-webhook',
   path: '/api/public/asaas-webhook',
@@ -386,7 +392,7 @@ export interface FileRoutesByFullPath {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/curiosidades/$id': typeof CuriosidadesIdRoute
-  '/empresa/$id': typeof EmpresaIdRoute
+  '/empresa/$id': typeof EmpresaIdRouteWithChildren
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
@@ -418,6 +424,7 @@ export interface FileRoutesByFullPath {
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/empresa/$id/reivindicar': typeof EmpresaIdReivindicarRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -441,7 +448,7 @@ export interface FileRoutesByTo {
   '/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/curiosidades/$id': typeof CuriosidadesIdRoute
-  '/empresa/$id': typeof EmpresaIdRoute
+  '/empresa/$id': typeof EmpresaIdRouteWithChildren
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
@@ -473,6 +480,7 @@ export interface FileRoutesByTo {
   '/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/empresa/$id/reivindicar': typeof EmpresaIdReivindicarRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -499,7 +507,7 @@ export interface FileRoutesById {
   '/_authenticated/painel-imoveis': typeof AuthenticatedPainelImoveisRoute
   '/_authenticated/portal-imprensa': typeof AuthenticatedPortalImprensaRoute
   '/curiosidades/$id': typeof CuriosidadesIdRoute
-  '/empresa/$id': typeof EmpresaIdRoute
+  '/empresa/$id': typeof EmpresaIdRouteWithChildren
   '/eventos/$id': typeof EventosIdRoute
   '/guia/$categoria': typeof GuiaCategoriaRouteWithChildren
   '/imoveis/$id': typeof ImoveisIdRoute
@@ -531,6 +539,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/utilidade-publica': typeof AuthenticatedAdminUtilidadePublicaRoute
   '/_authenticated/admin/vagas': typeof AuthenticatedAdminVagasRoute
   '/api/public/asaas-webhook': typeof ApiPublicAsaasWebhookRoute
+  '/empresa/$id/reivindicar': typeof EmpresaIdReivindicarRoute
   '/guia/$categoria/$subcategoria': typeof GuiaCategoriaSubcategoriaRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -589,6 +598,7 @@ export interface FileRouteTypes {
     | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/api/public/asaas-webhook'
+    | '/empresa/$id/reivindicar'
     | '/guia/$categoria/$subcategoria'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -644,6 +654,7 @@ export interface FileRouteTypes {
     | '/admin/utilidade-publica'
     | '/admin/vagas'
     | '/api/public/asaas-webhook'
+    | '/empresa/$id/reivindicar'
     | '/guia/$categoria/$subcategoria'
     | '/admin'
   id:
@@ -701,6 +712,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/utilidade-publica'
     | '/_authenticated/admin/vagas'
     | '/api/public/asaas-webhook'
+    | '/empresa/$id/reivindicar'
     | '/guia/$categoria/$subcategoria'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -722,7 +734,7 @@ export interface RootRouteChildren {
   UtilidadePublicaRoute: typeof UtilidadePublicaRoute
   VagasRoute: typeof VagasRouteWithChildren
   CuriosidadesIdRoute: typeof CuriosidadesIdRoute
-  EmpresaIdRoute: typeof EmpresaIdRoute
+  EmpresaIdRoute: typeof EmpresaIdRouteWithChildren
   EventosIdRoute: typeof EventosIdRoute
   GuiaCategoriaRoute: typeof GuiaCategoriaRouteWithChildren
   NoticiasIdRoute: typeof NoticiasIdRoute
@@ -949,6 +961,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/guia/$categoria/$subcategoria'
       preLoaderRoute: typeof GuiaCategoriaSubcategoriaRouteImport
       parentRoute: typeof GuiaCategoriaRoute
+    }
+    '/empresa/$id/reivindicar': {
+      id: '/empresa/$id/reivindicar'
+      path: '/reivindicar'
+      fullPath: '/empresa/$id/reivindicar'
+      preLoaderRoute: typeof EmpresaIdReivindicarRouteImport
+      parentRoute: typeof EmpresaIdRoute
     }
     '/api/public/asaas-webhook': {
       id: '/api/public/asaas-webhook'
@@ -1222,6 +1241,18 @@ const VagasRouteChildren: VagasRouteChildren = {
 
 const VagasRouteWithChildren = VagasRoute._addFileChildren(VagasRouteChildren)
 
+interface EmpresaIdRouteChildren {
+  EmpresaIdReivindicarRoute: typeof EmpresaIdReivindicarRoute
+}
+
+const EmpresaIdRouteChildren: EmpresaIdRouteChildren = {
+  EmpresaIdReivindicarRoute: EmpresaIdReivindicarRoute,
+}
+
+const EmpresaIdRouteWithChildren = EmpresaIdRoute._addFileChildren(
+  EmpresaIdRouteChildren,
+)
+
 interface GuiaCategoriaRouteChildren {
   GuiaCategoriaSubcategoriaRoute: typeof GuiaCategoriaSubcategoriaRoute
 }
@@ -1251,7 +1282,7 @@ const rootRouteChildren: RootRouteChildren = {
   UtilidadePublicaRoute: UtilidadePublicaRoute,
   VagasRoute: VagasRouteWithChildren,
   CuriosidadesIdRoute: CuriosidadesIdRoute,
-  EmpresaIdRoute: EmpresaIdRoute,
+  EmpresaIdRoute: EmpresaIdRouteWithChildren,
   EventosIdRoute: EventosIdRoute,
   GuiaCategoriaRoute: GuiaCategoriaRouteWithChildren,
   NoticiasIdRoute: NoticiasIdRoute,
