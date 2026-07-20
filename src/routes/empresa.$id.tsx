@@ -87,6 +87,10 @@ function EmpresaPage() {
     queryKey: ["business", id],
     queryFn: () => fetchBusinessById(id),
   });
+  const { data: hasOwner } = useQuery({
+    queryKey: ["business-has-owner", id],
+    queryFn: () => businessHasOwner(id),
+  });
   const b: any = business ?? {};
   const { plan: ownerPlan } = useOwnerPlan(b.submitted_by);
 
