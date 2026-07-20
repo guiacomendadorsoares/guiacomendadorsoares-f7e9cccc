@@ -358,3 +358,176 @@ function TeamManager({
     </div>
   );
 }
+
+// ============= Audit Timeline =============
+const ACTION_LABEL: Record<string, string> = {
+  member_invited: "Membro adicionado",
+  member_reactivated: "Membro reativado",
+  member_role_changed: "Papel alterado",
+  member_removed: "Membro removido",
+  ownership_transferred: "Titularidade transferida",
+};
+
+function fmtValue(v: any): string {
+  if (v == null) return "—";
+  if (typeof v === "string") return v;
+  try { return JSON.stringify(v); } catch { return String(v); }
+}
+
+function AuditTimeline({ businessId }: { businessId: string }) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["business-audit", businessId],
+    queryFn: () => listBusinessAudit(businessId, 200),
+  });
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
+      <div className="mb-3 flex items-center gap-2">
+        <History className="h-4 w-4 text-primary" />
+        <h3 className="font-display text-sm font-bold">Histórico de alterações</h3>
+      </div>
+      {isLoading ? (
+        <div className="grid place-items-center py-6"><Loader2 className="h-4 w-4 animate-spin" /></div>
+      ) : !data?.length ? (
+        <p className="rounded-xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+          Nenhuma ação registrada ainda.
+        </p>
+      ) : (
+        <ol className="relative space-y-3 border-l border-border pl-4">
+          {data.map((row) => (
+            <li key={row.id} className="relative">
+              <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-2 ring-background" />
+              <div className="rounded-xl border border-border bg-background p-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">
+                    {ACTION_LABEL[row.action] ?? row.action}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {new Date(row.created_at).toLocaleString("pt-BR")}
+                  </span>
+                </div>
+                <p className="mt-1.5 text-sm">
+                  Por <strong>{row.actor?.full_name || row.actor?.email || "Sistema"}</strong>
+                </p>
+                {(row.previous_value || row.new_value) && (
+                  <div className="mt-1.5 grid gap-1 text-xs text-muted-foreground sm:grid-cols-2">
+                    {row.previous_value && <div><span className="font-semibold">Antes:</span> {fmtValue(row.previous_value)}</div>}
+                    {row.new_value && <div><span className="font-semibold">Depois:</span> {fmtValue(row.new_value)}</div>}
+                  </div>
+                )}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+// ============= Ownership Transfer =============
+function OwnershipTransfer({ business, currentUserId }: { business: MyBusiness; currentUserId: string }) {
+  const qc = useQueryClient();
+  const { data: team, isLoading } = useQuery({
+    queryKey: ["business-team", business.id],
+    queryFn: () => listTeam(business.id),
+  });
+  const candidates = (team ?? []).filter(
+    (m) => !m.is_primary_owner && m.user_id !== currentUserId && m.status === "active",
+  );
+  const [targetId, setTargetId] = useState<string>("");
+  const [reason, setReason] = useState("");
+  const [confirmTarget, setConfirmTarget] = useState<TeamMember | null>(null);
+
+  const mut = useMutation({
+    mutationFn: (t: TeamMember) => transferOwnership({
+      businessId: business.id,
+      newOwnerUserId: t.user_id,
+      reason: reason.trim() || undefined,
+    }),
+    onSuccess: () => {
+      toast.success("Titularidade transferida com sucesso.");
+      setConfirmTarget(null);
+      setTargetId("");
+      setReason("");
+      qc.invalidateQueries({ queryKey: ["business-team", business.id] });
+      qc.invalidateQueries({ queryKey: ["business-audit", business.id] });
+      qc.invalidateQueries({ queryKey: ["my-businesses"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-4 shadow-card">
+      <div className="mb-3 flex items-center gap-2">
+        <Crown className="h-4 w-4 text-amber-600" />
+        <h3 className="font-display text-sm font-bold">Transferir titularidade</h3>
+      </div>
+      <p className="mb-4 text-sm text-muted-foreground">
+        Ao transferir, você deixa de ser o proprietário desta empresa e assume o papel de <strong>Gerente</strong>.
+        O novo titular terá controle total, incluindo o plano de assinatura. Esta ação é registrada na auditoria.
+      </p>
+
+      {isLoading ? (
+        <div className="grid place-items-center py-6"><Loader2 className="h-4 w-4 animate-spin" /></div>
+      ) : !candidates.length ? (
+        <p className="rounded-xl border border-dashed border-border bg-background p-6 text-center text-sm text-muted-foreground">
+          Adicione um membro à equipe antes de transferir a titularidade.
+        </p>
+      ) : (
+        <div className="space-y-3">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-muted-foreground">Novo proprietário</Label>
+            <Select value={targetId} onValueChange={setTargetId}>
+              <SelectTrigger><SelectValue placeholder="Selecione um membro" /></SelectTrigger>
+              <SelectContent>
+                {candidates.map((m) => (
+                  <SelectItem key={m.id} value={m.user_id}>
+                    {m.profile?.full_name || m.profile?.email || m.user_id} · {ROLE_LABEL[m.role]}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-muted-foreground">Motivo (opcional)</Label>
+            <Textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={2} placeholder="Ex.: venda da empresa, mudança de sócio…" />
+          </div>
+          <div>
+            <Button
+              variant="destructive"
+              disabled={!targetId || mut.isPending}
+              onClick={() => {
+                const t = candidates.find((c) => c.user_id === targetId);
+                if (t) setConfirmTarget(t);
+              }}
+            >
+              {mut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Transferir titularidade"}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <AlertDialog open={!!confirmTarget} onOpenChange={(o) => !o && setConfirmTarget(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar transferência?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você deixará de ser o proprietário de <strong>{business.name}</strong> e passará para
+              <strong> {confirmTarget?.profile?.full_name || confirmTarget?.profile?.email}</strong>.
+              Esta ação não pode ser desfeita sem o consentimento do novo titular.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => confirmTarget && mut.mutate(confirmTarget)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Confirmar transferência
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+}
