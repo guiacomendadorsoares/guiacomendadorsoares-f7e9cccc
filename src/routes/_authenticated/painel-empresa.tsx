@@ -87,6 +87,10 @@ function PainelEmpresa() {
               <TabsTrigger value="farmacia">💊 Farmácia</TabsTrigger>
               <TabsTrigger value="vagas">Vagas</TabsTrigger>
               <TabsTrigger value="eventos">Eventos</TabsTrigger>
+              <TabsTrigger value="auditoria"><History className="mr-1 h-3.5 w-3.5" /> Auditoria</TabsTrigger>
+              {selected.is_primary_owner && (
+                <TabsTrigger value="titularidade"><Crown className="mr-1 h-3.5 w-3.5" /> Titularidade</TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="empresa" className="mt-4">
@@ -116,6 +120,16 @@ function PainelEmpresa() {
             <TabsContent value="eventos" className="mt-4">
               <ContentCrud table="events" ownerOnly={user.id} forcePending />
             </TabsContent>
+
+            <TabsContent value="auditoria" className="mt-4">
+              <AuditTimeline businessId={selected.id} />
+            </TabsContent>
+
+            {selected.is_primary_owner && (
+              <TabsContent value="titularidade" className="mt-4">
+                <OwnershipTransfer business={selected} currentUserId={user.id} />
+              </TabsContent>
+            )}
           </Tabs>
         )}
       </div>
